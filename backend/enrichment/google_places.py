@@ -1,19 +1,22 @@
+from pathlib import Path
 from backend.enrichment.types import Config
 import requests
 import time
 from typing import Dict, List
 import os
+import dotenv
 
 
 PLACES_NEARBY_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
 PLACES_DETAILS_URL = "https://maps.googleapis.com/maps/api/place/details/json"
 
+dotenv.load_dotenv(Path(__file__).resolve().parent.parent / ".env.local")
 PLACES_API_KEY = os.getenv("GOOGLE_PLACES_API_KEY")
 
-def nearby_search(cfg: Config, lat: float, lng: float, place_type: str) -> List[Dict]:
+def nearby_search(cfg: Config, place_type: str) -> List[Dict]:
     params = {
         "key": cfg.api_key,
-        "location": f"{lat},{lng}",
+        "location": f"{cfg.lat},{cfg.lng}",
         "radius": cfg.nearby_search_radius_m,
         "type": place_type,
     }
