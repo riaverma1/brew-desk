@@ -1,5 +1,6 @@
 import json
 import time
+from datetime import datetime, timezone
 from typing import Dict, List, Optional, Tuple
 from backend.enrichment.types import Config
 from backend.enrichment.google_places import nearby_search, place_details
@@ -36,11 +37,50 @@ def run_bootstrap(cfg: Config) -> Dict:
         time.sleep(cfg.request_sleep_s)
         details = place_details(cfg, pid)
         signals = extract_signals(details)
+        fetched_at = datetime.now(timezone.utc).isoformat()
+
+        location = (details.get("geometry") or {}).get("location") or {}
+        place_block = {
+            "name": details.get("name"),
+            "lat": location.get("lat"),
+            "lng": location.get("lng"),
+            "types": details.get("types") or [],
+            "formatted_address": details.get("formatted_address"),
+        }
+
+        wfh_attributes = {
+            "wifi_score": signals.get("wifi_score"),
+            "outlets_score": signals.get("outlets_score"),
+            "laptop_friendly": (signals.get("laptop_friendly_score") or 0) >= 0.5,
+            "noise_level": "unknown",
+            "confidence": signals.get("confidence_numeric", 0.0),
+        }
 
         enriched.append({
             "place_id": pid,
-            "google_details": details,
-            "wfh_attributes_v0": signals,
+            "place": place_block,
+            "sources": {
+                "google_details": {
+                    "fetched_at": fetched_at,
+                    "payload": details,
+                },
+                "google_reviews": {
+                    "fetched_at": fetched_at,
+                    "reviews": details.get("reviews", []),
+                },
+                "tavily": {
+                    "fetched_at": None,
+                    "query": None,
+                    "results": [],
+                    "excerpts": [],
+                },
+            },
+            "derived": {
+                "wfh_attributes": wfh_attributes,
+                "summary": signals.get("summary", ""),
+                "derived_at": datetime.now(timezone.utc).isoformat(),
+                "deriver_version": "signals_v0.1",
+            },
             "ingested_at_epoch": int(time.time()),
         })
 

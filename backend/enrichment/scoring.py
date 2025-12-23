@@ -32,6 +32,9 @@ def extract_signals(details: Dict) -> Dict:
     elif evidence_total >= 2:
         confidence = "medium"
 
+    # numeric confidence for downstream derived schema consumers
+    confidence_numeric = min(1.0, evidence_total / 5.0)
+
     # Evidence snippets: store a couple reviews that contain key terms
     evidence_reviews = []
     for rv in reviews:
@@ -46,11 +49,24 @@ def extract_signals(details: Dict) -> Dict:
         if len(evidence_reviews) >= 3:
             break
 
+    insights = []
+    if wifi_score >= 0.5:
+        insights.append("WiFi likely available")
+    if outlets_score >= 0.5:
+        insights.append("Some outlets mentioned")
+    if laptop_score >= 0.5:
+        insights.append("Laptop-friendly mentions")
+    if not insights:
+        insights.append("Insufficient evidence about work-friendliness")
+    summary = "; ".join(insights)
+
     return {
         "wifi_score": wifi_score,
         "laptop_friendly_score": laptop_score,
         "outlets_score": outlets_score,
         "confidence": confidence,
+        "confidence_numeric": confidence_numeric,
+        "summary": summary,
         "keyword_counts": {
             "wifi": wifi,
             "laptop_work": laptop,
