@@ -88,6 +88,19 @@ async def nearby_search_endpoint(
         
         logger.info(f"Total results from Google Places API: {len(all_results)}")
         
+        # Filter out places with 'magazine' in name (early filtering to avoid processing)
+        filtered_results = []
+        for result in all_results:
+            display_name_obj = result.get("displayName", {})
+            display_name = display_name_obj.get("text", "") if isinstance(display_name_obj, dict) else str(display_name_obj) if display_name_obj else ""
+            if "magazine" in display_name.lower():
+                logger.debug(f"Excluding place '{display_name}' from Google Places results (magazine in name)")
+                continue
+            filtered_results.append(result)
+        
+        all_results = filtered_results
+        logger.info(f"Results after filtering magazines: {len(all_results)}")
+        
         if not all_results:
             logger.warning("No results from Google Places API")
             return {
@@ -159,6 +172,11 @@ async def nearby_search_endpoint(
         for place_id in place_ids:
             place_data = places_data.get(place_id, {})
             place_obj = place_data.get("place", {})
+            
+            # Skip places with 'magazine' in name
+            if "magazine" in place_obj.get("name", "").lower():
+                logger.debug(f"Excluding place {place_id} (magazine in name)")
+                continue
             
             # Build place response
             place_response = {
@@ -232,6 +250,11 @@ async def get_places_data_endpoint(
         for place_id in place_id_list:
             place_data = places_data.get(place_id, {})
             place_obj = place_data.get("place", {})
+            
+            # Skip places with 'magazine' in name
+            if "magazine" in place_obj.get("name", "").lower():
+                logger.debug(f"Excluding place {place_id} (magazine in name)")
+                continue
             
             place_response = {
                 "id": place_id,
