@@ -1,2 +1,8 @@
 requests
 python-dotenv
+fastapi
+uvicorn[standard]
+pydantic
+langchain-openai
+langchain-tavily
+tavily-python

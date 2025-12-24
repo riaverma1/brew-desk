@@ -11,18 +11,23 @@ JSON structure: Dictionary keyed by place_id
 import json
 import os
 import logging
+import tempfile
+import shutil
 from pathlib import Path
 from typing import Dict, List, Optional
+
+from backend.enrichment.file_lock import file_lock
 
 logger = logging.getLogger(__name__)
 
 
-def load_places_json(path: str) -> Dict[str, Dict]:
+def load_places_json(path: str, use_lock: bool = True) -> Dict[str, Dict]:
     """
     Load JSON file, return dictionary keyed by place_id.
     
     Args:
         path: Path to JSON file
+        use_lock: Whether to use file locking (default True for thread safety)
         
     Returns:
         Dictionary keyed by place_id, or empty dict if file doesn't exist or is empty
@@ -32,86 +37,94 @@ def load_places_json(path: str) -> Dict[str, Dict]:
     
     if not os.path.exists(path):
         logger.info(f"[load_places_json] File does not exist: {path}")
-        print(f"DEBUG: File does not exist: {path}")
         return {}
     
     file_size = os.path.getsize(path)
     logger.debug(f"[load_places_json] File size: {file_size} bytes")
-    print(f"DEBUG: File exists, size: {file_size} bytes")
     
     # Check if file is empty
     if file_size == 0:
         logger.info(f"[load_places_json] File is empty: {path}")
-        print(f"DEBUG: File is empty, returning empty dict")
         return {}
     
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            content = f.read()
-            logger.debug(f"[load_places_json] File content length: {len(content)} chars")
-            print(f"DEBUG: Read {len(content)} characters from file")
-            if len(content) < 200:
-                print(f"DEBUG: File content preview: {repr(content[:200])}")
-            
-            data = json.loads(content)
-            logger.debug(f"[load_places_json] Successfully parsed JSON, type: {type(data)}")
-            print(f"DEBUG: Parsed JSON successfully, type: {type(data)}")
-            
-    except (json.JSONDecodeError, ValueError) as e:
-        # If JSON is invalid or empty, return empty dict
-        logger.error(f"[load_places_json] JSON decode error: {e}")
-        print(f"DEBUG: JSON decode error: {e}")
-        return {}
+    def _load():
+        max_retries = 3
+        data = {}
+        for attempt in range(max_retries):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                    logger.debug(f"[load_places_json] File content length: {len(content)} chars")
+                    
+                    data = json.loads(content)
+                    logger.debug(f"[load_places_json] Successfully parsed JSON, type: {type(data)}")
+                    break  # Success, exit retry loop
+                    
+            except (json.JSONDecodeError, ValueError) as e:
+                if attempt < max_retries - 1:
+                    # Retry reading (file might be mid-write)
+                    logger.warning(f"[load_places_json] JSON decode error on attempt {attempt + 1}: {e}, retrying...")
+                    import time
+                    time.sleep(0.1 * (attempt + 1))  # Exponential backoff
+                else:
+                    # Final attempt failed - create backup and try to recover
+                    logger.error(f"[load_places_json] JSON decode error after {max_retries} attempts: {e}")
+                    
+                    # Create backup of corrupted file before returning empty
+                    backup_path = path + ".corrupted_backup"
+                    try:
+                        if os.path.exists(path):
+                            shutil.copy2(path, backup_path)
+                            logger.warning(f"[load_places_json] Created backup of corrupted file: {backup_path}")
+                    except Exception as backup_error:
+                        logger.error(f"[load_places_json] Failed to create backup: {backup_error}")
+                    
+                    return {}
+        
+        # Ensure it's a dictionary keyed by place_id
+        if isinstance(data, dict):
+            place_count = len(data)
+            logger.info(f"[load_places_json] Loaded {place_count} places from JSON")
+            return data
+        elif isinstance(data, list):
+            # Convert old array format to dict format
+            logger.info(f"[load_places_json] Converting list format to dict format ({len(data)} items)")
+            result = {}
+            for place in data:
+                place_id = place.get("place_id")
+                if place_id:
+                    result[place_id] = place
+            logger.info(f"[load_places_json] Converted to {len(result)} places")
+            return result
+        else:
+            logger.warning(f"[load_places_json] Unexpected data type: {type(data)}")
+            return {}
     
-    # Ensure it's a dictionary keyed by place_id
-    if isinstance(data, dict):
-        place_count = len(data)
-        logger.info(f"[load_places_json] Loaded {place_count} places from JSON")
-        print(f"DEBUG: Loaded {place_count} places from JSON")
-        if place_count > 0:
-            sample_ids = list(data.keys())[:3]
-            print(f"DEBUG: Sample place_ids: {sample_ids}")
-        return data
-    elif isinstance(data, list):
-        # Convert old array format to dict format
-        logger.info(f"[load_places_json] Converting list format to dict format ({len(data)} items)")
-        print(f"DEBUG: Converting list format to dict format ({len(data)} items)")
-        result = {}
-        for place in data:
-            place_id = place.get("place_id")
-            if place_id:
-                result[place_id] = place
-        logger.info(f"[load_places_json] Converted to {len(result)} places")
-        print(f"DEBUG: Converted to {len(result)} places")
-        return result
+    if use_lock:
+        try:
+            with file_lock(path, timeout=5.0):
+                return _load()
+        except TimeoutError:
+            logger.error(f"[load_places_json] Timeout acquiring lock for {path}")
+            # Fallback to non-locked read if lock times out
+            return _load()
     else:
-        logger.warning(f"[load_places_json] Unexpected data type: {type(data)}")
-        print(f"DEBUG: Unexpected data type: {type(data)}, returning empty dict")
-        return {}
+        return _load()
 
 
-def save_places_json(path: str, places: Dict[str, Dict]) -> None:
+def save_places_json(path: str, places: Dict[str, Dict], use_lock: bool = True) -> None:
     """
-    Save dictionary to JSON file.
+    Save dictionary to JSON file with atomic write and file locking.
     
     Args:
         path: Path to JSON file
         places: Dictionary keyed by place_id
+        use_lock: Whether to use file locking (default True for thread safety)
     """
     logger.debug(f"[save_places_json] Saving to: {path}")
     logger.debug(f"[save_places_json] Absolute path: {os.path.abspath(path)}")
     place_count = len(places)
     logger.info(f"[save_places_json] Saving {place_count} places to JSON")
-    print(f"DEBUG: Saving {place_count} places to JSON file: {path}")
-    
-    if place_count > 0:
-        sample_ids = list(places.keys())[:3]
-        print(f"DEBUG: Sample place_ids being saved: {sample_ids}")
-        # Show structure of first place
-        first_id = sample_ids[0]
-        first_place = places[first_id]
-        print(f"DEBUG: First place structure keys: {list(first_place.keys())}")
-        print(f"DEBUG: First place flags - places_details: {first_place.get('places_details_flag')}, enriched: {first_place.get('enriched_flag')}")
     
     # Ensure directory exists
     dir_path = os.path.dirname(path)
@@ -119,27 +132,74 @@ def save_places_json(path: str, places: Dict[str, Dict]) -> None:
         os.makedirs(dir_path, exist_ok=True)
         logger.debug(f"[save_places_json] Created directory: {dir_path}")
     
-    try:
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(places, f, ensure_ascii=False, indent=2)
+    def _save():
+        # Use atomic write: write to temp file, then rename (atomic on most filesystems)
+        temp_path = path + ".tmp"
+        max_retries = 3
         
-        # Verify file was written
-        if os.path.exists(path):
-            saved_size = os.path.getsize(path)
-            logger.info(f"[save_places_json] Successfully saved {saved_size} bytes")
-            print(f"DEBUG: Successfully saved {saved_size} bytes to file")
-        else:
-            logger.error(f"[save_places_json] File was not created after write!")
-            print(f"DEBUG: ERROR - File was not created after write!")
-    except Exception as e:
-        logger.error(f"[save_places_json] Error saving JSON: {e}")
-        print(f"DEBUG: ERROR saving JSON: {e}")
-        raise
+        for attempt in range(max_retries):
+            try:
+                # Write to temporary file first
+                with open(temp_path, "w", encoding="utf-8") as f:
+                    json.dump(places, f, ensure_ascii=False, indent=2)
+                
+                # Verify temp file was written correctly
+                if not os.path.exists(temp_path):
+                    raise IOError(f"Temp file was not created: {temp_path}")
+                
+                # Verify temp file is valid JSON
+                with open(temp_path, "r", encoding="utf-8") as f:
+                    json.load(f)  # Validate JSON
+                
+                # Atomic rename (replaces existing file atomically on most filesystems)
+                shutil.move(temp_path, path)
+                
+                # Verify final file was written
+                if os.path.exists(path):
+                    saved_size = os.path.getsize(path)
+                    logger.info(f"[save_places_json] Successfully saved {saved_size} bytes")
+                    return  # Success, exit retry loop
+                else:
+                    raise IOError(f"File was not created after atomic rename: {path}")
+                    
+            except (json.JSONEncodeError, IOError, OSError) as e:
+                if attempt < max_retries - 1:
+                    logger.warning(f"[save_places_json] Error on attempt {attempt + 1}: {e}, retrying...")
+                    # Clean up temp file if it exists
+                    if os.path.exists(temp_path):
+                        try:
+                            os.remove(temp_path)
+                        except:
+                            pass
+                    import time
+                    time.sleep(0.1 * (attempt + 1))  # Exponential backoff
+                else:
+                    # Final attempt failed
+                    logger.error(f"[save_places_json] Error saving JSON after {max_retries} attempts: {e}")
+                    # Clean up temp file
+                    if os.path.exists(temp_path):
+                        try:
+                            os.remove(temp_path)
+                        except:
+                            pass
+                    raise
+    
+    if use_lock:
+        try:
+            with file_lock(path, timeout=10.0):
+                _save()
+        except TimeoutError:
+            logger.error(f"[save_places_json] Timeout acquiring lock for {path}")
+            raise IOError(f"Could not acquire lock to save {path}")
+    else:
+        _save()
 
 
 def upsert_place(path: str, place: Dict) -> None:
     """
     Upsert a single place entry (add if new, update if exists) based on place_id.
+    
+    Uses file locking to handle concurrent writes atomically.
     
     Args:
         path: Path to JSON file
@@ -150,23 +210,29 @@ def upsert_place(path: str, place: Dict) -> None:
         raise ValueError("place must have 'place_id' key")
     
     logger.debug(f"[upsert_place] Upserting place: {place_id}")
-    print(f"DEBUG: [upsert_place] Upserting place: {place_id}")
     
-    places = load_places_json(path)
-    was_existing = place_id in places
-    logger.debug(f"[upsert_place] Place {'already exists' if was_existing else 'is new'}")
-    print(f"DEBUG: [upsert_place] Place {'already exists' if was_existing else 'is new'}")
-    
-    places[place_id] = place
-    save_places_json(path, places)
-    
-    logger.debug(f"[upsert_place] Successfully upserted: {place_id}")
-    print(f"DEBUG: [upsert_place] Successfully upserted: {place_id}")
+    try:
+        with file_lock(path, timeout=10.0):
+            places = load_places_json(path, use_lock=False)  # Already locked, don't lock again
+            was_existing = place_id in places
+            logger.debug(f"[upsert_place] Place {'already exists' if was_existing else 'is new'}")
+            
+            places[place_id] = place
+            save_places_json(path, places, use_lock=False)  # Already locked, don't lock again
+            
+            logger.debug(f"[upsert_place] Successfully upserted: {place_id}")
+    except TimeoutError:
+        logger.error(f"[upsert_place] Timeout acquiring lock for {path}")
+        raise IOError(f"Could not acquire lock to upsert {place_id}")
+    except Exception as e:
+        logger.error(f"[upsert_place] Failed to upsert {place_id}: {e}")
+        raise
 
 
 def upsert_place_ids(path: str, place_ids: List[str]) -> List[str]:
     """
     Upsert multiple place_ids, creating minimal entries for new ones.
+    Uses file locking for atomic operation.
     
     Args:
         path: Path to JSON file
@@ -176,54 +242,57 @@ def upsert_place_ids(path: str, place_ids: List[str]) -> List[str]:
         List of place_ids that were newly created (not already in JSON)
     """
     logger.info(f"[upsert_place_ids] Starting upsert for {len(place_ids)} place_ids")
-    print(f"DEBUG: [upsert_place_ids] Starting upsert for {len(place_ids)} place_ids")
-    print(f"DEBUG: [upsert_place_ids] Place IDs to upsert: {place_ids}")
     
-    places = load_places_json(path)
-    logger.debug(f"[upsert_place_ids] Loaded {len(places)} existing places from JSON")
-    print(f"DEBUG: [upsert_place_ids] Loaded {len(places)} existing places from JSON")
-    
-    if len(places) > 0:
-        existing_ids = list(places.keys())[:5]
-        print(f"DEBUG: [upsert_place_ids] Sample existing place_ids: {existing_ids}")
-    
-    new_place_ids = []
-    existing_place_ids = []
-    
-    for place_id in place_ids:
-        if place_id not in places:
-            # Create minimal entry
-            logger.debug(f"[upsert_place_ids] Creating new entry for: {place_id}")
-            print(f"DEBUG: [upsert_place_ids] Creating NEW entry for: {place_id}")
-            places[place_id] = {
-                "place_id": place_id,
-                "places_details_flag": False,
-                "enriched_flag": False,
-                "place": {},
-                "sources": {},
-                "derived": {}
-            }
-            new_place_ids.append(place_id)
-        else:
-            existing_place_ids.append(place_id)
-            logger.debug(f"[upsert_place_ids] Place already exists: {place_id}")
-            print(f"DEBUG: [upsert_place_ids] Place already EXISTS: {place_id}")
-    
-    logger.info(f"[upsert_place_ids] Created {len(new_place_ids)} new entries, {len(existing_place_ids)} already existed")
-    print(f"DEBUG: [upsert_place_ids] Summary - New: {len(new_place_ids)}, Existing: {len(existing_place_ids)}")
-    print(f"DEBUG: [upsert_place_ids] New place_ids: {new_place_ids}")
-    
-    logger.debug(f"[upsert_place_ids] Total places before save: {len(places)}")
-    print(f"DEBUG: [upsert_place_ids] Total places before save: {len(places)}")
-    
-    save_places_json(path, places)
-    
-    # Verify after save
-    verify_places = load_places_json(path)
-    logger.debug(f"[upsert_place_ids] Verified after save: {len(verify_places)} places in file")
-    print(f"DEBUG: [upsert_place_ids] Verified after save: {len(verify_places)} places in file")
-    
-    return new_place_ids
+    try:
+        with file_lock(path, timeout=10.0):
+            places = load_places_json(path, use_lock=False)  # Already locked
+            logger.debug(f"[upsert_place_ids] Loaded {len(places)} existing places from JSON")
+            
+            # Check if JSON was corrupted (returned empty when it shouldn't be)
+            if len(places) == 0 and os.path.exists(path) and os.path.getsize(path) > 100:
+                # File exists and has content but couldn't be parsed - this is corruption
+                logger.error(f"[upsert_place_ids] WARNING: JSON file appears corrupted (has {os.path.getsize(path)} bytes but loaded 0 places)")
+                # Don't proceed - this would overwrite all existing data
+                raise ValueError(f"JSON file at {path} is corrupted and cannot be loaded. A backup may have been created at {path}.corrupted_backup")
+            
+            new_place_ids = []
+            existing_place_ids = []
+            
+            for place_id in place_ids:
+                if place_id not in places:
+                    # Create minimal entry
+                    logger.debug(f"[upsert_place_ids] Creating new entry for: {place_id}")
+                    places[place_id] = {
+                        "place_id": place_id,
+                        "places_details_flag": False,
+                        "tavily_flag": False,
+                        "enriched_flag": False,
+                        "place": {},
+                        "sources": {},
+                        "derived": {}
+                    }
+                    new_place_ids.append(place_id)
+                else:
+                    existing_place_ids.append(place_id)
+                    logger.debug(f"[upsert_place_ids] Place already exists: {place_id}")
+            
+            logger.info(f"[upsert_place_ids] Created {len(new_place_ids)} new entries, {len(existing_place_ids)} already existed")
+            
+            logger.debug(f"[upsert_place_ids] Total places before save: {len(places)}")
+            
+            save_places_json(path, places, use_lock=False)  # Already locked
+            
+            # Verify after save (without lock since we're done)
+            verify_places = load_places_json(path, use_lock=True)
+            logger.debug(f"[upsert_place_ids] Verified after save: {len(verify_places)} places in file")
+            
+            return new_place_ids
+    except TimeoutError:
+        logger.error(f"[upsert_place_ids] Timeout acquiring lock for {path}")
+        raise IOError(f"Could not acquire lock to upsert place_ids")
+    except Exception as e:
+        logger.error(f"[upsert_place_ids] Failed to upsert place_ids: {e}")
+        raise
 
 
 def reset_enrichment_flag(
@@ -292,6 +361,7 @@ def reset_enrichment_flag(
                     del place["enriched_at"]
                 if "enriched_version" in place:
                     del place["enriched_version"]
+                place["tavily_flag"] = False  # Reset tavily_flag when clearing data
                 logger.debug(f"[reset_enrichment_flag] Cleared enrichment data for {place_id}")
             
             reset_count += 1

@@ -113,21 +113,16 @@ def process_nearby_search_sync(
         # If places_details_flag is false, fetch place details
         if not places_details_flag:
             logger.info(f"[process_nearby_search_sync] Fetching place details for {place_id}...")
-            print(f"DEBUG: [process_nearby_search_sync] Fetching place details for {place_id}...")
             try:
                 # Pass nearby_search result to extract binary attributes from it
                 updated_place = enrich_place_details_sync(cfg, place_id, existing_place, nearby_result)
                 logger.debug(f"[process_nearby_search_sync] Successfully enriched {place_id}, upserting...")
-                print(f"DEBUG: [process_nearby_search_sync] Successfully enriched {place_id}, upserting...")
                 upsert_place(json_path, updated_place)
                 logger.info(f"[process_nearby_search_sync] Enriched place details for {place_id}")
-                print(f"DEBUG: [process_nearby_search_sync] ✓ Enriched place details for {place_id}")
             except Exception as e:
-                logger.error(f"[process_nearby_search_sync] Failed to enrich place details for {place_id}: {e}")
-                print(f"DEBUG: [process_nearby_search_sync] ERROR enriching {place_id}: {e}")
+                logger.error(f"[process_nearby_search_sync] Failed to enrich place details for {place_id}: {e}", exc_info=True)
         else:
             logger.debug(f"[process_nearby_search_sync] Skipping {place_id} - already has details")
-            print(f"DEBUG: [process_nearby_search_sync] Skipping {place_id} - already has details")
         
         processed.append(place_id)
     
@@ -180,25 +175,78 @@ def process_enrichment_async(
         logger.info("No places need async enrichment")
         return 0
     
-    logger.info(f"Processing async enrichment for {len(place_ids_to_process)} places")
+    # Deduplicate place_ids_to_process
+    place_ids_to_process = list(dict.fromkeys(place_ids_to_process))  # Preserves order while removing duplicates
+    
+    logger.info(f"Processing async enrichment for {len(place_ids_to_process)} places (after deduplication)")
     
     enriched_count = 0
+    processed_place_ids = set()  # Track processed place_ids to avoid duplicates within the same batch
+    
     for place_id in place_ids_to_process:
+        # Skip if already processed in this batch
+        if place_id in processed_place_ids:
+            logger.warning(f"Place {place_id} already processed in this batch, skipping duplicate")
+            continue
+        
+        # Reload places from file before each enrichment to avoid race conditions
+        places = load_places_json(json_path)
+        
+        if place_id not in places:
+            logger.warning(f"Place {place_id} not found in JSON file, skipping")
+            processed_place_ids.add(place_id)
+            continue
+        
         existing_place = places[place_id]
+        
+        # Double-check enriched_flag after reload (might have been enriched by another process)
+        if existing_place.get("enriched_flag", False):
+            logger.info(f"Place {place_id} already enriched (checked after reload), skipping")
+            processed_place_ids.add(place_id)
+            continue
         
         # Get place object for enrichment
         place_obj = existing_place.get("place", {})
         if not place_obj:
             logger.warning(f"Place {place_id} has no place object, skipping async enrichment")
+            processed_place_ids.add(place_id)
             continue
         
         try:
+            from backend.enrichment.process_lock import AlreadyProcessingError, TooManyErrorsError
+            
             updated_place = enrich_place_web_async(cfg, place_obj, existing_place)
+            
+            # Verify place_id is present before upserting
+            if "place_id" not in updated_place:
+                logger.error(f"Place {place_id} missing place_id in updated_place dict, cannot upsert")
+                processed_place_ids.add(place_id)
+                continue
+            
+            # Verify enriched_flag was set
+            if not updated_place.get("enriched_flag", False):
+                logger.warning(f"Place {place_id} enriched but enriched_flag not set to True")
+            
             upsert_place(json_path, updated_place)
-            enriched_count += 1
-            logger.info(f"Completed async enrichment for {place_id} ({enriched_count}/{len(place_ids_to_process)})")
+            
+            # Verify the save worked by checking the file
+            places_after = load_places_json(json_path)
+            if place_id in places_after and places_after[place_id].get("enriched_flag", False):
+                enriched_count += 1
+                processed_place_ids.add(place_id)
+                logger.info(f"Completed async enrichment for {place_id} ({enriched_count}/{len(place_ids_to_process)}) - verified in file")
+            else:
+                logger.error(f"Place {place_id} enriched but enriched_flag not found in file after upsert!")
+                processed_place_ids.add(place_id)
+        except AlreadyProcessingError:
+            logger.warning(f"Place {place_id} is already being processed, skipping")
+            processed_place_ids.add(place_id)
+        except TooManyErrorsError:
+            logger.error(f"Place {place_id} has too many errors, stopping processing")
+            processed_place_ids.add(place_id)
         except Exception as e:
-            logger.error(f"Failed async enrichment for {place_id}: {e}")
+            logger.error(f"Failed async enrichment for {place_id}: {e}", exc_info=True)
+            processed_place_ids.add(place_id)
     
     return enriched_count
 

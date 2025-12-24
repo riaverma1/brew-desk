@@ -68,31 +68,40 @@ def enrich_place_details_sync(cfg: Config, place_id: str, existing_place: Dict, 
     Returns:
         Updated place dictionary
     """
+    from backend.enrichment.process_lock import place_processing_lock, AlreadyProcessingError, TooManyErrorsError
+    
     logger.debug(f"[enrich_place_details_sync] Starting enrichment for: {place_id}")
-    print(f"DEBUG: [enrich_place_details_sync] Starting enrichment for: {place_id}")
     
     places_details_flag = existing_place.get("places_details_flag", False)
     logger.debug(f"[enrich_place_details_sync] places_details_flag: {places_details_flag}")
-    print(f"DEBUG: [enrich_place_details_sync] places_details_flag: {places_details_flag}")
     
     if places_details_flag:
         logger.info(f"[enrich_place_details_sync] Place {place_id} already has details, skipping")
-        print(f"DEBUG: [enrich_place_details_sync] Place {place_id} already has details, skipping")
         return existing_place
     
-    logger.info(f"[enrich_place_details_sync] Fetching place details for {place_id}")
-    print(f"DEBUG: [enrich_place_details_sync] Fetching place details for {place_id}...")
-    
-    # Fetch place details with binary attributes
+    # Use process lock to prevent duplicate processing
     try:
-        details = place_details(cfg, place_id)
-        logger.debug(f"[enrich_place_details_sync] Successfully fetched details for {place_id}")
-        print(f"DEBUG: [enrich_place_details_sync] Successfully fetched details for {place_id}")
-        print(f"DEBUG: [enrich_place_details_sync] Details keys: {list(details.keys())[:10]}")
-    except Exception as e:
-        logger.error(f"[enrich_place_details_sync] Error fetching details for {place_id}: {e}")
-        print(f"DEBUG: [enrich_place_details_sync] ERROR fetching details: {e}")
-        raise
+        with place_processing_lock(place_id, "place_details_sync"):
+            # Double-check flag after acquiring lock (another process might have enriched it)
+            if existing_place.get("places_details_flag", False):
+                logger.info(f"[enrich_place_details_sync] Place {place_id} already enriched by another process, skipping")
+                return existing_place
+            
+            logger.info(f"[enrich_place_details_sync] Fetching place details for {place_id}")
+            
+            # Fetch place details with binary attributes
+            try:
+                details = place_details(cfg, place_id)
+                logger.debug(f"[enrich_place_details_sync] Successfully fetched details for {place_id}")
+            except Exception as e:
+                logger.error(f"[enrich_place_details_sync] Error fetching details for {place_id}: {e}")
+                raise
+    except AlreadyProcessingError:
+        logger.warning(f"[enrich_place_details_sync] Place {place_id} is already being processed, skipping")
+        return existing_place
+    except TooManyErrorsError as e:
+        logger.error(f"[enrich_place_details_sync] {e}, skipping")
+        return existing_place
     
     # Extract binary attributes from nearby_search result (preferred) or place_details (fallback)
     # These fields come from nearby_search, not place_details
@@ -468,53 +477,150 @@ def enrich_place_web_async(cfg: Config, place: Dict, existing_place: Dict) -> Di
     Returns:
         Updated place dictionary
     """
-    if existing_place.get("enriched_flag", False):
-        logger.info(f"Place {existing_place.get('place_id')} already enriched, skipping")
-        return existing_place
+    from backend.enrichment.process_lock import place_processing_lock, AlreadyProcessingError, TooManyErrorsError
     
     place_id = existing_place.get("place_id")
-    logger.info(f"Starting async enrichment for {place_id}")
     
-    # Step 1: Run Tavily web search
-    tavily_data = _run_tavily_search(place)
+    if existing_place.get("enriched_flag", False):
+        logger.info(f"Place {place_id} already enriched, skipping")
+        return existing_place
     
-    # Save Tavily content to sources
-    fetched_at = datetime.now(timezone.utc).isoformat()
-    if "sources" not in existing_place:
-        existing_place["sources"] = {}
-    
-    existing_place["sources"]["tavily"] = {
-        "fetched_at": fetched_at,
-        "query": tavily_data["query"],  # Primary query
-        "queries": tavily_data.get("queries", [tavily_data["query"]]),  # All queries used
-        "results": tavily_data["results"],
-        "excerpts": tavily_data.get("excerpts", []),
-    }
-    
-    # Step 2: Derive attributes using LLM (combines Google reviews + Tavily)
-    google_reviews = existing_place.get("sources", {}).get("google_reviews", {}).get("reviews", [])
-    tavily_results = tavily_data["results"]
-    tavily_excerpts = tavily_data.get("excerpts", [])
-    
-    derived_attrs = derive_attributes_from_evidence(
-        place=place,
-        google_reviews=google_reviews,
-        tavily_results=tavily_results,
-        tavily_excerpts=tavily_excerpts,
-    )
-    
-    # Add "open_after_7pm" attribute derived from place details (not from evidence)
-    opening_hours = place.get("opening_hours")
-    open_after_7pm = _derive_open_after_7pm(opening_hours)
-    derived_attrs["open_after_7pm"] = open_after_7pm
-    
-    # Update existing place
-    existing_place["derived"] = derived_attrs
-    existing_place["enriched_flag"] = True
-    existing_place["enriched_at"] = fetched_at
-    existing_place["enriched_version"] = "signals_v0.1"
-    
-    return existing_place
+    # Use process lock to prevent duplicate processing
+    try:
+        with place_processing_lock(place_id, "web_async_enrichment"):
+            # Double-check flag after acquiring lock (another process might have enriched it)
+            if existing_place.get("enriched_flag", False):
+                logger.info(f"Place {place_id} already enriched by another process, skipping")
+                return existing_place
+            
+            logger.info(f"Starting async enrichment for {place_id}")
+            
+            # Step 1: Run Tavily web search (only if not already done)
+            # Check if Tavily data already exists to avoid duplicate API calls
+            existing_tavily = existing_place.get("sources", {}).get("tavily")
+            has_existing_tavily = existing_tavily and existing_tavily.get("results") and len(existing_tavily.get("results", [])) > 0
+            
+            if has_existing_tavily:
+                logger.info(f"Place {place_id} already has Tavily data ({len(existing_tavily.get('results', []))} results), reusing it to avoid API call")
+                tavily_data = {
+                    "query": existing_tavily.get("query", ""),
+                    "queries": existing_tavily.get("queries", [existing_tavily.get("query", "")]),
+                    "results": existing_tavily.get("results", []),
+                    "excerpts": existing_tavily.get("excerpts", []),
+                }
+            else:
+                logger.info(f"Place {place_id} does not have Tavily data, running Tavily search")
+                # Run Tavily search - this may return empty results if API fails
+                tavily_data = _run_tavily_search(place)
+                
+                # Check if we got successful results (non-empty)
+                has_new_results = bool(tavily_data.get("results") and len(tavily_data.get("results", [])) > 0)
+                
+                if not has_new_results:
+                    # API call failed or returned empty results
+                    if has_existing_tavily:
+                        # We have existing data - preserve it, don't overwrite with empty
+                        logger.warning(f"Place {place_id} Tavily search failed/returned empty, preserving existing Tavily data ({len(existing_tavily.get('results', []))} results)")
+                        tavily_data = {
+                            "query": existing_tavily.get("query", ""),
+                            "queries": existing_tavily.get("queries", [existing_tavily.get("query", "")]),
+                            "results": existing_tavily.get("results", []),
+                            "excerpts": existing_tavily.get("excerpts", []),
+                        }
+                    else:
+                        # No existing data and API failed - this is first time, save empty (but don't set tavily_flag)
+                        logger.warning(f"Place {place_id} Tavily search failed/returned empty, no existing data to preserve")
+            
+            # Save Tavily content to sources ONLY if we have successful results
+            # Never overwrite existing data with empty/null results
+            fetched_at = datetime.now(timezone.utc).isoformat()
+            if "sources" not in existing_place:
+                existing_place["sources"] = {}
+            
+            has_tavily_results = bool(tavily_data.get("results") and len(tavily_data.get("results", [])) > 0)
+            
+            if has_tavily_results:
+                # We have successful results - overwrite existing data (or create new)
+                existing_place["sources"]["tavily"] = {
+                    "fetched_at": fetched_at,
+                    "query": tavily_data["query"],  # Primary query
+                    "queries": tavily_data.get("queries", [tavily_data["query"]]),  # All queries used
+                    "results": tavily_data["results"],
+                    "excerpts": tavily_data.get("excerpts", []),
+                }
+                logger.info(f"Place {place_id} successfully updated Tavily data with {len(tavily_data.get('results', []))} results")
+            elif has_existing_tavily:
+                # API failed but we have existing data - preserve it, just update timestamp
+                logger.info(f"Place {place_id} preserving existing Tavily data after failed search attempt")
+                existing_place["sources"]["tavily"]["last_attempt_at"] = fetched_at
+            else:
+                # No results and no existing data - save empty structure (first time, API failed)
+                # This allows us to track that we tried but don't set tavily_flag
+                existing_place["sources"]["tavily"] = {
+                    "fetched_at": fetched_at,
+                    "query": tavily_data.get("query", ""),
+                    "queries": tavily_data.get("queries", []),
+                    "results": [],
+                    "excerpts": [],
+                    "failed": True,  # Mark as failed so we know it's not just empty
+                }
+                logger.warning(f"Place {place_id} Tavily search failed, saved empty structure (no existing data to preserve)")
+            
+            # Set tavily_flag based on whether we have Tavily results in the saved data
+            # Check the actual saved data, not just tavily_data (which might be preserved existing data)
+            saved_tavily = existing_place.get("sources", {}).get("tavily", {})
+            has_tavily_results = bool(saved_tavily.get("results") and len(saved_tavily.get("results", [])) > 0)
+            existing_place["tavily_flag"] = has_tavily_results
+            if has_tavily_results:
+                logger.info(f"Place {place_id} has Tavily data ({len(saved_tavily.get('results', []))} results), tavily_flag set to True")
+            else:
+                logger.info(f"Place {place_id} has no Tavily data, tavily_flag set to False")
+            
+            # Step 2: Derive attributes using LLM (combines Google reviews + Tavily)
+            # Use the saved Tavily data (which may be preserved existing data if API failed)
+            google_reviews = existing_place.get("sources", {}).get("google_reviews", {}).get("reviews", [])
+            saved_tavily = existing_place.get("sources", {}).get("tavily", {})
+            tavily_results = saved_tavily.get("results", [])
+            tavily_excerpts = saved_tavily.get("excerpts", [])
+            
+            derived_attrs = derive_attributes_from_evidence(
+                place=place,
+                google_reviews=google_reviews,
+                tavily_results=tavily_results,
+                tavily_excerpts=tavily_excerpts,
+            )
+            
+            # Add "open_after_7pm" attribute derived from place details (not from evidence)
+            opening_hours = place.get("opening_hours")
+            open_after_7pm = _derive_open_after_7pm(opening_hours)
+            derived_attrs["open_after_7pm"] = open_after_7pm
+            
+            # Update existing place
+            existing_place["derived"] = derived_attrs
+            
+            # enriched_flag should only be True if derived attributes were created AND Tavily data exists
+            # This ensures we only mark as "enriched" when we have Tavily evidence
+            if has_tavily_results:
+                existing_place["enriched_flag"] = True
+                existing_place["enriched_at"] = fetched_at
+                existing_place["enriched_version"] = "signals_v0.1"
+                logger.info(f"Place {place_id} enriched with Tavily data, enriched_flag set to True")
+            else:
+                existing_place["enriched_flag"] = False
+                logger.warning(f"Place {place_id} derived attributes created but no Tavily data, enriched_flag set to False")
+            
+            # Ensure place_id is set (it should already be there, but make sure)
+            if "place_id" not in existing_place and place_id:
+                existing_place["place_id"] = place_id
+            
+            logger.info(f"Async enrichment completed for {place_id}, enriched_flag set to True")
+            return existing_place
+    except AlreadyProcessingError:
+        logger.warning(f"Place {place_id} is already being processed, skipping")
+        return existing_place
+    except TooManyErrorsError as e:
+        logger.error(f"{e}, skipping")
+        return existing_place
 
 
 def _generate_tavily_queries(place: Dict) -> List[str]:

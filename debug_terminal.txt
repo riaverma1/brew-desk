@@ -1,0 +1,210 @@
+RuntimeError: generator didn't stop after throw()
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.place_enrichment:Starting async enrichment for ChIJfe_2P1NZwokR6CnObz22-7M
+INFO:backend.enrichment.place_enrichment:Place ChIJfe_2P1NZwokR6CnObz22-7M does not have Tavily data, running Tavily search
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:backend.enrichment.place_enrichment:[VALIDATION] has_wifi: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned has_wifi='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:[VALIDATION] has_outlets: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned has_outlets='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+WARNING:backend.enrichment.place_enrichment:VALIDATION FAILED: is_laptop_friendly='mixed' (conf=0.5) has evidence that doesn't match attribute keywords. Evidence: ["Review 3: 'smallish interior but easy to move around'"]. Keywords required: ['laptop', 'work', 'working', 'study', 'studying', 'remote', 'wfh', 'computer', 'desk', 'workplace', 'workspace']. Overriding to 'unknown' with confidence 0.0
+WARNING:backend.enrichment.place_enrichment:VALIDATION FAILED: noise_level='mixed' (conf=0.5) has evidence that doesn't match attribute keywords. Evidence: ["Review 4: 'there were line during their peak hour'"]. Keywords required: ['noise', 'noisy', 'quiet', 'quietly', 'loud', 'peaceful', 'calm', 'busy', 'crowded', 'music', 'sound', 'volume', 'silent', 'hushed']. Overriding to 'unknown' with confidence 0.0
+WARNING:backend.enrichment.place_enrichment:VALIDATION FAILED: seating_availability='mixed' (conf=0.5) has evidence that doesn't match attribute keywords. Evidence: ["Review 3: 'smallish interior but easy to move around'", "Review 4: 'there were line during their peak hour'"]. Keywords required: ['seating', 'seats', 'seat', 'table', 'tables', 'chair', 'chairs', 'sit', 'space', 'room', 'available', 'taken', 'occupied', 'empty', 'full', 'vacant', 'free', 'busy', 'crowded', 'limited', 'plenty', 'find a seat', 'get a table', 'no seats', 'no tables', 'always full', 'usually empty']. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:[VALIDATION] seating_comfort: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned seating_comfort='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:Async enrichment completed for ChIJ8dRJOQBZwokRL68iW3rVSzY, enriched_flag set to True
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.json_storage:[save_places_json] Saving 63 places to JSON
+INFO:backend.enrichment.json_storage:[save_places_json] Successfully saved 2630924 bytes
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.places_manager:Completed async enrichment for ChIJ8dRJOQBZwokRL68iW3rVSzY (1/3) - verified in file
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.place_enrichment:Starting async enrichment for ChIJ0xEQtFlYwokRTi07N6-ojBU
+INFO:backend.enrichment.place_enrichment:Place ChIJ0xEQtFlYwokRTi07N6-ojBU does not have Tavily data, running Tavily search
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59388 - "GET /api/places/status?place_ids=ChIJkx9xgPVYwokRPQoBUPtFxdw,ChIJkx9xgPVYwokRZjZfQE7-UJc HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59436 - "GET /api/places/status?place_ids=ChIJkx9xgPVYwokRPQoBUPtFxdw,ChIJkx9xgPVYwokRZjZfQE7-UJc HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59572 - "GET /api/places/status?place_ids=ChIJkx9xgPVYwokRPQoBUPtFxdw,ChIJkx9xgPVYwokRZjZfQE7-UJc HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59595 - "GET /api/places/status?place_ids=ChIJ8dRJOQBZwokRL68iW3rVSzY,ChIJ0xEQtFlYwokRTi07N6-ojBU,ChIJxX5-j1hYwokRbIjUzzp6_rg HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59635 - "GET /api/places/status?place_ids=ChIJkx9xgPVYwokRPQoBUPtFxdw,ChIJkx9xgPVYwokRZjZfQE7-UJc HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59641 - "GET /api/places/status?place_ids=ChIJkx9xgPVYwokRPQoBUPtFxdw,ChIJkx9xgPVYwokRZjZfQE7-UJc HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59388 - "GET /api/places/status?place_ids=ChIJkx9xgPVYwokRPQoBUPtFxdw,ChIJkx9xgPVYwokRZjZfQE7-UJc HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59436 - "GET /api/places/status?place_ids=ChIJ0xEQtFlYwokRTi07N6-ojBU,ChIJM9ktaVhYwokRImpBBHiudGg,ChIJ8dRJOQBZwokRL68iW3rVSzY,ChIJfe_2P1NZwokR6CnObz22-7M,ChIJxX5-j1hYwokRbIjUzzp6_rg,ChIJbVtD_4BZwokRVJcC9hll1l8 HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59572 - "GET /api/places/data?place_ids=ChIJu826B3hZwokRvIwutUfNamg,ChIJZX7S-gBZwokRkB7hCr19Elk,ChIJY3pQTGdYwokRWpJej5Etii8,ChIJQfecMlxYwokRjJXdcBB8g6A HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59595 - "GET /api/places/data?place_ids=ChIJczao-jhZwokRC3e4DT0sm9w,ChIJXcNGyA5ZwokRp1eKA6ogeQI HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59635 - "GET /api/places/status?place_ids=ChIJ8dRJOQBZwokRL68iW3rVSzY,ChIJxX5-j1hYwokRbIjUzzp6_rg,ChIJbVtD_4BZwokRVJcC9hll1l8,ChIJCX6BBfdZwokRBaiiyC82vrU,ChIJoxGBgFhYwokRIQV6z5YKvNY,ChIJM9ktaVhYwokRImpBBHiudGg,ChIJuZ97SfZYwokR0ZFk-6UgeUk,ChIJp3PsL_ZYwokRZYqs_40RJF4,ChIJ_00VvvdYwokRLj90olENQ3g,ChIJ7awWrxxZwokRT3Sk_4DN4Jo,ChIJG0fkfuJZwokRqmAxXTpYP2I HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59641 - "GET /api/places/status?place_ids=ChIJ8dRJOQBZwokRL68iW3rVSzY,ChIJ0xEQtFlYwokRTi07N6-ojBU,ChIJxX5-j1hYwokRbIjUzzp6_rg HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59388 - "GET /api/places/data?place_ids=ChIJfZXpdVxYwokRbjLwlQQLtgU,ChIJOealtlBZwokRSuLO63dnRqk,ChIJub-cMlVZwokReHxiSKmB02E HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59436 - "GET /api/places/data?place_ids=ChIJnYrWdQBZwokRvGZ_yMncrXA HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59572 - "GET /api/places/status?place_ids=ChIJ0xEQtFlYwokRTi07N6-ojBU,ChIJM9ktaVhYwokRImpBBHiudGg,ChIJ8dRJOQBZwokRL68iW3rVSzY,ChIJfe_2P1NZwokR6CnObz22-7M,ChIJxX5-j1hYwokRbIjUzzp6_rg,ChIJbVtD_4BZwokRVJcC9hll1l8 HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59595 - "GET /api/places/data?place_ids=ChIJXcNGyA5ZwokRp1eKA6ogeQI,ChIJnYrWdQBZwokRvGZ_yMncrXA HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59635 - "GET /api/places/data?place_ids=ChIJkx9xgPVYwokRPQoBUPtFxdw,ChIJkx9xgPVYwokRZjZfQE7-UJc HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59641 - "GET /api/places/data?place_ids=ChIJczao-jhZwokRC3e4DT0sm9w,ChIJXcNGyA5ZwokRp1eKA6ogeQI HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59388 - "GET /api/places/status?place_ids=ChIJ8dRJOQBZwokRL68iW3rVSzY,ChIJxX5-j1hYwokRbIjUzzp6_rg,ChIJbVtD_4BZwokRVJcC9hll1l8,ChIJCX6BBfdZwokRBaiiyC82vrU,ChIJoxGBgFhYwokRIQV6z5YKvNY,ChIJM9ktaVhYwokRImpBBHiudGg,ChIJuZ97SfZYwokR0ZFk-6UgeUk,ChIJp3PsL_ZYwokRZYqs_40RJF4,ChIJ_00VvvdYwokRLj90olENQ3g,ChIJ7awWrxxZwokRT3Sk_4DN4Jo,ChIJG0fkfuJZwokRqmAxXTpYP2I HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59572 - "GET /api/places/data?place_ids=ChIJXcNGyA5ZwokRp1eKA6ogeQI,ChIJnYrWdQBZwokRvGZ_yMncrXA HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59595 - "GET /api/places/data?place_ids=ChIJkx9xgPVYwokRPQoBUPtFxdw,ChIJkx9xgPVYwokRZjZfQE7-UJc HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59635 - "GET /api/places/data?place_ids=ChIJczao-jhZwokRC3e4DT0sm9w,ChIJXcNGyA5ZwokRp1eKA6ogeQI HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59641 - "GET /api/places/status?place_ids=ChIJ8dRJOQBZwokRL68iW3rVSzY,ChIJxX5-j1hYwokRbIjUzzp6_rg,ChIJbVtD_4BZwokRVJcC9hll1l8,ChIJCX6BBfdZwokRBaiiyC82vrU,ChIJoxGBgFhYwokRIQV6z5YKvNY,ChIJM9ktaVhYwokRImpBBHiudGg,ChIJuZ97SfZYwokR0ZFk-6UgeUk,ChIJp3PsL_ZYwokRZYqs_40RJF4,ChIJ_00VvvdYwokRLj90olENQ3g,ChIJ7awWrxxZwokRT3Sk_4DN4Jo,ChIJG0fkfuJZwokRqmAxXTpYP2I HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59572 - "GET /api/places/data?place_ids=ChIJkx9xgPVYwokRPQoBUPtFxdw,ChIJkx9xgPVYwokRZjZfQE7-UJc HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59595 - "GET /api/places/data?place_ids=ChIJczao-jhZwokRC3e4DT0sm9w,ChIJXcNGyA5ZwokRp1eKA6ogeQI HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59635 - "GET /api/places/status?place_ids=ChIJ8dRJOQBZwokRL68iW3rVSzY,ChIJxX5-j1hYwokRbIjUzzp6_rg,ChIJbVtD_4BZwokRVJcC9hll1l8,ChIJCX6BBfdZwokRBaiiyC82vrU,ChIJoxGBgFhYwokRIQV6z5YKvNY,ChIJM9ktaVhYwokRImpBBHiudGg,ChIJuZ97SfZYwokR0ZFk-6UgeUk,ChIJp3PsL_ZYwokRZYqs_40RJF4,ChIJ_00VvvdYwokRLj90olENQ3g,ChIJ7awWrxxZwokRT3Sk_4DN4Jo,ChIJG0fkfuJZwokRqmAxXTpYP2I HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59641 - "GET /api/places/data?place_ids=ChIJkx9xgPVYwokRPQoBUPtFxdw,ChIJkx9xgPVYwokRZjZfQE7-UJc HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59635 - "GET /api/places/data?place_ids=ChIJkx9xgPVYwokRPQoBUPtFxdw,ChIJkx9xgPVYwokRZjZfQE7-UJc HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59641 - "GET /api/places/data?place_ids=ChIJkx9xgPVYwokRPQoBUPtFxdw,ChIJkx9xgPVYwokRZjZfQE7-UJc HTTP/1.1" 200 OK
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59635 - "GET /api/places/data?place_ids=ChIJkx9xgPVYwokRPQoBUPtFxdw,ChIJkx9xgPVYwokRZjZfQE7-UJc HTTP/1.1" 200 OK
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59641 - "GET /api/places/data?place_ids=ChIJkx9xgPVYwokRPQoBUPtFxdw,ChIJkx9xgPVYwokRZjZfQE7-UJc HTTP/1.1" 200 OK
+INFO:backend.enrichment.place_enrichment:Generated 3 Tavily queries for 6 Columbus - Central Park Hotel: ['6 Columbus - Central Park Hotel remote work wifi power outlets reviews', '6 Columbus - Central Park Hotel laptop-friendly environment seating comfort noise levels', 'reviews about working from 6 Columbus - Central Park Hotel wifi quality power availability']
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:     127.0.0.1:59635 - "GET /api/places/data?place_ids=ChIJkx9xgPVYwokRPQoBUPtFxdw,ChIJkx9xgPVYwokRZjZfQE7-UJc HTTP/1.1" 200 OK
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+WARNING:backend.enrichment.place_enrichment:Failed to generate queries with LLM: Expecting value: line 1 column 1 (char 0), using fallback
+INFO:backend.enrichment.place_enrichment:Generated 3 Tavily queries for Coffee Project New York | Hell's Kitchen: ["Is Coffee Project New York | Hell's Kitchen in 840 9th Ave, New York, NY 10019, USA good for working laptop wifi outlets", "Coffee Project New York | Hell's Kitchen 840 9th Ave, New York, NY 10019, USA laptop friendly wifi review", "Coffee Project New York | Hell's Kitchen coffee shop remote work laptop"]
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:backend.enrichment.place_enrichment:Generated 3 Tavily queries for Kashkaval Garden: ['Kashkaval Garden 852 9th Ave New York NY remote work wifi power outlets reviews', 'Kashkaval Garden laptop friendly environment seating comfort noise levels', 'Kashkaval Garden reviews Reddit working from laptop wifi power availability']
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query '6 Columbus - Central Park Hotel remote work wifi power outlets reviews': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query 'Is Coffee Project New York | Hell's Kitchen in 840 9th Ave, New York, NY 10019, USA good for working laptop wifi outlets': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query 'Kashkaval Garden 852 9th Ave New York NY remote work wifi power outlets reviews': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query '6 Columbus - Central Park Hotel laptop-friendly environment seating comfort noise levels': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query 'Coffee Project New York | Hell's Kitchen 840 9th Ave, New York, NY 10019, USA laptop friendly wifi review': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query 'Kashkaval Garden laptop friendly environment seating comfort noise levels': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query 'reviews about working from 6 Columbus - Central Park Hotel wifi quality power availability': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+INFO:backend.enrichment.place_enrichment:Tavily search for 6 Columbus - Central Park Hotel returned 0 unique results from 3 queries
+WARNING:backend.enrichment.place_enrichment:Tavily search returned empty results for all queries: ['6 Columbus - Central Park Hotel remote work wifi power outlets reviews', '6 Columbus - Central Park Hotel laptop-friendly environment seating comfort noise levels', 'reviews about working from 6 Columbus - Central Park Hotel wifi quality power availability']
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query 'Coffee Project New York | Hell's Kitchen coffee shop remote work laptop': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+INFO:backend.enrichment.place_enrichment:Tavily search for Coffee Project New York | Hell's Kitchen returned 0 unique results from 3 queries
+WARNING:backend.enrichment.place_enrichment:Tavily search returned empty results for all queries: ["Is Coffee Project New York | Hell's Kitchen in 840 9th Ave, New York, NY 10019, USA good for working laptop wifi outlets", "Coffee Project New York | Hell's Kitchen 840 9th Ave, New York, NY 10019, USA laptop friendly wifi review", "Coffee Project New York | Hell's Kitchen coffee shop remote work laptop"]
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query 'Kashkaval Garden reviews Reddit working from laptop wifi power availability': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+INFO:backend.enrichment.place_enrichment:Tavily search for Kashkaval Garden returned 0 unique results from 3 queries
+WARNING:backend.enrichment.place_enrichment:Tavily search returned empty results for all queries: ['Kashkaval Garden 852 9th Ave New York NY remote work wifi power outlets reviews', 'Kashkaval Garden laptop friendly environment seating comfort noise levels', 'Kashkaval Garden reviews Reddit working from laptop wifi power availability']
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:backend.enrichment.place_enrichment:[VALIDATION] has_wifi: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned has_wifi='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:[VALIDATION] has_outlets: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned has_outlets='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:[VALIDATION] is_laptop_friendly: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned is_laptop_friendly='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+WARNING:backend.enrichment.place_enrichment:VALIDATION FAILED: seating_comfort='good' (conf=0.5) has evidence that doesn't match attribute keywords. Evidence: ["Review 4: 'the service, absolutely top-notch. Everyone was so friendly, helpful, and accommodating.'"]. Keywords required: ['comfortable', 'comfort', 'uncomfortable', 'cushion', 'hard', 'soft', 'ergonomic', 'chair', 'seating', 'cozy', 'uncomfortable', 'stiff', 'supportive', 'back support', 'cushioned']. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:Async enrichment completed for ChIJ0xEQtFlYwokRTi07N6-ojBU, enriched_flag set to True
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.json_storage:[save_places_json] Saving 63 places to JSON
+INFO:backend.enrichment.json_storage:[save_places_json] Successfully saved 2633816 bytes
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.places_manager:Completed async enrichment for ChIJ0xEQtFlYwokRTi07N6-ojBU (2/3) - verified in file
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.place_enrichment:Starting async enrichment for ChIJxX5-j1hYwokRbIjUzzp6_rg
+INFO:backend.enrichment.place_enrichment:Place ChIJxX5-j1hYwokRbIjUzzp6_rg does not have Tavily data, running Tavily search
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:backend.enrichment.place_enrichment:[VALIDATION] has_outlets: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned has_outlets='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:Async enrichment completed for ChIJfe_2P1NZwokR6CnObz22-7M, enriched_flag set to True
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.json_storage:[save_places_json] Saving 63 places to JSON
+INFO:backend.enrichment.json_storage:[save_places_json] Successfully saved 2637385 bytes
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.places_manager:Completed async enrichment for ChIJfe_2P1NZwokR6CnObz22-7M (1/3) - verified in file
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.place_enrichment:Starting async enrichment for ChIJbVtD_4BZwokRVJcC9hll1l8
+INFO:backend.enrichment.place_enrichment:Place ChIJbVtD_4BZwokRVJcC9hll1l8 does not have Tavily data, running Tavily search
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:backend.enrichment.place_enrichment:Generated 3 Tavily queries for Allcity Corporate housing: ['Allcity Corporate housing 330 W 58th St New York remote work reviews wifi power outlets', 'Is Allcity Corporate housing suitable for working laptop reviews noise level seating comfort', 'Reddit Allcity Corporate housing 330 W 58th St wifi power outlets remote work experience']
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query 'Allcity Corporate housing 330 W 58th St New York remote work reviews wifi power outlets': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query 'Is Allcity Corporate housing suitable for working laptop reviews noise level seating comfort': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query 'Reddit Allcity Corporate housing 330 W 58th St wifi power outlets remote work experience': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+INFO:backend.enrichment.place_enrichment:Tavily search for Allcity Corporate housing returned 0 unique results from 3 queries
+WARNING:backend.enrichment.place_enrichment:Tavily search returned empty results for all queries: ['Allcity Corporate housing 330 W 58th St New York remote work reviews wifi power outlets', 'Is Allcity Corporate housing suitable for working laptop reviews noise level seating comfort', 'Reddit Allcity Corporate housing 330 W 58th St wifi power outlets remote work experience']
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:backend.enrichment.place_enrichment:Generated 3 Tavily queries for Broad Nosh Bagels Deli & Catering 58th Street: ['Broad Nosh Bagels Deli & Catering 58th Street WiFi power outlets remote work reviews', 'Is Broad Nosh Bagels Deli & Catering 58th Street laptop friendly seating comfort noise level', 'Reviews of Broad Nosh Bagels Deli & Catering 58th Street for working from laptop']
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query 'Broad Nosh Bagels Deli & Catering 58th Street WiFi power outlets remote work reviews': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query 'Is Broad Nosh Bagels Deli & Catering 58th Street laptop friendly seating comfort noise level': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query 'Reviews of Broad Nosh Bagels Deli & Catering 58th Street for working from laptop': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+INFO:backend.enrichment.place_enrichment:Tavily search for Broad Nosh Bagels Deli & Catering 58th Street returned 0 unique results from 3 queries
+WARNING:backend.enrichment.place_enrichment:Tavily search returned empty results for all queries: ['Broad Nosh Bagels Deli & Catering 58th Street WiFi power outlets remote work reviews', 'Is Broad Nosh Bagels Deli & Catering 58th Street laptop friendly seating comfort noise level', 'Reviews of Broad Nosh Bagels Deli & Catering 58th Street for working from laptop']
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:backend.enrichment.place_enrichment:[VALIDATION] has_wifi: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned has_wifi='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+WARNING:backend.enrichment.place_enrichment:VALIDATION FAILED: seating_comfort='bad' (conf=0.5) has evidence that doesn't match attribute keywords. Evidence: ["Review 5: 'Tremendous disappointment on so many levels!'"]. Keywords required: ['comfortable', 'comfort', 'uncomfortable', 'cushion', 'hard', 'soft', 'ergonomic', 'chair', 'seating', 'cozy', 'uncomfortable', 'stiff', 'supportive', 'back support', 'cushioned']. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:Async enrichment completed for ChIJoxGBgFhYwokRIQV6z5YKvNY, enriched_flag set to True
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.json_storage:[save_places_json] Saving 63 places to JSON
+INFO:backend.enrichment.json_storage:[save_places_json] Successfully saved 2640943 bytes
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.places_manager:Completed async enrichment for ChIJoxGBgFhYwokRIQV6z5YKvNY (1/7) - verified in file
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.place_enrichment:Starting async enrichment for ChIJuZ97SfZYwokR0ZFk-6UgeUk
+INFO:backend.enrichment.place_enrichment:Place ChIJuZ97SfZYwokR0ZFk-6UgeUk does not have Tavily data, running Tavily search
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+WARNING:backend.enrichment.place_enrichment:Failed to generate queries with LLM: Expecting value: line 1 column 1 (char 0), using fallback
+INFO:backend.enrichment.place_enrichment:Generated 3 Tavily queries for Starbucks: ['Is Starbucks in 4 Columbus Cir, New York, NY 10019, USA good for working laptop wifi outlets', 'Starbucks 4 Columbus Cir, New York, NY 10019, USA laptop friendly wifi review', 'Starbucks coffee shop remote work laptop']
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query 'Is Starbucks in 4 Columbus Cir, New York, NY 10019, USA good for working laptop wifi outlets': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query 'Starbucks 4 Columbus Cir, New York, NY 10019, USA laptop friendly wifi review': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+WARNING:backend.enrichment.place_enrichment:Tavily search failed for query 'Starbucks coffee shop remote work laptop': This request exceeds your plan's set usage limit. Please upgrade your plan or contact support@tavily.com
+INFO:backend.enrichment.place_enrichment:Tavily search for Starbucks returned 0 unique results from 3 queries
+WARNING:backend.enrichment.place_enrichment:Tavily search returned empty results for all queries: ['Is Starbucks in 4 Columbus Cir, New York, NY 10019, USA good for working laptop wifi outlets', 'Starbucks 4 Columbus Cir, New York, NY 10019, USA laptop friendly wifi review', 'Starbucks coffee shop remote work laptop']
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:backend.enrichment.place_enrichment:[VALIDATION] has_wifi: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned has_wifi='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:[VALIDATION] has_outlets: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned has_outlets='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:[VALIDATION] is_laptop_friendly: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned is_laptop_friendly='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:[VALIDATION] noise_level: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned noise_level='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:[VALIDATION] seating_availability: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned seating_availability='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:[VALIDATION] seating_comfort: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned seating_comfort='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:Async enrichment completed for ChIJxX5-j1hYwokRbIjUzzp6_rg, enriched_flag set to True
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.json_storage:[save_places_json] Saving 63 places to JSON
+INFO:backend.enrichment.json_storage:[save_places_json] Successfully saved 2642835 bytes
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.places_manager:Completed async enrichment for ChIJxX5-j1hYwokRbIjUzzp6_rg (3/3) - verified in file
+INFO:backend.api.services.enrichment_service:Async enrichment completed for 3 places
+INFO:httpx:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:backend.enrichment.place_enrichment:[VALIDATION] has_wifi: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned has_wifi='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:[VALIDATION] has_outlets: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned has_outlets='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+WARNING:backend.enrichment.place_enrichment:VALIDATION FAILED: is_laptop_friendly='mixed' (conf=0.5) has evidence that doesn't match attribute keywords. Evidence: ["Review 2: 'I don’t think these bagels are worth the wait and would try a different spot next time.'", "Review 4: 'I would recommend you order ahead!'"]. Keywords required: ['laptop', 'work', 'working', 'study', 'studying', 'remote', 'wfh', 'computer', 'desk', 'workplace', 'workspace']. Overriding to 'unknown' with confidence 0.0
+WARNING:backend.enrichment.place_enrichment:VALIDATION FAILED: noise_level='mixed' (conf=0.6) has evidence that doesn't match attribute keywords. Evidence: ["Review 2: 'the line, it took an hour at 10am on a Saturday from beginning to end.'", "Review 3: 'The environment inside was fantastic and the staff was super efficient.'"]. Keywords required: ['noise', 'noisy', 'quiet', 'quietly', 'loud', 'peaceful', 'calm', 'busy', 'crowded', 'music', 'sound', 'volume', 'silent', 'hushed']. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:[VALIDATION] seating_comfort: No sources or evidence found, setting to 'unknown'
+WARNING:backend.enrichment.place_enrichment:LLM returned seating_comfort='unknown' with confidence 0.0 but no evidence. Overriding to 'unknown' with confidence 0.0
+INFO:backend.enrichment.place_enrichment:Async enrichment completed for ChIJbVtD_4BZwokRVJcC9hll1l8, enriched_flag set to True
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.json_storage:[save_places_json] Saving 63 places to JSON
+INFO:backend.enrichment.json_storage:[save_places_json] Successfully saved 2645815 bytes
+INFO:backend.enrichment.json_storage:[load_places_json] Loaded 63 places from JSON
+INFO:backend.enrichment.places_manager:Completed async enrichment for ChIJbVtD_4BZwokRVJcC9hll1l8 (2/3) - verified in file
+INFO:backend.api.services.enrichment_service:Async enrichment completed for 2 places
+
