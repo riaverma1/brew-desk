@@ -424,6 +424,10 @@ export default function Home() {
     // Create or reuse info window
     if (!infoWindowRef.current) {
       infoWindowRef.current = new google.maps.InfoWindow();
+      // Listen for when user closes the InfoWindow (clicks X)
+      infoWindowRef.current.addListener("closeclick", () => {
+        openInfoWindowPlaceIdRef.current = null;
+      });
     }
     const infoWindow = infoWindowRef.current;
 
@@ -588,7 +592,8 @@ export default function Home() {
     }).filter((m) => m !== null) as google.maps.Marker[];
 
     // If InfoWindow was open, re-open it on the new marker
-    if (openPlaceStillExists && openPlaceId && infoWindowRef.current) {
+    // BUT only if it wasn't manually closed by the user (openInfoWindowPlaceIdRef is still set)
+    if (openPlaceStillExists && openPlaceId && infoWindowRef.current && openInfoWindowPlaceIdRef.current === openPlaceId) {
       // Find the marker for the open place by matching place IDs
       const openPlaceIndex = filteredPlaces.findIndex(p => p.id === openPlaceId);
       if (openPlaceIndex >= 0 && openPlaceIndex < markersRef.current.length) {
