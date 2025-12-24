@@ -3,6 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 
 type Bounds = { north: number; south: number; east: number; west: number };
+type Photo = {
+  name: string;
+  url: string;
+  widthPx?: number;
+  heightPx?: number;
+  authorAttributions?: Array<{ displayName?: string; uri?: string }>;
+};
+
 type Place = {
   id: string;
   name: string;
@@ -12,6 +20,7 @@ type Place = {
   rating?: number | null;
   userRatingCount?: number | null;
   mapsUrl?: string | null;
+  photos?: Photo[];
 };
 
 export default function Home() {
@@ -84,12 +93,43 @@ export default function Home() {
       });
 
       marker.addListener("click", () => {
+        // Build photo carousel HTML if photos are available
+        let photosHtml = "";
+        if (p.photos && p.photos.length > 0) {
+          const photoItems = p.photos
+            .slice(0, 5) // Limit to 5 photos
+            .map(
+              (photo) => `
+            <div style="flex: 0 0 auto; width: 120px; margin-right: 8px;">
+              <img 
+                src="${photo.url}" 
+                alt="${p.name}"
+                style="width: 120px; height: 90px; object-fit: cover; border-radius: 4px; cursor: pointer;"
+                onclick="window.open('${photo.url}', '_blank')"
+                onerror="this.style.display='none'"
+              />
+            </div>
+          `
+            )
+            .join("");
+          
+          photosHtml = `
+            <div style="margin: 12px 0; padding: 8px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee;">
+              <div style="font-size: 11px; color: #666; margin-bottom: 6px;">Photos</div>
+              <div style="display: flex; overflow-x: auto; gap: 0; scrollbar-width: thin; -webkit-overflow-scrolling: touch;">
+                ${photoItems}
+              </div>
+            </div>
+          `;
+        }
+        
         const html = `
-          <div style="max-width:240px">
-            <div style="font-weight:600">${p.name}</div>
-            <div style="font-size:12px; margin:6px 0">${p.address ?? ""}</div>
-            <div style="font-size:12px">⭐ ${p.rating ?? "—"} (${p.userRatingCount ?? 0})</div>
-            ${p.mapsUrl ? `<div style="margin-top:8px"><a href="${p.mapsUrl}" target="_blank" rel="noreferrer">Open in Google Maps</a></div>` : ""}
+          <div style="max-width:280px">
+            <div style="font-weight:600; font-size:14px; margin-bottom:6px">${p.name}</div>
+            <div style="font-size:12px; margin:6px 0; color:#666">${p.address ?? ""}</div>
+            <div style="font-size:12px; margin:6px 0">⭐ ${p.rating ?? "—"} (${p.userRatingCount ?? 0} reviews)</div>
+            ${photosHtml}
+            ${p.mapsUrl ? `<div style="margin-top:8px"><a href="${p.mapsUrl}" target="_blank" rel="noreferrer" style="font-size:12px; color:#1976d2; text-decoration:none">Open in Google Maps →</a></div>` : ""}
           </div>
         `;
         info.setContent(html);

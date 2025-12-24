@@ -22,7 +22,7 @@ except ImportError:
     TavilyClient = None
 
 from backend.enrichment.types import Config
-from backend.enrichment.google_places import place_details
+from backend.enrichment.google_places import place_details, process_photos
 
 logger = logging.getLogger(__name__)
 
@@ -169,6 +169,10 @@ def enrich_place_details_sync(cfg: Config, place_id: str, existing_place: Dict, 
     # Extract neighborhood from address or geometry
     neighborhood = _extract_neighborhood(details)
     
+    # Process photos (prefer interior, limit to 2-5)
+    photos = details.get("photos", [])
+    processed_photos = process_photos(photos, cfg.api_key, max_photos=5)
+    
     # Build place object (extract from new API format)
     # New API uses: location (with latitude/longitude), displayName (object with text), formattedAddress, etc.
     location_obj = details.get("location", {})
@@ -188,6 +192,7 @@ def enrich_place_details_sync(cfg: Config, place_id: str, existing_place: Dict, 
         "price_level": details.get("priceLevel"),
         "business_status": details.get("businessStatus"),
         "opening_hours": details.get("regularOpeningHours"),
+        "photos": processed_photos,  # Add processed photos
         **binary_attrs,
     }
     

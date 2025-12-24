@@ -153,7 +153,7 @@ def nearby_search(cfg: Config, place_type: str, debug: bool = False) -> List[Dic
     headers = {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": cfg.api_key,
-        "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.userRatingCount,places.priceLevel,places.businessStatus,places.regularOpeningHours,places.websiteUri,places.restroom,places.servesCoffee,places.goodForGroups,places.parkingOptions,places.accessibilityOptions,places.outdoorSeating"
+        "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.userRatingCount,places.priceLevel,places.businessStatus,places.regularOpeningHours,places.websiteUri,places.restroom,places.servesCoffee,places.goodForGroups,places.parkingOptions,places.accessibilityOptions,places.outdoorSeating,places.photos"
     }
     
     # Prepare base request body (will be copied for each request)
@@ -254,7 +254,7 @@ def place_details(cfg: Config, place_id: str, debug: bool = False) -> Dict:
     headers = {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": cfg.api_key,
-        "X-Goog-FieldMask": "displayName,formattedAddress,location,types,rating,userRatingCount,priceLevel,businessStatus,regularOpeningHours,websiteUri,reviews,restroom,servesCoffee,goodForGroups,parkingOptions,accessibilityOptions,outdoorSeating"
+        "X-Goog-FieldMask": "displayName,formattedAddress,location,types,rating,userRatingCount,priceLevel,businessStatus,regularOpeningHours,websiteUri,reviews,restroom,servesCoffee,goodForGroups,parkingOptions,accessibilityOptions,outdoorSeating,photos"
     }
     
     if debug:
@@ -293,6 +293,78 @@ def place_details(cfg: Config, place_id: str, debug: bool = False) -> Dict:
     return data
 
 
+def process_photos(photos: List[Dict], api_key: str, max_photos: int = 5) -> List[Dict]:
+    """
+    Process photos from Google Places API response.
+    Prefers interior photos when available, limits to max_photos (default 5).
+    
+    Args:
+        photos: List of photo objects from API response
+        api_key: Google Places API key for generating photo URLs
+        max_photos: Maximum number of photos to return (default 5, minimum 2)
+        
+    Returns:
+        List of photo dictionaries with name, url, widthPx, heightPx, and authorAttributions
+    """
+    if not photos:
+        return []
+    
+    # Separate interior and other photos
+    interior_photos = []
+    other_photos = []
+    
+    for photo in photos:
+        # Check if photo is marked as interior
+        # The API may have a "photoTypes" field or similar metadata
+        # For now, we'll check if there's any indication it's interior
+        # In the new API, photos might have metadata indicating type
+        photo_types = photo.get("photoTypes", [])
+        is_interior = "INTERIOR" in photo_types or any("interior" in str(pt).upper() for pt in photo_types)
+        
+        if is_interior:
+            interior_photos.append(photo)
+        else:
+            other_photos.append(photo)
+    
+    # Prefer interior photos, but include others if needed
+    selected_photos = []
+    
+    # Add interior photos first (up to max_photos)
+    selected_photos.extend(interior_photos[:max_photos])
+    
+    # If we need more photos, add from others
+    if len(selected_photos) < max_photos:
+        remaining = max_photos - len(selected_photos)
+        selected_photos.extend(other_photos[:remaining])
+    
+    # If we still don't have enough, use all available (but limit to max_photos)
+    if len(selected_photos) < 2 and len(photos) >= 2:
+        # Ensure we have at least 2 photos if available (but not more than max_photos)
+        selected_photos = photos[:min(max_photos, len(photos))]
+    
+    # Limit to max_photos
+    selected_photos = selected_photos[:max_photos]
+    
+    # Generate photo URLs and format response
+    processed = []
+    for photo in selected_photos:
+        photo_name = photo.get("name", "")
+        if not photo_name:
+            continue
+        
+        # Generate photo URL using Places Photo API
+        # Format: https://places.googleapis.com/v1/{photo_name}/media?maxHeightPx=400&maxWidthPx=400&key={api_key}
+        photo_url = f"https://places.googleapis.com/v1/{photo_name}/media?maxHeightPx=400&maxWidthPx=400&key={api_key}"
+        
+        processed.append({
+            "name": photo_name,
+            "url": photo_url,
+            "widthPx": photo.get("widthPx"),
+            "heightPx": photo.get("heightPx"),
+            "authorAttributions": photo.get("authorAttributions", []),
+        })
+    
+    return processed
 
 
 def nearby_search_with_sync(cfg: Config, place_type: str, auto_enrich_sync: bool = True) -> List[Dict]:

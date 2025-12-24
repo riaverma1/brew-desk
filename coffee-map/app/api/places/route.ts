@@ -40,7 +40,7 @@ export async function GET(req: Request) {
       "Content-Type": "application/json",
       "X-Goog-Api-Key": apiKey,
       // Field mask controls response size + cost
-      "X-Goog-FieldMask": "places.id,places.displayName,places.location,places.formattedAddress,places.rating,places.userRatingCount,places.googleMapsUri",
+      "X-Goog-FieldMask": "places.id,places.displayName,places.location,places.formattedAddress,places.rating,places.userRatingCount,places.googleMapsUri,places.photos",
     },
     body: JSON.stringify(body),
   });
@@ -54,6 +54,56 @@ export async function GET(req: Request) {
   }
 
   const data = await resp.json();
+  
+  // Helper function to process photos (prefer interior, limit to 2-5)
+  const processPhotos = (photos: any[] | undefined, apiKey: string): any[] => {
+    if (!photos || photos.length === 0) return [];
+    
+    // Separate interior and other photos
+    const interiorPhotos: any[] = [];
+    const otherPhotos: any[] = [];
+    
+    for (const photo of photos) {
+      const photoTypes = photo.photoTypes || [];
+      const isInterior = photoTypes.some((pt: string) => 
+        pt.toUpperCase().includes("INTERIOR")
+      );
+      
+      if (isInterior) {
+        interiorPhotos.push(photo);
+      } else {
+        otherPhotos.push(photo);
+      }
+    }
+    
+    // Prefer interior photos, but include others if needed
+    let selectedPhotos: any[] = [];
+    selectedPhotos.push(...interiorPhotos.slice(0, 5));
+    
+    if (selectedPhotos.length < 5) {
+      const remaining = 5 - selectedPhotos.length;
+      selectedPhotos.push(...otherPhotos.slice(0, remaining));
+    }
+    
+    // Ensure at least 2 photos if available, but limit to 5
+    if (selectedPhotos.length < 2 && photos.length >= 2) {
+      selectedPhotos = photos.slice(0, Math.min(5, photos.length));
+    }
+    
+    selectedPhotos = selectedPhotos.slice(0, 5);
+    
+    // Generate photo URLs
+    return selectedPhotos
+      .filter((photo) => photo.name)
+      .map((photo) => ({
+        name: photo.name,
+        url: `https://places.googleapis.com/v1/${photo.name}/media?maxHeightPx=400&maxWidthPx=400&key=${apiKey}`,
+        widthPx: photo.widthPx,
+        heightPx: photo.heightPx,
+        authorAttributions: photo.authorAttributions || [],
+      }));
+  };
+  
   const places = (data.places ?? []).map((p: any) => ({
     id: p.id,
     name: p.displayName?.text ?? "Unknown",
@@ -63,6 +113,7 @@ export async function GET(req: Request) {
     rating: p.rating ?? null,
     userRatingCount: p.userRatingCount ?? null,
     mapsUrl: p.googleMapsUri ?? null,
+    photos: processPhotos(p.photos, apiKey),
   }));
 
   return NextResponse.json({ places });
