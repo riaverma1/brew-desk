@@ -1,0 +1,133 @@
+{
+  "place_id": "...",
+  "places_details_flag": true,
+  "places_details_called_at": "2025-12-23T20:15:00Z",
+  "places_details_called_version": "google_places_v0.1",
+  "enriched_flag": true,
+  "enriched_at": "2025-12-23T20:17:10Z",
+  "enriched_version": "signals_v0.1",
+  "place": {
+    "name": "...",
+    "lat": ...,
+    "lng": ...,
+    "types": [...],
+    "formatted_address": "...",
+    "neighborhood": "...",
+    "website": "...",
+    "rating": ...,
+    "user_ratings_total": ...,
+    "price_level": ...,
+    "business_status": ...,
+    "opening_hours": {
+      "open_now": ...,
+      "periods": [ ... ]
+    },
+    "restroom": "...",
+    "ServesCoffee": "...",
+    "outdoorSeating": "...",
+    "goodForGroups": "...",
+    "accessibilityOptions": "...",
+    "parkingOptions": "..."
+  },
+  "sources": {
+    "google_details": {
+      "fetched_at": "2025-12-23T20:15:00Z",
+      "payload": { ... } 
+    },
+
+    "google_reviews": {
+      "fetched_at": "2025-12-23T20:15:00Z",
+      "reviews": [ ... ]
+    },
+
+    "tavily": {
+      "fetched_at": "2025-12-23T20:16:30Z",
+      "query": "Is Birch Coffee ... good for working laptop wifi outlets",
+      "results": [
+        { "url": "...", "title": "...", "snippet": "...", "score": 0.82 }
+      ],
+      "excerpts": [
+        { "url": "...", "text": "..." }
+      ]
+    }
+  },
+  "derived": {
+    "has_wifi": {
+      "value": "free",
+      "confidence": 0.86,
+      "sources": [
+        "google_maps_ui",
+        "review_nlp",
+        "website from tavily"
+      ],
+      "evidence": [
+        "Review: 'Fast Wi-Fi, worked here for hours'",
+        "Google Maps lists Free Wi-Fi"
+      ]
+    },
+    "has_outlets": {
+      "value": "many",
+      "confidence": 0.86,
+      "sources": [
+      ],
+      "evidence": [
+      ]
+    },
+    "is_laptop_friendly": {
+      "value": "yes",
+      "confidence": 0.86,
+      "sources": [
+      ],
+      "evidence": [
+      ]
+    },
+    "noise_level": {
+      "value": "quiet",
+      "confidence": 0.86,
+      "sources": [
+      ],
+      "evidence": [
+      ]
+    },
+    "seating_availability": {
+      "value": "good",
+      "confidence": 0.86,
+      "sources": [
+      ],
+      "evidence": [
+      ]
+    },
+    "seating_comfort": {
+        "value": "good",
+        "confidence": 0.86,
+        "sources": [
+        ],
+        "evidence": [
+        ]
+      },
+    "notable_positives": {
+    "value": [
+      "...",
+      "..."
+    ], 
+    "sources": [
+    ],
+    "evidence": [
+      "...",
+      "..."
+    ]       
+    },
+    "common_complaints": {
+      "value": [
+      "...",
+      "..."
+    ], 
+    "sources": [
+    ],
+    "evidence": [
+      "...",
+      "..."
+    ]       
+    }
+  }
+}
