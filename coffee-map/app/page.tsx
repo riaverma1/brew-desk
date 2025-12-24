@@ -397,6 +397,129 @@ export default function Home() {
     return true;
   });
 
+  // Helper function to build InfoWindow HTML content
+  const buildInfoWindowContent = (place: EnrichedPlace): string => {
+    const formatAttributeName = (name: string) => {
+      return name.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+    };
+
+    const formatAttributeValue = (attr: DerivedAttribute) => {
+      if (Array.isArray(attr.value)) {
+        return attr.value.join(", ");
+      }
+      return attr.value;
+    };
+
+    let attributesHtml = "";
+    if (place.derived) {
+      Object.entries(place.derived).forEach(([key, attr]) => {
+        if (attr && attr.value !== "unknown" && !(Array.isArray(attr.value) && attr.value.length === 0)) {
+          // Store evidence data in a ref with a unique key
+          const evidenceKey = `${place.id}_${key}`;
+          if (attr.evidence && attr.evidence.length > 0) {
+            evidenceDataRef.current.set(evidenceKey, {
+              evidence: attr.evidence,
+              sources: attr.sources || []
+            });
+          }
+          
+          attributesHtml += `
+            <div style="margin-bottom: 8px; font-size: 12px;">
+              <div style="font-weight: 600; margin-bottom: 4px;">
+                ${formatAttributeName(key)}: ${formatAttributeValue(attr)}
+                ${attr.confidence > 0 ? `<span style="color: #666; font-weight: 400; margin-left: 4px;">(${Math.round(attr.confidence * 100)}% confidence)</span>` : ""}
+              </div>
+              ${attr.evidence && attr.evidence.length > 0 ? `
+                <button 
+                  onclick="window.showEvidence('${evidenceKey}', '${key}')"
+                  style="background: #1976d2; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;"
+                >
+                  Show Evidence
+                </button>
+              ` : ""}
+            </div>
+          `;
+        }
+      });
+    }
+
+    let amenitiesHtml = "";
+    if (place.restroom !== undefined || place.servesCoffee !== undefined || place.outdoorSeating !== undefined) {
+      amenitiesHtml = `
+        <div style="margin-top: 8px; margin-bottom: 8px; padding-top: 8px; border-top: 1px solid #eee;">
+          <div style="font-size: 11px; font-weight: 600; margin-bottom: 4px; color: #666;">Amenities</div>
+          ${place.restroom !== undefined ? `<div style="font-size: 12px; margin-bottom: 4px;"><strong>Restroom:</strong> ${place.restroom ? "Yes" : "No"}</div>` : ""}
+          ${place.servesCoffee !== undefined ? `<div style="font-size: 12px; margin-bottom: 4px;"><strong>Serves Coffee:</strong> ${place.servesCoffee ? "Yes" : "No"}</div>` : ""}
+          ${place.outdoorSeating !== undefined ? `<div style="font-size: 12px; margin-bottom: 4px;"><strong>Outdoor Seating:</strong> ${place.outdoorSeating ? "Yes" : "No"}</div>` : ""}
+        </div>
+      `;
+    }
+
+    const enrichmentStatusHtml = enrichingPlaces.has(place.id)
+      ? `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; font-size: 11px; color: #666;">
+           <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #ffa726; margin-right: 6px;"></span>
+           Enrichment in progress...
+         </div>`
+      : "";
+
+    // Build photos carousel HTML
+    let photosHtml = "";
+    if (place.photos && place.photos.length > 0) {
+      const photosToShow = place.photos.slice(0, 5); // Show up to 5 photos
+      photosHtml = `
+        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
+          <div style="font-size: 11px; font-weight: 600; margin-bottom: 6px; color: #666;">Photos</div>
+          <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px;">
+            ${photosToShow.map((photo: any) => `
+              <img 
+                src="${photo.url}" 
+                alt="${place.name}"
+                style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; flex-shrink: 0; cursor: pointer;"
+                onclick="window.open('${photo.url}', '_blank')"
+                onerror="this.style.display='none'"
+              />
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    // Build Google Maps link
+    const googleMapsUrl = place.id 
+      ? `https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(place.id)}`
+      : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.lat)},${encodeURIComponent(place.lng)}`;
+    const googleMapsButton = `
+      <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
+        <a 
+          href="${googleMapsUrl}" 
+          target="_blank"
+          rel="noopener noreferrer"
+          style="display: inline-block; background: #4285f4; color: white; text-decoration: none; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500;"
+        >
+          Open in Google Maps
+        </a>
+      </div>
+    `;
+
+    return `
+      <div style="max-width: 300px; padding: 8px;">
+        <div style="font-weight: 600; font-size: 14px; margin-bottom: 6px;">${place.name}</div>
+        ${place.address ? `<div style="font-size: 12px; margin-bottom: 6px; color: #666;">${place.address}</div>` : ""}
+        ${place.rating ? `<div style="font-size: 12px; margin-bottom: 6px;">⭐ ${place.rating} (${place.userRatingCount || 0} reviews)</div>` : ""}
+        ${photosHtml}
+        ${amenitiesHtml}
+        ${attributesHtml ? `
+          <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
+            <div style="font-size: 11px; font-weight: 600; margin-bottom: 4px; color: #666;">Work From Home Attributes</div>
+            ${attributesHtml}
+          </div>
+        ` : ""}
+        ${enrichmentStatusHtml}
+        ${googleMapsButton}
+      </div>
+    `;
+  };
+
   // Render markers
   useEffect(() => {
     const map = mapRef.current;
@@ -411,12 +534,16 @@ export default function Home() {
     const openPlaceId = openInfoWindowPlaceIdRef.current;
     const openPlaceStillExists = openPlaceId && filteredPlaces.some(p => p.id === openPlaceId);
     
+    // Store whether InfoWindow was open before clearing markers
+    const wasInfoWindowOpen = infoWindowRef.current && openInfoWindowPlaceIdRef.current !== null;
+    
     // Clear old markers
     markersRef.current.forEach((m) => m.setMap(null));
     markersRef.current = [];
     
-    // Only close InfoWindow if the place it's open for no longer exists
-    if (infoWindowRef.current && !openPlaceStillExists) {
+    // Close InfoWindow only if the place it's open for no longer exists
+    // Don't close if it was manually closed (openInfoWindowPlaceIdRef is null) - that's already handled
+    if (infoWindowRef.current && !openPlaceStillExists && openPlaceId) {
       infoWindowRef.current.close();
       openInfoWindowPlaceIdRef.current = null;
     }
@@ -448,127 +575,8 @@ export default function Home() {
         // Track which place the InfoWindow is open for
         openInfoWindowPlaceIdRef.current = place.id;
         
-        // Build HTML content for InfoWindow
-        const formatAttributeName = (name: string) => {
-          return name.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-        };
-
-        const formatAttributeValue = (attr: DerivedAttribute) => {
-          if (Array.isArray(attr.value)) {
-            return attr.value.join(", ");
-          }
-          return attr.value;
-        };
-
-        let attributesHtml = "";
-        if (place.derived) {
-          Object.entries(place.derived).forEach(([key, attr]) => {
-            if (attr && attr.value !== "unknown" && !(Array.isArray(attr.value) && attr.value.length === 0)) {
-              // Store evidence data in a ref with a unique key
-              const evidenceKey = `${place.id}_${key}`;
-              if (attr.evidence && attr.evidence.length > 0) {
-                evidenceDataRef.current.set(evidenceKey, {
-                  evidence: attr.evidence,
-                  sources: attr.sources || []
-                });
-              }
-              
-              attributesHtml += `
-                <div style="margin-bottom: 8px; font-size: 12px;">
-                  <div style="font-weight: 600; margin-bottom: 4px;">
-                    ${formatAttributeName(key)}: ${formatAttributeValue(attr)}
-                    ${attr.confidence > 0 ? `<span style="color: #666; font-weight: 400; margin-left: 4px;">(${Math.round(attr.confidence * 100)}% confidence)</span>` : ""}
-                  </div>
-                  ${attr.evidence && attr.evidence.length > 0 ? `
-                    <button 
-                      onclick="window.showEvidence('${evidenceKey}', '${key}')"
-                      style="background: #1976d2; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px;"
-                    >
-                      Show Evidence
-                    </button>
-                  ` : ""}
-                </div>
-              `;
-            }
-          });
-        }
-
-        let amenitiesHtml = "";
-        if (place.restroom !== undefined || place.servesCoffee !== undefined || place.outdoorSeating !== undefined) {
-          amenitiesHtml = `
-            <div style="margin-top: 8px; margin-bottom: 8px; padding-top: 8px; border-top: 1px solid #eee;">
-              <div style="font-size: 11px; font-weight: 600; margin-bottom: 4px; color: #666;">Amenities</div>
-              ${place.restroom !== undefined ? `<div style="font-size: 12px; margin-bottom: 4px;"><strong>Restroom:</strong> ${place.restroom ? "Yes" : "No"}</div>` : ""}
-              ${place.servesCoffee !== undefined ? `<div style="font-size: 12px; margin-bottom: 4px;"><strong>Serves Coffee:</strong> ${place.servesCoffee ? "Yes" : "No"}</div>` : ""}
-              ${place.outdoorSeating !== undefined ? `<div style="font-size: 12px; margin-bottom: 4px;"><strong>Outdoor Seating:</strong> ${place.outdoorSeating ? "Yes" : "No"}</div>` : ""}
-            </div>
-          `;
-        }
-
-        const enrichmentStatusHtml = enrichingPlaces.has(place.id)
-          ? `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; font-size: 11px; color: #666;">
-               <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #ffa726; margin-right: 6px;"></span>
-               Enrichment in progress...
-             </div>`
-          : "";
-
-        // Build photos carousel HTML
-        let photosHtml = "";
-        if (place.photos && place.photos.length > 0) {
-          const photosToShow = place.photos.slice(0, 5); // Show up to 5 photos
-          photosHtml = `
-            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
-              <div style="font-size: 11px; font-weight: 600; margin-bottom: 6px; color: #666;">Photos</div>
-              <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px;">
-                ${photosToShow.map((photo: any) => `
-                  <img 
-                    src="${photo.url}" 
-                    alt="${place.name}"
-                    style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px; flex-shrink: 0; cursor: pointer;"
-                    onclick="window.open('${photo.url}', '_blank')"
-                    onerror="this.style.display='none'"
-                  />
-                `).join("")}
-              </div>
-            </div>
-          `;
-        }
-
-        // Build Google Maps link
-        // Use place_id if available (new API format), otherwise use coordinates
-        const googleMapsUrl = place.id 
-          ? `https://www.google.com/maps/place/?q=place_id:${encodeURIComponent(place.id)}`
-          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.lat)},${encodeURIComponent(place.lng)}`;
-        const googleMapsButton = `
-          <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
-            <a 
-              href="${googleMapsUrl}" 
-              target="_blank"
-              rel="noopener noreferrer"
-              style="display: inline-block; background: #4285f4; color: white; text-decoration: none; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500;"
-            >
-              Open in Google Maps
-            </a>
-          </div>
-        `;
-
-        const html = `
-          <div style="max-width: 300px; padding: 8px;">
-            <div style="font-weight: 600; font-size: 14px; margin-bottom: 6px;">${place.name}</div>
-            ${place.address ? `<div style="font-size: 12px; margin-bottom: 6px; color: #666;">${place.address}</div>` : ""}
-            ${place.rating ? `<div style="font-size: 12px; margin-bottom: 6px;">⭐ ${place.rating} (${place.userRatingCount || 0} reviews)</div>` : ""}
-            ${photosHtml}
-            ${amenitiesHtml}
-            ${attributesHtml ? `
-              <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
-                <div style="font-size: 11px; font-weight: 600; margin-bottom: 4px; color: #666;">Work From Home Attributes</div>
-                ${attributesHtml}
-              </div>
-            ` : ""}
-            ${enrichmentStatusHtml}
-            ${googleMapsButton}
-          </div>
-        `;
+        // Build HTML content using helper function
+        const html = buildInfoWindowContent(place);
 
         // Store showEvidence function globally for InfoWindow buttons
         (window as any).showEvidence = (evidenceKey: string, attrName: string) => {
@@ -591,22 +599,20 @@ export default function Home() {
       return marker;
     }).filter((m) => m !== null) as google.maps.Marker[];
 
-    // If InfoWindow was open, re-open it on the new marker
-    // BUT only if it wasn't manually closed by the user (openInfoWindowPlaceIdRef is still set)
-    if (openPlaceStillExists && openPlaceId && infoWindowRef.current && openInfoWindowPlaceIdRef.current === openPlaceId) {
-      // Find the marker for the open place by matching place IDs
+    // If InfoWindow was open before re-rendering, re-attach it to the new marker
+    // This keeps it open when the user scrolls (markers are re-rendered)
+    if (wasInfoWindowOpen && openPlaceStillExists && openPlaceId && infoWindowRef.current) {
+      const openPlace = filteredPlaces.find(p => p.id === openPlaceId);
       const openPlaceIndex = filteredPlaces.findIndex(p => p.id === openPlaceId);
-      if (openPlaceIndex >= 0 && openPlaceIndex < markersRef.current.length) {
+      if (openPlace && openPlaceIndex >= 0 && openPlaceIndex < markersRef.current.length) {
         const markerForOpenPlace = markersRef.current[openPlaceIndex];
         if (markerForOpenPlace) {
-          // Re-open the InfoWindow on the new marker
-          // Trigger a click on the marker to rebuild and open the InfoWindow with latest data
-          google.maps.event.trigger(markerForOpenPlace, 'click');
+          // Re-open the InfoWindow on the new marker without triggering click (no panning)
+          // Rebuild content with latest place data
+          const html = buildInfoWindowContent(openPlace);
+          infoWindowRef.current.setContent(html);
+          infoWindowRef.current.open({ map, anchor: markerForOpenPlace });
         }
-      } else {
-        // If we couldn't find the marker, just close the InfoWindow
-        infoWindowRef.current.close();
-        openInfoWindowPlaceIdRef.current = null;
       }
     }
   }, [filteredPlaces, enrichingPlaces]);
