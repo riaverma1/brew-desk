@@ -47,15 +47,13 @@ class Evidence(BaseModel):
     quote: Optional[str] = None  # short excerpt supporting a key claim
 
 
-class PlaceAttributes(BaseModel):
+class PlaceAttributes(BaseModel): 
     wifi_quality: str = Field(default="unknown", description="good|mixed|bad|unknown")
     outlet_availability: str = Field(default="many|few|none|unknown")
     noise_level: str = Field(default="quiet|mixed|loud|unknown")
     laptop_friendly: str = Field(default="yes|mixed|no|unknown")
-    time_pressure: str = Field(default="none|some|strict|unknown")
     seating_comfort: str = Field(default="good|mixed|bad|unknown")
 
-    best_times: List[str] = Field(default_factory=list)
     common_complaints: List[str] = Field(default_factory=list)
     notable_positives: List[str] = Field(default_factory=list)
 
@@ -186,9 +184,7 @@ Your task for EACH request:
     "outlet_availability": "many|few|none|unknown",
     "noise_level": "quiet|mixed|loud|unknown",
     "laptop_friendly": "yes|mixed|no|unknown",
-    "time_pressure": "none|some|strict|unknown",
     "seating_comfort": "good|mixed|bad|unknown",
-    "best_times": ["string"],
     "common_complaints": ["string"],
     "notable_positives": ["string"],
     "wfh_overall": "yes|mixed|no|unknown",
@@ -232,7 +228,7 @@ def build_wfh_agent():
     )
 
     tavily_search_tool = TavilySearch(
-        max_results=5,
+        max_results=8,
         topic="general",
         include_answer=False,
         include_raw_content=False,  # keep token usage small
