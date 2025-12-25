@@ -81,6 +81,8 @@ flowchart TB
     end
 ```
 
+
+
 ## File Structure and Responsibilities
 
 ### 1. `json_storage.py` - JSON File Utilities
@@ -101,6 +103,8 @@ flowchart TB
 }
 ```
 
+
+
 ### 2. `google_places.py` - Enhanced Place Details
 
 **Purpose**: Fetch place data from Google Places API**Changes**:
@@ -120,9 +124,7 @@ flowchart TB
 
 ### 3. `place_enrichment.py` - Sync and Async Enrichment
 
-**Purpose**: Contains both sync (place_details) and async (Tavily + LLM) enrichment logic
-
-**Note**: The async enrichment uses TWO LLM calls:
+**Purpose**: Contains both sync (place_details) and async (Tavily + LLM) enrichment logic**Note**: The async enrichment uses TWO LLM calls:
 
 1. Tavily search agent (optional, or use TavilySearch directly) - just to collect web results
 2. Unified attribute derivation LLM - takes Google reviews + Tavily results together to derive attributes with confidence scores**Sync Function**: `enrich_place_details_sync(cfg: Config, place_id: str, existing_place: Dict) -> Dict`
@@ -149,50 +151,50 @@ flowchart TB
 
 - Checks if `enriched_flag` is false
 - **Step 1: Run Tavily web search** (just to collect web results, not to derive attributes):
-  - Uses TavilySearch directly or calls a helper function to search for place
-  - Constructs query from place name + location (e.g., "Is Birch Coffee in Flatiron good for working laptop wifi outlets")
-  - Gets Tavily search results and excerpts
-  - **Saves all Tavily content to `sources.tavily`**:
+- Uses TavilySearch directly or calls a helper function to search for place
+- Constructs query from place name + location (e.g., "Is Birch Coffee in Flatiron good for working laptop wifi outlets")
+- Gets Tavily search results and excerpts
+- **Saves all Tavily content to `sources.tavily`**:
     - `fetched_at`: ISO timestamp
     - `query`: The search query used
     - `results`: Full Tavily search results array (with url, title, snippet, score)
     - `excerpts`: Full Tavily excerpts array (with url, text) if available
 - **Step 2: Derive attributes using LLM** (combines Google reviews + Tavily results):
-  - Calls new function `derive_attributes_from_evidence()` (see below)
-  - This function takes:
+- Calls new function `derive_attributes_from_evidence()` (see below)
+- This function takes:
     - Google reviews (from `sources.google_reviews.reviews` in existing_place)
     - Tavily results and excerpts (from `sources.tavily` just saved)
     - Place information (name, address, etc.)
-  - Uses LLM to analyze ALL evidence together and derive attributes with confidence scores
-  - Returns structure matching schema's `derived` section
+- Uses LLM to analyze ALL evidence together and derive attributes with confidence scores
+- Returns structure matching schema's `derived` section
 - Updates flags: `enriched_flag=True`, `enriched_at`, `enriched_version`
 
 **New LLM Function**: `derive_attributes_from_evidence(place: Dict, google_reviews: List[Dict], tavily_results: List[Dict], tavily_excerpts: List[Dict]) -> Dict`
 
 - **Purpose**: Unified LLM call that takes ALL evidence (Google reviews + Tavily) and derives attributes with confidence scores
 - **Input**:
-  - `place`: Place dict with name, address, etc.
-  - `google_reviews`: Full array of Google Maps reviews
-  - `tavily_results`: Tavily search results (url, title, snippet, score)
-  - `tavily_excerpts`: Tavily excerpts (url, text)
+- `place`: Place dict with name, address, etc.
+- `google_reviews`: Full array of Google Maps reviews
+- `tavily_results`: Tavily search results (url, title, snippet, score)
+- `tavily_excerpts`: Tavily excerpts (url, text)
 - **Process**:
-  - Combines all evidence into a structured prompt
-  - Uses LLM (ChatOpenAI) with structured output to derive attributes
-  - LLM analyzes BOTH Google reviews AND Tavily content together
-  - For each attribute, LLM provides:
+- Combines all evidence into a structured prompt
+- Uses LLM (ChatOpenAI) with structured output to derive attributes
+- LLM analyzes BOTH Google reviews AND Tavily content together
+- For each attribute, LLM provides:
     - `value`: The attribute value (e.g., "free", "many", "yes", "quiet")
     - `confidence`: Float 0.0-1.0 based on strength of evidence from ALL sources
     - `sources`: Array of source identifiers (e.g., `["google_reviews", "tavily_https://example.com"]`)
     - `evidence`: Array of specific evidence snippets from both sources (e.g., `["Review: 'Fast Wi-Fi, worked here for hours'", "Tavily excerpt: 'The cafe offers free WiFi and plenty of outlets'"]`)
 - **Output**: Returns `derived` section matching schema:
-  - `has_wifi`: `{value: "free"|"paid"|"none", confidence: float, sources: [], evidence: []}`
-  - `has_outlets`: `{value: "many"|"few"|"none", confidence: float, sources: [], evidence: []}`
-  - `is_laptop_friendly`: `{value: "yes"|"mixed"|"no", confidence: float, sources: [], evidence: []}`
-  - `noise_level`: `{value: "quiet"|"mixed"|"loud", confidence: float, sources: [], evidence: []}`
-  - `seating_availability`: `{value: "good"|"mixed"|"limited", confidence: float, sources: [], evidence: []}`
-  - `seating_comfort`: `{value: "good"|"mixed"|"bad", confidence: float, sources: [], evidence: []}`
-  - `notable_positives`: `{value: [str], sources: [], evidence: [str]}`
-  - `common_complaints`: `{value: [str], sources: [], evidence: [str]}`
+- `has_wifi`: `{value: "free"|"paid"|"none", confidence: float, sources: [], evidence: []}`
+- `has_outlets`: `{value: "many"|"few"|"none", confidence: float, sources: [], evidence: []}`
+- `is_laptop_friendly`: `{value: "yes"|"mixed"|"no", confidence: float, sources: [], evidence: []}`
+- `noise_level`: `{value: "quiet"|"mixed"|"loud", confidence: float, sources: [], evidence: []}`
+- `seating_availability`: `{value: "good"|"mixed"|"limited", confidence: float, sources: [], evidence: []}`
+- `seating_comfort`: `{value: "good"|"mixed"|"bad", confidence: float, sources: [], evidence: []}`
+- `notable_positives`: `{value: [str], sources: [], evidence: [str]}`
+- `common_complaints`: `{value: [str], sources: [], evidence: [str]}`
 - **Implementation**: Uses structured output (Pydantic model or JSON mode) to ensure consistent format
 - **Key point**: Attributes are derived from BOTH sources together, not separately. The LLM considers all evidence holistically to determine confidence scores.
 
@@ -282,6 +284,8 @@ All cleaned content is saved to `sources`:
 }
 ```
 
+
+
 ## Usage Pattern
 
 ### Sync (during nearby_search):
@@ -295,6 +299,8 @@ results = google_places.nearby_search_with_sync(cfg, place_type="cafe")
 # 3. Does NOT call Tavily
 ```
 
+
+
 ### Async (separate call):
 
 ```python
@@ -304,6 +310,8 @@ places_manager.process_enrichment_async(cfg, place_ids=place_ids)
 # Or process all places needing enrichment:
 places_manager.process_enrichment_async(cfg)
 ```
+
+
 
 ## Files to Create/Modify
 
@@ -340,9 +348,7 @@ See `sandbox.ipynb` section for a complete test script demonstrating:
 
 ## Key Design Decision: Unified LLM for Attribute Derivation
 
-**Question**: Do we need an LLM to combine Google reviews + Tavily results?
-
-**Answer**: Yes. We use a **unified LLM call** (`derive_attributes_from_evidence()`) that:
+**Question**: Do we need an LLM to combine Google reviews + Tavily results?**Answer**: Yes. We use a **unified LLM call** (`derive_attributes_from_evidence()`) that:
 
 - Takes ALL evidence together (Google reviews + Tavily results)
 - Derives attributes with confidence scores based on the combined evidence
@@ -358,5 +364,3 @@ See `sandbox.ipynb` section for a complete test script demonstrating:
 **Implementation approach**:
 
 - Option 1: Create a new LLM function that takes reviews + Tavily results as input
-- Option 2: Modify the existing agent to also accept reviews (but this mixes concerns)
-- **Chosen**: Option 1 - separate function for clarity and separation of concerns

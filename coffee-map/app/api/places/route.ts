@@ -50,7 +50,7 @@ export async function GET(req: Request) {
     // "restaurant",
     "library",
     "internet_cafe",
-    "book_store",
+    // "book_store",
     // "community_center",
     // "hotel",
     // "bed_and_breakfast",

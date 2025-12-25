@@ -67,11 +67,29 @@ def process_places_sync(
             if place_id:
                 nearby_result_map[place_id] = result
     
+    # Load places FIRST to verify file is readable and has data
+    places_before = load_places_json(json_path)
+    initial_count = len(places_before)
+    logger.info(f"Loaded {initial_count} places from JSON before upsert")
+    
+    # Safety check: if file has data but we loaded 0, something is wrong
+    import os
+    if initial_count == 0 and os.path.exists(json_path) and os.path.getsize(json_path) > 1000:
+        logger.error(f"CRITICAL: JSON file has {os.path.getsize(json_path)} bytes but loaded 0 places. Aborting to prevent data loss.")
+        raise ValueError(f"JSON file appears corrupted - loaded 0 places from {os.path.getsize(json_path)} byte file. Aborting upsert to prevent data loss.")
+    
     # Upsert place_ids that don't exist (atomic operation)
     upsert_place_ids(json_path, place_ids)
     
-    # Load places to check which need sync enrichment
+    # Reload after upsert and verify we didn't lose data
     places = load_places_json(json_path)
+    final_count = len(places)
+    logger.info(f"Loaded {final_count} places from JSON after upsert")
+    
+    # Safety check: if we had data before and now have less, something went wrong
+    if initial_count > 0 and final_count < initial_count:
+        logger.error(f"CRITICAL: Data loss detected! Had {initial_count} places, now have {final_count}. This should not happen.")
+        raise ValueError(f"Data loss detected during upsert: {initial_count} -> {final_count} places")
     
     # Process each place that needs sync enrichment
     processed = []
