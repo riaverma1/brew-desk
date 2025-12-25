@@ -42,7 +42,7 @@ class NearbySearchRequest(BaseModel):
     radius: int = 1200
     types: List[str] = [
         "cafe", "coffee_shop", "bakery", "tea_house",
-        "library", "internet_cafe", "book_store",
+        "library", "internet_cafe",
     ]
 
 
