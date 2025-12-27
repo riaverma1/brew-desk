@@ -4,11 +4,8 @@
   "python.analysis.extraPaths": [
     "${workspaceFolder}/backend"
   ],
-  "jupyter.kernels.filter": [
-    {
-      "type": "pythonEnvironment",
-      "path": "${workspaceFolder}/backend/.venv"
-    }
+  "jupyter.kernels.excludePythonEnvironments": [
+    "${workspaceFolder}/backend/.venv"
   ]
 }
 
