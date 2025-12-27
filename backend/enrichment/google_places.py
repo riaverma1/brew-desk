@@ -150,10 +150,12 @@ def nearby_search(cfg: Config, place_type: str, debug: bool = False) -> List[Dic
         print(f"{'='*60}")
     
     # Prepare request headers
+    # Only request minimal fields for nearby search to reduce API costs
+    # Binary attributes and reviews are fetched via place_details for top-5 and user-triggered enrichments
     headers = {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": cfg.api_key,
-        "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.userRatingCount,places.priceLevel,places.businessStatus,places.regularOpeningHours,places.websiteUri,places.restroom,places.servesCoffee,places.goodForGroups,places.parkingOptions,places.accessibilityOptions,places.outdoorSeating,places.photos"
+        "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.userRatingCount,places.priceLevel,places.businessStatus,places.regularOpeningHours,places.websiteUri"
     }
     
     # Prepare base request body (will be copied for each request)

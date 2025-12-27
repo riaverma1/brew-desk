@@ -296,4 +296,3 @@ sequenceDiagram
 ## Files to Modify
 
 1. `backend/enrichment/places_manager.py` - Add basic info extraction/saving, top-n selection
-2. `backend/enrichment/scoring.py` - New file with scoring functions
