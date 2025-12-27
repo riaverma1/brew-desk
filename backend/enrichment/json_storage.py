@@ -264,6 +264,7 @@ def upsert_place_ids(path: str, place_ids: List[str]) -> List[str]:
                     logger.debug(f"[upsert_place_ids] Creating new entry for: {place_id}")
                     places[place_id] = {
                         "place_id": place_id,
+                        "nearby_search_flag": False,
                         "places_details_flag": False,
                         "tavily_flag": False,
                         "enriched_flag": False,

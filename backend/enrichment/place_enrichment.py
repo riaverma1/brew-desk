@@ -191,35 +191,49 @@ def enrich_place_details_sync(cfg: Config, place_id: str, existing_place: Dict, 
     
     print(f"DEBUG: [enrich_place_details_sync] {'='*60}\n")
     
-    # Extract neighborhood from address or geometry
-    neighborhood = _extract_neighborhood(details)
+    # Check if basic info already exists from nearby_search
+    has_basic_info = existing_place.get("nearby_search_flag", False)
+    existing_place_obj = existing_place.get("place", {})
     
-    # Process photos (prefer interior, limit to 2-5)
-    photos = details.get("photos", [])
-    processed_photos = process_photos(photos, cfg.api_key, max_photos=5)
-    
-    # Build place object (extract from new API format)
-    # New API uses: location (with latitude/longitude), displayName (object with text), formattedAddress, etc.
-    location_obj = details.get("location", {})
-    display_name_obj = details.get("displayName", {})
-    display_name_text = display_name_obj.get("text", "") if isinstance(display_name_obj, dict) else str(display_name_obj) if display_name_obj else ""
-    
-    place_obj = {
-        "name": display_name_text,
-        "lat": location_obj.get("latitude"),
-        "lng": location_obj.get("longitude"),
-        "types": details.get("types", []),
-        "formatted_address": details.get("formattedAddress", ""),
-        "neighborhood": neighborhood,
-        "website": details.get("websiteUri"),
-        "rating": details.get("rating"),
-        "user_ratings_total": details.get("userRatingCount"),
-        "price_level": details.get("priceLevel"),
-        "business_status": details.get("businessStatus"),
-        "opening_hours": details.get("regularOpeningHours"),
-        "photos": processed_photos,  # Add processed photos
-        **binary_attrs,
-    }
+    if has_basic_info and existing_place_obj:
+        # Reuse basic info from nearby_search, only add binary attributes and reviews
+        logger.info(f"[enrich_place_details_sync] Reusing basic info from nearby_search for {place_id}")
+        place_obj = existing_place_obj.copy()  # Don't overwrite existing basic info
+        # Add binary attributes
+        place_obj.update(binary_attrs)
+    else:
+        # No basic info exists, extract everything from place_details
+        logger.info(f"[enrich_place_details_sync] No basic info found, extracting all from place_details for {place_id}")
+        
+        # Extract neighborhood from address or geometry
+        neighborhood = _extract_neighborhood(details)
+        
+        # Process photos (prefer interior, limit to 2-5)
+        photos = details.get("photos", [])
+        processed_photos = process_photos(photos, cfg.api_key, max_photos=5)
+        
+        # Build place object (extract from new API format)
+        # New API uses: location (with latitude/longitude), displayName (object with text), formattedAddress, etc.
+        location_obj = details.get("location", {})
+        display_name_obj = details.get("displayName", {})
+        display_name_text = display_name_obj.get("text", "") if isinstance(display_name_obj, dict) else str(display_name_obj) if display_name_obj else ""
+        
+        place_obj = {
+            "name": display_name_text,
+            "lat": location_obj.get("latitude"),
+            "lng": location_obj.get("longitude"),
+            "types": details.get("types", []),
+            "formatted_address": details.get("formattedAddress", ""),
+            "neighborhood": neighborhood,
+            "website": details.get("websiteUri"),
+            "rating": details.get("rating"),
+            "user_ratings_total": details.get("userRatingCount"),
+            "price_level": details.get("priceLevel"),
+            "business_status": details.get("businessStatus"),
+            "opening_hours": details.get("regularOpeningHours"),
+            "photos": processed_photos,  # Add processed photos
+            **binary_attrs,
+        }
     
     # Update existing place
     fetched_at = datetime.now(timezone.utc).isoformat()
@@ -485,6 +499,9 @@ def enrich_place_web_async(cfg: Config, place: Dict, existing_place: Dict) -> Di
     """
     Async enrichment: Run Tavily search and derive attributes using LLM.
     
+    Now waits for both place_details and Tavily to complete before running LLM.
+    Handles partial evidence cases (if one API fails but the other succeeds).
+    
     Args:
         cfg: Config object
         place: Place dictionary with name, address, etc.
@@ -510,6 +527,15 @@ def enrich_place_web_async(cfg: Config, place: Dict, existing_place: Dict) -> Di
                 return existing_place
             
             logger.info(f"Starting async enrichment for {place_id}")
+            fetched_at = datetime.now(timezone.utc).isoformat()
+            
+            # Check if place_details has been fetched
+            places_details_flag = existing_place.get("places_details_flag", False)
+            has_place_details = places_details_flag
+            
+            # Check if we have Google reviews
+            google_reviews = existing_place.get("sources", {}).get("google_reviews", {}).get("reviews", [])
+            has_google_reviews = bool(google_reviews and len(google_reviews) > 0)
             
             # Step 1: Run Tavily web search (only if not already done)
             # Check if Tavily data already exists to avoid duplicate API calls
@@ -549,7 +575,6 @@ def enrich_place_web_async(cfg: Config, place: Dict, existing_place: Dict) -> Di
             
             # Save Tavily content to sources ONLY if we have successful results
             # Never overwrite existing data with empty/null results
-            fetched_at = datetime.now(timezone.utc).isoformat()
             if "sources" not in existing_place:
                 existing_place["sources"] = {}
             
@@ -592,12 +617,24 @@ def enrich_place_web_async(cfg: Config, place: Dict, existing_place: Dict) -> Di
             else:
                 logger.info(f"Place {place_id} has no Tavily data, tavily_flag set to False")
             
-            # Step 2: Derive attributes using LLM (combines Google reviews + Tavily)
+            # Step 2: Wait for both place_details and Tavily before running LLM
+            # Check if we have at least one source of evidence
+            has_evidence = has_google_reviews or has_tavily_results
+            
+            if not has_evidence:
+                logger.warning(f"Place {place_id} has no evidence (no Google reviews and no Tavily results), cannot run LLM")
+                existing_place["enriched_flag"] = False
+                return existing_place
+            
+            # Step 3: Derive attributes using LLM (combines Google reviews + Tavily)
             # Use the saved Tavily data (which may be preserved existing data if API failed)
+            # Reload google_reviews in case they were updated
             google_reviews = existing_place.get("sources", {}).get("google_reviews", {}).get("reviews", [])
             saved_tavily = existing_place.get("sources", {}).get("tavily", {})
             tavily_results = saved_tavily.get("results", [])
             tavily_excerpts = saved_tavily.get("excerpts", [])
+            
+            logger.info(f"Place {place_id} running LLM with evidence: Google reviews={len(google_reviews)}, Tavily results={len(tavily_results)}")
             
             derived_attrs = derive_attributes_from_evidence(
                 place=place,
@@ -614,22 +651,42 @@ def enrich_place_web_async(cfg: Config, place: Dict, existing_place: Dict) -> Di
             # Update existing place
             existing_place["derived"] = derived_attrs
             
-            # enriched_flag should only be True if derived attributes were created AND Tavily data exists
-            # This ensures we only mark as "enriched" when we have Tavily evidence
-            if has_tavily_results:
+            # Handle partial evidence cases and set flags appropriately
+            # enriched_flag should be True if we have derived attributes and at least one source of evidence
+            if has_place_details and has_tavily_results:
+                # Both succeeded
+                existing_place["places_details_flag"] = True
+                existing_place["tavily_flag"] = True
                 existing_place["enriched_flag"] = True
+                logger.info(f"Place {place_id} enriched with both Google reviews and Tavily data, all flags set to True")
+            elif has_place_details and not has_tavily_results:
+                # place_details succeeded but Tavily failed
+                existing_place["places_details_flag"] = True
+                existing_place["tavily_flag"] = False
+                existing_place["enriched_flag"] = True  # Still enriched with partial evidence
+                logger.info(f"Place {place_id} enriched with Google reviews only (Tavily failed), enriched_flag set to True")
+            elif not has_place_details and has_tavily_results:
+                # Tavily succeeded but place_details failed
+                existing_place["places_details_flag"] = False
+                existing_place["tavily_flag"] = True
+                existing_place["enriched_flag"] = True  # Still enriched with partial evidence
+                logger.info(f"Place {place_id} enriched with Tavily only (place_details failed), enriched_flag set to True")
+            else:
+                # Both failed (shouldn't happen if we checked has_evidence above)
+                existing_place["places_details_flag"] = False
+                existing_place["tavily_flag"] = False
+                existing_place["enriched_flag"] = False
+                logger.warning(f"Place {place_id} has no evidence, enriched_flag set to False")
+            
+            if existing_place.get("enriched_flag", False):
                 existing_place["enriched_at"] = fetched_at
                 existing_place["enriched_version"] = "signals_v0.1"
-                logger.info(f"Place {place_id} enriched with Tavily data, enriched_flag set to True")
-            else:
-                existing_place["enriched_flag"] = False
-                logger.warning(f"Place {place_id} derived attributes created but no Tavily data, enriched_flag set to False")
             
             # Ensure place_id is set (it should already be there, but make sure)
             if "place_id" not in existing_place and place_id:
                 existing_place["place_id"] = place_id
             
-            logger.info(f"Async enrichment completed for {place_id}, enriched_flag set to True")
+            logger.info(f"Async enrichment completed for {place_id}, enriched_flag={existing_place.get('enriched_flag')}")
             return existing_place
     except AlreadyProcessingError:
         logger.warning(f"Place {place_id} is already being processed, skipping")

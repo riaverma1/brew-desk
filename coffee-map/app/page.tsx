@@ -1,8 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import FilterSidebar, { WFHFilters } from "./components/FilterSidebar";
 import EvidenceModal from "./components/EvidenceModal";
+
+// TypeScript declaration for Google Maps
+declare global {
+  interface Window {
+    google: typeof google;
+    showEvidence: (evidenceKey: string, attrName: string) => void;
+    enrichPlace: (placeId: string) => Promise<void>;
+  }
+}
 
 type Bounds = { north: number; south: number; east: number; west: number };
 
@@ -50,7 +59,9 @@ type EnrichedPlace = {
     notable_positives?: DerivedAttribute;
     common_complaints?: DerivedAttribute;
   };
+  nearby_search_flag?: boolean;
   places_details_flag: boolean;
+  tavily_flag?: boolean;
   enriched_flag: boolean;
   enriching?: boolean;
 };
@@ -88,12 +99,38 @@ export default function Home() {
 
   // Get user location and initialize map
   useEffect(() => {
+    // Check if Google Maps is already loaded
+    if (window.google && window.google.maps) {
+      console.log("Google Maps already loaded");
+      initializeMap();
+      return;
+    }
+
     const script = document.createElement("script");
     script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&v=weekly`;
     script.async = true;
-    document.head.appendChild(script);
+    
+    script.onerror = () => {
+      console.error("Failed to load Google Maps script");
+    };
 
     script.onload = () => {
+      console.log("Google Maps script loaded");
+      initializeMap();
+    };
+
+    document.head.appendChild(script);
+
+    function initializeMap() {
+      const mapElement = document.getElementById("map");
+      if (!mapElement) {
+        console.error("Map element not found - retrying in 100ms");
+        setTimeout(initializeMap, 100);
+        return;
+      }
+
+      console.log("Map element found, initializing map...");
+
       // Get user location
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -101,36 +138,61 @@ export default function Home() {
             const userLat = position.coords.latitude;
             const userLng = position.coords.longitude;
 
-            const map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
-              center: { lat: userLat, lng: userLng },
-              zoom: 17,
-            });
-
-            mapRef.current = map;
-
-            // Wait for map to be fully loaded before fetching places
-            const idleListener = map.addListener("idle", () => {
-              if (mapRef.current) {
-                console.log("Map idle, fetching places...");
-                fetchPlacesForBounds(mapRef.current);
-                google.maps.event.removeListener(idleListener);
+            try {
+              if (!window.google || !window.google.maps) {
+                console.error("Google Maps API not available");
+                return;
               }
-            });
 
-            // When the user stops moving the map, fetch new results
-            map.addListener("idle", () => {
-              if (mapRef.current) {
-                fetchPlacesForBounds(mapRef.current);
+              const map = new google.maps.Map(mapElement, {
+                center: { lat: userLat, lng: userLng },
+                zoom: 17,
+              });
+
+              mapRef.current = map;
+              console.log("Map initialized successfully at", userLat, userLng);
+
+              // Wait for map to be fully loaded before fetching places
+              const idleListener = map.addListener("idle", () => {
+                if (mapRef.current) {
+                  console.log("Map idle, fetching places...");
+                  fetchPlacesForBounds(mapRef.current);
+                  google.maps.event.removeListener(idleListener);
+                }
+              });
+
+              // When the user stops moving the map, fetch new results
+              map.addListener("idle", () => {
+                if (mapRef.current) {
+                  fetchPlacesForBounds(mapRef.current);
+                }
+              });
+            } catch (error) {
+              console.error("Error initializing map:", error);
+              // Try to show a helpful error message
+              if (mapElement) {
+                mapElement.innerHTML = `<div style="padding: 20px; text-align: center; color: red;">
+                  <p>Failed to initialize map</p>
+                  <p style="font-size: 12px;">${error instanceof Error ? error.message : String(error)}</p>
+                </div>`;
               }
-            });
+            }
           },
-          () => {
+          (error: GeolocationPositionError) => {
+            console.warn("Geolocation failed:", error);
             // Fallback to default location if geolocation fails
-            const map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
-              center: { lat: 40.7831, lng: -73.9712 },
-              zoom: 17,
-            });
-            mapRef.current = map;
+            try {
+              if (!window.google || !window.google.maps) {
+                console.error("Google Maps API not available (fallback)");
+                return;
+              }
+
+              const map = new google.maps.Map(mapElement, {
+                center: { lat: 40.7831, lng: -73.9712 },
+                zoom: 17,
+              });
+              mapRef.current = map;
+              console.log("Map initialized successfully (fallback) at 40.7831, -73.9712");
             // Wait for map to be fully loaded
             const idleListener = map.addListener("idle", () => {
               if (mapRef.current) {
@@ -146,36 +208,62 @@ export default function Home() {
                 fetchPlacesForBounds(mapRef.current);
               }
             });
+            } catch (error) {
+              console.error("Error initializing map (fallback):", error);
+              if (mapElement) {
+                mapElement.innerHTML = `<div style="padding: 20px; text-align: center; color: red;">
+                  <p>Failed to initialize map (fallback)</p>
+                  <p style="font-size: 12px;">${error instanceof Error ? error.message : String(error)}</p>
+                </div>`;
+              }
+            }
           }
         );
-      } else {
-        // Fallback if geolocation not available
-        const map = new google.maps.Map(document.getElementById("map") as HTMLElement, {
-          center: { lat: 40.7831, lng: -73.9712 },
-          zoom: 17,
-        });
-        mapRef.current = map;
-        
-        // Wait for map to be fully loaded
-        const idleListener = map.addListener("idle", () => {
-          if (mapRef.current) {
-            console.log("Map idle (no geolocation), fetching places...");
-            fetchPlacesForBounds(mapRef.current);
-            google.maps.event.removeListener(idleListener);
-          }
-        });
+              } else {
+                console.log("Geolocation not available, using default location");
+                // Fallback if geolocation not available
+                try {
+                  if (!window.google || !window.google.maps) {
+                    console.error("Google Maps API not available (no geolocation)");
+                    return;
+                  }
 
-        // When the user stops moving the map, fetch new results
-        map.addListener("idle", () => {
-          if (mapRef.current) {
-            fetchPlacesForBounds(mapRef.current);
-          }
-        });
-      }
-    };
+                  const map = new google.maps.Map(mapElement, {
+                    center: { lat: 40.7831, lng: -73.9712 },
+                    zoom: 17,
+                  });
+                  mapRef.current = map;
+                  console.log("Map initialized successfully (no geolocation) at 40.7831, -73.9712");
+                
+                // Wait for map to be fully loaded
+                const idleListener = map.addListener("idle", () => {
+                  if (mapRef.current) {
+                    console.log("Map idle (no geolocation), fetching places...");
+                    fetchPlacesForBounds(mapRef.current);
+                    google.maps.event.removeListener(idleListener);
+                  }
+                });
+
+                // When the user stops moving the map, fetch new results
+                map.addListener("idle", () => {
+                  if (mapRef.current) {
+                    fetchPlacesForBounds(mapRef.current);
+                  }
+                });
+              } catch (error) {
+                console.error("Error initializing map (no geolocation):", error);
+                if (mapElement) {
+                  mapElement.innerHTML = `<div style="padding: 20px; text-align: center; color: red;">
+                    <p>Failed to initialize map (no geolocation)</p>
+                    <p style="font-size: 12px;">${error instanceof Error ? error.message : String(error)}</p>
+                  </div>`;
+                }
+              }
+            }
+    }
 
     return () => {
-      script.remove();
+      // Cleanup handled by React
     };
   }, []);
 
@@ -219,6 +307,8 @@ export default function Home() {
       if (!res.ok) {
         const errorText = await res.text();
         console.error("API error:", res.status, errorText);
+        // Set empty places array on error
+        setPlaces([]);
         return;
       }
 
@@ -227,6 +317,7 @@ export default function Home() {
 
       if (data.error) {
         console.error("API returned error:", data.error);
+        setPlaces([]);  // Set empty array on error
         return;
       }
 
@@ -234,11 +325,13 @@ export default function Home() {
         console.log(`Received ${data.places.length} places`);
         setPlaces(data.places);
         
-        // Track enriching places
+        // Track enriching places (only places that are actively being enriched, not just unenriched)
         if (data.enrichment_status) {
           const enriching = new Set<string>();
           Object.entries(data.enrichment_status).forEach(([placeId, status]: [string, any]) => {
-            if (status.enriching || !status.enriched_flag) {
+            // Only mark as enriching if status.enriching is true (actively being enriched)
+            // Don't mark unenriched places as "enriching" - they should show the Enrich button
+            if (status.enriching === true) {
               enriching.add(placeId);
             }
           });
@@ -251,9 +344,13 @@ export default function Home() {
         }
       } else {
         console.warn("No places in response:", data);
+        // Set empty array to prevent undefined errors
+        setPlaces([]);
       }
     } catch (error) {
       console.error("Error fetching places:", error);
+      // Set empty array on error to prevent undefined errors
+      setPlaces([]);
     }
     }, 500); // 500ms debounce
   };
@@ -287,7 +384,9 @@ export default function Home() {
         const completed = new Set<string>();
 
         Object.entries(statusData).forEach(([placeId, status]: [string, any]) => {
-          if (status.enriching || !status.enriched_flag) {
+          // Only track places that are actively being enriched (status.enriching === true)
+          // Don't track unenriched places - they should show the Enrich button
+          if (status.enriching === true) {
             stillEnriching.add(placeId);
           } else if (status.enriched_flag) {
             completed.add(placeId);
@@ -311,8 +410,14 @@ export default function Home() {
                 const index = updated.findIndex((p) => p.id === newPlace.id);
                 if (index >= 0) {
                   // Only update if data actually changed (avoid unnecessary re-renders)
+                  // Fast comparison: check key fields instead of full JSON.stringify
                   const oldPlace = updated[index];
-                  const placeChanged = JSON.stringify(oldPlace) !== JSON.stringify(newPlace);
+                  const placeChanged = 
+                    oldPlace.enriched_flag !== newPlace.enriched_flag ||
+                    oldPlace.places_details_flag !== newPlace.places_details_flag ||
+                    (oldPlace as any).tavily_flag !== (newPlace as any).tavily_flag ||
+                    (oldPlace.derived && newPlace.derived && 
+                     JSON.stringify(oldPlace.derived) !== JSON.stringify(newPlace.derived));
                   if (placeChanged) {
                     updated[index] = newPlace;
                     hasChanges = true;
@@ -349,8 +454,10 @@ export default function Home() {
     };
   }, []);
 
-  // Filter places based on WFH filters
-  const filteredPlaces = places.filter((place) => {
+  // Filter places based on WFH filters (memoized for performance)
+  const filteredPlaces = useMemo(() => {
+    const startTime = performance.now();
+    const filtered = places.filter((place) => {
     // WiFi filter
     if (filters.has_wifi && filters.has_wifi.length > 0) {
       const wifiValue = place.derived?.has_wifi?.value;
@@ -394,8 +501,12 @@ export default function Home() {
       return false;
     }
 
-    return true;
-  });
+      return true;
+    });
+    const endTime = performance.now();
+    console.log(`Filtering took ${(endTime - startTime).toFixed(2)}ms for ${places.length} places, result: ${filtered.length}`);
+    return filtered;
+  }, [places, filters]);
 
   // Helper function to build InfoWindow HTML content
   const buildInfoWindowContent = (place: EnrichedPlace): string => {
@@ -462,6 +573,21 @@ export default function Home() {
          </div>`
       : "";
 
+    // Build Enrich button (only show if not enriched)
+    const enrichButtonHtml = !place.enriched_flag && !enrichingPlaces.has(place.id)
+      ? `
+        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee;">
+          <button 
+            id="enrich-btn-${place.id}"
+            onclick="window.enrichPlace('${place.id}')"
+            style="background: #4caf50; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500; width: 100%;"
+          >
+            Enrich
+          </button>
+        </div>
+      `
+      : "";
+
     // Build photos carousel HTML
     let photosHtml = "";
     if (place.photos && place.photos.length > 0) {
@@ -501,9 +627,80 @@ export default function Home() {
       </div>
     `;
 
+    // Build enriching icon (shows when place is being enriched)
+    let enrichingIcon = "";
+    const isEnriching = enrichingPlaces.has(place.id) || place.enriching === true;
+    if (isEnriching) {
+      enrichingIcon = `
+        <span 
+          style="
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ffa726;
+            color: white;
+            font-size: 10px;
+            line-height: 16px;
+            text-align: center;
+            margin-left: 6px;
+            cursor: help;
+            vertical-align: middle;
+            position: relative;
+            animation: pulse 2s infinite;
+          "
+          title="Enrichment in progress..."
+        >
+          ⟳
+        </span>
+        <style>
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+          }
+        </style>
+      `;
+    }
+
+    // Build Tavily status icon with tooltip (only show if enriched)
+    let tavilyStatusIcon = "";
+    if (place.enriched_flag) {
+      const hasTavily = place.tavily_flag === true;
+      const tooltipText = hasTavily 
+        ? "Enriched with Tavily web search" 
+        : "Enriched without Tavily (Google Places only)";
+      const iconColor = hasTavily ? "#4CAF50" : "#FF9800";
+      const iconSymbol = hasTavily ? "✓" : "ℹ";
+      
+      tavilyStatusIcon = `
+        <span 
+          style="
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: ${iconColor};
+            color: white;
+            font-size: 10px;
+            line-height: 16px;
+            text-align: center;
+            margin-left: 6px;
+            cursor: help;
+            vertical-align: middle;
+            position: relative;
+          "
+          title="${tooltipText}"
+        >
+          ${iconSymbol}
+        </span>
+      `;
+    }
+
     return `
       <div style="max-width: 300px; padding: 8px;">
-        <div style="font-weight: 600; font-size: 14px; margin-bottom: 6px;">${place.name}</div>
+        <div style="font-weight: 600; font-size: 14px; margin-bottom: 6px; display: flex; align-items: center;">
+          ${place.name}${enrichingIcon}${tavilyStatusIcon}
+        </div>
         ${place.address ? `<div style="font-size: 12px; margin-bottom: 6px; color: #666;">${place.address}</div>` : ""}
         ${place.rating ? `<div style="font-size: 12px; margin-bottom: 6px;">⭐ ${place.rating} (${place.userRatingCount || 0} reviews)</div>` : ""}
         ${photosHtml}
@@ -515,6 +712,7 @@ export default function Home() {
           </div>
         ` : ""}
         ${enrichmentStatusHtml}
+        ${enrichButtonHtml}
         ${googleMapsButton}
       </div>
     `;
@@ -528,14 +726,16 @@ export default function Home() {
       return;
     }
 
+    const renderStartTime = performance.now();
     console.log(`Rendering ${filteredPlaces.length} filtered places`);
 
     // Check if InfoWindow is open for a place that still exists
     const openPlaceId = openInfoWindowPlaceIdRef.current;
     const openPlaceStillExists = openPlaceId && filteredPlaces.some(p => p.id === openPlaceId);
     
-    // Store whether InfoWindow was open before clearing markers
-    const wasInfoWindowOpen = infoWindowRef.current && openInfoWindowPlaceIdRef.current !== null;
+    // Track if InfoWindow was visible before clearing markers
+    // We'll use a ref to track this since we can't query InfoWindow visibility directly
+    const wasInfoWindowVisible = openPlaceId !== null;
     
     // Clear old markers
     markersRef.current.forEach((m) => m.setMap(null));
@@ -564,11 +764,23 @@ export default function Home() {
         console.warn("Place missing coordinates:", place);
         return null;
       }
-      // Create marker with default red Google Maps icon
+      // Check if place is being enriched
+      const isEnriching = enrichingPlaces.has(place.id) || place.enriching === true;
+      
+      // Create marker with icon based on enrichment status
       const marker = new google.maps.Marker({
         map,
         position: { lat: place.lat, lng: place.lng },
-        title: place.name,
+        title: isEnriching ? `${place.name} (Enriching...)` : place.name,
+        // Use a different icon color if enriching
+        icon: isEnriching ? {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 8,
+          fillColor: "#ffa726",
+          fillOpacity: 1,
+          strokeColor: "#ffffff",
+          strokeWeight: 2,
+        } : undefined, // Default red marker if not enriching
       });
 
       marker.addListener("click", () => {
@@ -592,6 +804,65 @@ export default function Home() {
           }
         };
 
+        // Store enrichPlace function globally for InfoWindow buttons
+        (window as any).enrichPlace = async (placeId: string) => {
+          const FASTAPI_BASE_URL = process.env.NEXT_PUBLIC_FASTAPI_BASE_URL || "http://localhost:8000";
+          const button = document.getElementById(`enrich-btn-${placeId}`);
+          
+          if (button) {
+            button.textContent = "Enriching...";
+            (button as HTMLButtonElement).disabled = true;
+            (button as HTMLButtonElement).style.background = "#ccc";
+          }
+          
+          // Add to enriching places set
+          setEnrichingPlaces((prev) => new Set(prev).add(placeId));
+          
+          try {
+            const response = await fetch(`${FASTAPI_BASE_URL}/api/places/enrich/${placeId}`, {
+              method: "POST",
+            });
+            
+            if (!response.ok) {
+              throw new Error(`Enrichment failed: ${response.statusText}`);
+            }
+            
+            const enrichedPlace = await response.json();
+            
+            // Update the place in the places array and refresh InfoWindow
+            setPlaces((prevPlaces) => {
+              const updated = prevPlaces.map((p) => 
+                p.id === placeId ? { ...p, ...enrichedPlace } : p
+              );
+              const updatedPlace = updated.find((p) => p.id === placeId);
+              if (updatedPlace && infoWindowRef.current && openInfoWindowPlaceIdRef.current === placeId) {
+                const updatedHtml = buildInfoWindowContent(updatedPlace);
+                infoWindowRef.current.setContent(updatedHtml);
+              }
+              return updated;
+            });
+            
+            // Remove from enriching places
+            setEnrichingPlaces((prev) => {
+              const next = new Set(prev);
+              next.delete(placeId);
+              return next;
+            });
+          } catch (error) {
+            console.error("Error enriching place:", error);
+            if (button) {
+              button.textContent = "Enrich (Failed - Click to Retry)";
+              (button as HTMLButtonElement).disabled = false;
+              (button as HTMLButtonElement).style.background = "#4caf50";
+            }
+            setEnrichingPlaces((prev) => {
+              const next = new Set(prev);
+              next.delete(placeId);
+              return next;
+            });
+          }
+        };
+
         infoWindow.setContent(html);
         infoWindow.open({ map, anchor: marker });
       });
@@ -601,7 +872,9 @@ export default function Home() {
 
     // If InfoWindow was open before re-rendering, re-attach it to the new marker
     // This keeps it open when the user scrolls (markers are re-rendered)
-    if (wasInfoWindowOpen && openPlaceStillExists && openPlaceId && infoWindowRef.current) {
+    // Note: If user manually closed it, openInfoWindowPlaceIdRef.current will be null
+    // (set by the closeclick listener), so we won't re-open it
+    if (wasInfoWindowVisible && openPlaceStillExists && openPlaceId && infoWindowRef.current) {
       const openPlace = filteredPlaces.find(p => p.id === openPlaceId);
       const openPlaceIndex = filteredPlaces.findIndex(p => p.id === openPlaceId);
       if (openPlace && openPlaceIndex >= 0 && openPlaceIndex < markersRef.current.length) {
@@ -614,14 +887,91 @@ export default function Home() {
           infoWindowRef.current.open({ map, anchor: markerForOpenPlace });
         }
       }
+    } else if (openPlaceId && !openPlaceStillExists) {
+      // Place no longer exists in filtered results, clear the ref
+      openInfoWindowPlaceIdRef.current = null;
     }
+    const renderEndTime = performance.now();
+    console.log(`Marker rendering took ${(renderEndTime - renderStartTime).toFixed(2)}ms`);
   }, [filteredPlaces, enrichingPlaces]);
 
   return (
-    <main style={{ height: "100vh", width: "100%", position: "relative" }}>
+    <main style={{ height: "100vh", width: "100%", position: "relative", overflow: "hidden" }}>
       <FilterSidebar filters={filters} onFiltersChange={setFilters} />
 
-      <div id="map" style={{ height: "100%", width: "100%" }} />
+      {/* Enrichment Status Legend */}
+      <div
+        style={{
+          position: "absolute",
+          top: "12px",
+          right: "12px",
+          zIndex: 10,
+          background: "white",
+          padding: "12px 16px",
+          borderRadius: "8px",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+          fontSize: "11px",
+          maxWidth: "200px",
+        }}
+      >
+        <div style={{ fontWeight: 600, marginBottom: "8px", fontSize: "12px", color: "#333" }}>
+          Enrichment Status
+        </div>
+        <div style={{ display: "flex", alignItems: "center", marginBottom: "6px" }}>
+          <span
+            style={{
+              display: "inline-block",
+              width: "16px",
+              height: "16px",
+              borderRadius: "50%",
+              background: "#4CAF50",
+              color: "white",
+              fontSize: "10px",
+              lineHeight: "16px",
+              textAlign: "center",
+              marginRight: "8px",
+              flexShrink: 0,
+            }}
+            title="Enriched with Tavily web search"
+          >
+            ✓
+          </span>
+          <span style={{ color: "#666" }}>With Tavily</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <span
+            style={{
+              display: "inline-block",
+              width: "16px",
+              height: "16px",
+              borderRadius: "50%",
+              background: "#FF9800",
+              color: "white",
+              fontSize: "10px",
+              lineHeight: "16px",
+              textAlign: "center",
+              marginRight: "8px",
+              flexShrink: 0,
+            }}
+            title="Enriched without Tavily (Google Places only)"
+          >
+            ℹ
+          </span>
+          <span style={{ color: "#666" }}>Google Only</span>
+        </div>
+      </div>
+
+      <div 
+        id="map" 
+        style={{ 
+          height: "100%", 
+          width: "100%", 
+          position: "absolute",
+          top: 0,
+          left: 0,
+          zIndex: 0
+        }} 
+      />
 
       <EvidenceModal
         isOpen={evidenceModal.isOpen}
