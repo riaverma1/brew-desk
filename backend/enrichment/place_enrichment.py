@@ -89,10 +89,26 @@ def enrich_place_details_sync(cfg: Config, place_id: str, existing_place: Dict, 
             
             logger.info(f"[enrich_place_details_sync] Fetching place details for {place_id}")
             
+            # Check if we already have reviews to avoid unnecessary API calls
+            # This prevents fetching reviews multiple times, which can lead to excessive API usage
+            # (e.g., 5000+ calls when only 164 places exist)
+            existing_reviews = existing_place.get("sources", {}).get("google_reviews", {}).get("reviews", [])
+            has_existing_reviews = bool(existing_reviews and len(existing_reviews) > 0)
+            
+            if has_existing_reviews:
+                logger.info(f"[enrich_place_details_sync] Place {place_id} already has {len(existing_reviews)} reviews, excluding reviews from API call to save quota")
+            
             # Fetch place details with binary attributes
+            # Exclude reviews if we already have them to avoid unnecessary API calls
             try:
-                details = place_details(cfg, place_id)
+                details = place_details(cfg, place_id, include_reviews=not has_existing_reviews)
                 logger.debug(f"[enrich_place_details_sync] Successfully fetched details for {place_id}")
+                
+                # If we excluded reviews but still got them (shouldn't happen), or if we need to preserve existing reviews
+                if has_existing_reviews and "reviews" not in details:
+                    # Preserve existing reviews in the response
+                    details["reviews"] = existing_reviews
+                    logger.debug(f"[enrich_place_details_sync] Preserved {len(existing_reviews)} existing reviews")
             except Exception as e:
                 logger.error(f"[enrich_place_details_sync] Error fetching details for {place_id}: {e}")
                 raise

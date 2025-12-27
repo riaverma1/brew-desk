@@ -230,7 +230,7 @@ def nearby_search(cfg: Config, place_type: str, debug: bool = False) -> List[Dic
     return results
 
 
-def place_details(cfg: Config, place_id: str, debug: bool = False) -> Dict:
+def place_details(cfg: Config, place_id: str, debug: bool = False, include_reviews: bool = True) -> Dict:
     """
     Fetch place details using the new Places API v1 endpoint.
     
@@ -238,6 +238,7 @@ def place_details(cfg: Config, place_id: str, debug: bool = False) -> Dict:
         cfg: Config object
         place_id: Place ID to fetch details for
         debug: If True, print detailed debugging information
+        include_reviews: If False, exclude reviews from field mask to avoid unnecessary API calls
         
     Returns:
         Place dictionary in new API format (id, displayName, formattedAddress, location, etc.)
@@ -245,16 +246,26 @@ def place_details(cfg: Config, place_id: str, debug: bool = False) -> Dict:
     if debug:
         print(f"\n{'='*60}")
         print(f"DEBUG: [place_details] Fetching details for place_id: {place_id}")
+        print(f"DEBUG: [place_details] include_reviews: {include_reviews}")
         print(f"{'='*60}")
     
     # Construct URL for place details
     url = f"{PLACES_DETAILS_BASE_URL}/{place_id}"
     
+    # Build field mask - conditionally exclude reviews to save API calls
+    base_fields = "displayName,formattedAddress,location,types,rating,userRatingCount,priceLevel,businessStatus,regularOpeningHours,websiteUri,restroom,servesCoffee,goodForGroups,parkingOptions,accessibilityOptions,outdoorSeating,photos"
+    if include_reviews:
+        field_mask = f"{base_fields},reviews"
+    else:
+        field_mask = base_fields
+        if debug:
+            print(f"DEBUG: [place_details] Excluding reviews from field mask to avoid unnecessary API call")
+    
     # Prepare request headers
     headers = {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": cfg.api_key,
-        "X-Goog-FieldMask": "displayName,formattedAddress,location,types,rating,userRatingCount,priceLevel,businessStatus,regularOpeningHours,websiteUri,reviews,restroom,servesCoffee,goodForGroups,parkingOptions,accessibilityOptions,outdoorSeating,photos"
+        "X-Goog-FieldMask": field_mask
     }
     
     if debug:

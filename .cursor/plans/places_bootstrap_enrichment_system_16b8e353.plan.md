@@ -359,8 +359,3 @@ See `sandbox.ipynb` section for a complete test script demonstrating:
 
 - The existing `web_searches.enrich_place_with_agent()` only looks at Tavily results, not Google reviews
 - We need a separate LLM call that considers BOTH sources together
-- This ensures confidence scores reflect evidence from all sources, not just one
-
-**Implementation approach**:
-
-- Option 1: Create a new LLM function that takes reviews + Tavily results as input
