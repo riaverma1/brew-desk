@@ -82,6 +82,7 @@ export default function Home() {
   const [places, setPlaces] = useState<EnrichedPlace[]>([]);
   const [filters, setFilters] = useState<WFHFilters>({});
   const [enrichingPlaces, setEnrichingPlaces] = useState<Set<string>>(new Set());
+  const [isLoadingPlaces, setIsLoadingPlaces] = useState(false);
   const [evidenceModal, setEvidenceModal] = useState<{
     isOpen: boolean;
     attributeName: string;
@@ -95,6 +96,8 @@ export default function Home() {
   });
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const fetchPlacesTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const fetchPlacesAbortControllerRef = useRef<AbortController | null>(null);
+  const infoWindowOpenTimeRef = useRef<number | null>(null);
   const evidenceDataRef = useRef<Map<string, { evidence: string[]; sources: string[] }>>(new Map());
 
   // Get user location and initialize map
@@ -162,8 +165,15 @@ export default function Home() {
               });
 
               // When the user stops moving the map, fetch new results
+              // But ignore idle events that occur shortly after InfoWindow opens (to prevent auto-pan from triggering searches)
               map.addListener("idle", () => {
                 if (mapRef.current) {
+                  // Ignore idle events within 500ms of opening an InfoWindow (prevents auto-pan from triggering searches)
+                  const now = Date.now();
+                  if (infoWindowOpenTimeRef.current && (now - infoWindowOpenTimeRef.current) < 500) {
+                    console.log("Ignoring idle event (InfoWindow was just opened)");
+                    return;
+                  }
                   fetchPlacesForBounds(mapRef.current);
                 }
               });
@@ -203,8 +213,15 @@ export default function Home() {
             });
 
             // When the user stops moving the map, fetch new results
+            // But ignore idle events that occur shortly after InfoWindow opens (to prevent auto-pan from triggering searches)
             map.addListener("idle", () => {
               if (mapRef.current) {
+                // Ignore idle events within 500ms of opening an InfoWindow (prevents auto-pan from triggering searches)
+                const now = Date.now();
+                if (infoWindowOpenTimeRef.current && (now - infoWindowOpenTimeRef.current) < 500) {
+                  console.log("Ignoring idle event (InfoWindow was just opened)");
+                  return;
+                }
                 fetchPlacesForBounds(mapRef.current);
               }
             });
@@ -245,8 +262,15 @@ export default function Home() {
                 });
 
                 // When the user stops moving the map, fetch new results
+                // But ignore idle events that occur shortly after InfoWindow opens (to prevent auto-pan from triggering searches)
                 map.addListener("idle", () => {
                   if (mapRef.current) {
+                    // Ignore idle events within 500ms of opening an InfoWindow (prevents auto-pan from triggering searches)
+                    const now = Date.now();
+                    if (infoWindowOpenTimeRef.current && (now - infoWindowOpenTimeRef.current) < 500) {
+                      console.log("Ignoring idle event (InfoWindow was just opened)");
+                      return;
+                    }
                     fetchPlacesForBounds(mapRef.current);
                   }
                 });
@@ -267,14 +291,20 @@ export default function Home() {
     };
   }, []);
 
-  // Fetch places for current map bounds (with debouncing)
+  // Fetch places for current map bounds (with debouncing and request cancellation)
   const fetchPlacesForBounds = async (map: google.maps.Map) => {
-    // Clear any pending fetch
+    // Cancel any pending fetch request
+    if (fetchPlacesAbortControllerRef.current) {
+      fetchPlacesAbortControllerRef.current.abort();
+    }
+    
+    // Clear any pending timeout
     if (fetchPlacesTimeoutRef.current) {
       clearTimeout(fetchPlacesTimeoutRef.current);
     }
 
-    // Debounce: wait 500ms after map stops moving before fetching
+    // Debounce: wait 800ms after map stops moving before fetching
+    // This gives users time to pause before triggering a new search
     fetchPlacesTimeoutRef.current = setTimeout(async () => {
       // Wait for map bounds to be ready
       const b = map.getBounds();
@@ -301,58 +331,100 @@ export default function Home() {
 
       console.log("Fetching places for bounds:", bounds);
 
+      // Set loading state
+      setIsLoadingPlaces(true);
+
+      // Create a new AbortController for this request
+      const abortController = new AbortController();
+      fetchPlacesAbortControllerRef.current = abortController;
+
       try {
-      const res = await fetch(`/api/places?bounds=${encodeURIComponent(JSON.stringify(bounds))}`);
-      
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error("API error:", res.status, errorText);
-        // Set empty places array on error
-        setPlaces([]);
-        return;
-      }
-
-      const data = await res.json();
-      console.log("Received data:", data);
-
-      if (data.error) {
-        console.error("API returned error:", data.error);
-        setPlaces([]);  // Set empty array on error
-        return;
-      }
-
-      if (data.places && Array.isArray(data.places)) {
-        console.log(`Received ${data.places.length} places`);
-        setPlaces(data.places);
+        const res = await fetch(`/api/places?bounds=${encodeURIComponent(JSON.stringify(bounds))}`, {
+          signal: abortController.signal,
+        });
         
-        // Track enriching places (only places that are actively being enriched, not just unenriched)
-        if (data.enrichment_status) {
-          const enriching = new Set<string>();
-          Object.entries(data.enrichment_status).forEach(([placeId, status]: [string, any]) => {
-            // Only mark as enriching if status.enriching is true (actively being enriched)
-            // Don't mark unenriched places as "enriching" - they should show the Enrich button
-            if (status.enriching === true) {
-              enriching.add(placeId);
-            }
-          });
-          setEnrichingPlaces(enriching);
-          
-          // Start polling if there are enriching places
-          if (enriching.size > 0) {
-            startPolling(Array.from(enriching));
-          }
+        // Check if the request was aborted
+        if (abortController.signal.aborted) {
+          console.log("Request was aborted, ignoring response");
+          // Don't clear loading state here - let finally block handle it
+          return;
         }
-      } else {
-        console.warn("No places in response:", data);
-        // Set empty array to prevent undefined errors
-        setPlaces([]);
+        
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error("API error:", res.status, errorText);
+          // Set empty places array on error
+          setPlaces([]);
+          // Don't clear loading state here - let finally block handle it
+          return;
+        }
+
+        const data = await res.json();
+        
+        // Check again if aborted after JSON parsing (may have taken time)
+        if (abortController.signal.aborted) {
+          console.log("Request was aborted after parsing, ignoring response");
+          // Don't clear loading state here - let finally block handle it
+          return;
+        }
+        
+        console.log("Received data:", data);
+
+        if (data.error) {
+          console.error("API returned error:", data.error);
+          setPlaces([]);  // Set empty array on error
+          // Don't clear loading state here - let finally block handle it
+          return;
+        }
+
+        if (data.places && Array.isArray(data.places)) {
+          console.log(`Received ${data.places.length} places`);
+          setPlaces(data.places);
+          
+          // Track enriching places (only places that are actively being enriched, not just unenriched)
+          if (data.enrichment_status) {
+            const enriching = new Set<string>();
+            Object.entries(data.enrichment_status).forEach(([placeId, status]: [string, any]) => {
+              // Only mark as enriching if status.enriching is true (actively being enriched)
+              // Don't mark unenriched places as "enriching" - they should show the Enrich button
+              if (status.enriching === true) {
+                enriching.add(placeId);
+              }
+            });
+            setEnrichingPlaces(enriching);
+            
+            // Start polling if there are enriching places
+            if (enriching.size > 0) {
+              startPolling(Array.from(enriching));
+            }
+          }
+        } else {
+          console.warn("No places in response:", data);
+          // Set empty array to prevent undefined errors
+          setPlaces([]);
+        }
+      } catch (error) {
+        // Ignore abort errors (expected when cancelling requests)
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.log("Request was aborted");
+          // Don't clear loading state here - let finally block handle it
+          return;
+        }
+        console.error("Error fetching places:", error);
+        // Only set empty array if not aborted
+        if (!abortController.signal.aborted) {
+          setPlaces([]);
+        }
+        // Don't clear loading state here - let finally block handle it
+      } finally {
+        // Clear the abort controller ref if this was the current request
+        // Only clear loading state if this is still the active request (wasn't replaced by a newer one)
+        if (fetchPlacesAbortControllerRef.current === abortController) {
+          fetchPlacesAbortControllerRef.current = null;
+          setIsLoadingPlaces(false);
+        }
       }
-    } catch (error) {
-      console.error("Error fetching places:", error);
-      // Set empty array on error to prevent undefined errors
-      setPlaces([]);
-    }
-    }, 500); // 500ms debounce
+    }, 800); // 800ms debounce - increased from 500ms to give more pause time
   };
 
   // Poll for enrichment status
@@ -442,7 +514,7 @@ export default function Home() {
     }, 5000); // Poll every 5 seconds
   };
 
-  // Cleanup polling and debounce timer on unmount
+  // Cleanup polling, debounce timer, and abort in-flight requests on unmount
   useEffect(() => {
     return () => {
       if (pollingIntervalRef.current) {
@@ -450,6 +522,9 @@ export default function Home() {
       }
       if (fetchPlacesTimeoutRef.current) {
         clearTimeout(fetchPlacesTimeoutRef.current);
+      }
+      if (fetchPlacesAbortControllerRef.current) {
+        fetchPlacesAbortControllerRef.current.abort();
       }
     };
   }, []);
@@ -864,6 +939,8 @@ export default function Home() {
         };
 
         infoWindow.setContent(html);
+        // Track when InfoWindow opens to prevent auto-pan from triggering new searches
+        infoWindowOpenTimeRef.current = Date.now();
         infoWindow.open({ map, anchor: marker });
       });
 
@@ -884,6 +961,8 @@ export default function Home() {
           // Rebuild content with latest place data
           const html = buildInfoWindowContent(openPlace);
           infoWindowRef.current.setContent(html);
+          // Track when InfoWindow re-opens to prevent auto-pan from triggering new searches
+          infoWindowOpenTimeRef.current = Date.now();
           infoWindowRef.current.open({ map, anchor: markerForOpenPlace });
         }
       }
@@ -898,6 +977,46 @@ export default function Home() {
   return (
     <main style={{ height: "100vh", width: "100%", position: "relative", overflow: "hidden" }}>
       <FilterSidebar filters={filters} onFiltersChange={setFilters} />
+
+      {/* Loading Indicator */}
+      {isLoadingPlaces && (
+        <div
+          style={{
+            position: "absolute",
+            top: "12px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 10,
+            background: "white",
+            padding: "8px 16px",
+            borderRadius: "8px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+            fontSize: "12px",
+            fontWeight: 500,
+            color: "#1976d2",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <div
+            style={{
+              width: "16px",
+              height: "16px",
+              border: "2px solid #1976d2",
+              borderTopColor: "transparent",
+              borderRadius: "50%",
+              animation: "spin 0.8s linear infinite",
+            }}
+          />
+          Loading places...
+          <style>{`
+            @keyframes spin {
+              to { transform: rotate(360deg); }
+            }
+          `}</style>
+        </div>
+      )}
 
       {/* Enrichment Status Legend */}
       <div
