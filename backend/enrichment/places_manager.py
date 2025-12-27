@@ -8,7 +8,7 @@ import math
 from typing import Dict, List, Optional
 
 from backend.enrichment.types import Config
-from backend.enrichment.json_storage import load_places_json, upsert_place, upsert_place_ids
+from backend.enrichment.db_storage import load_all_places, upsert_place, upsert_place_ids
 from backend.enrichment.place_enrichment import enrich_place_details_sync, enrich_place_web_async
 from backend.enrichment.google_places import process_photos
 
@@ -30,8 +30,6 @@ def _normalize_display_name(display_name) -> str:
     return ""
 
 logger = logging.getLogger(__name__)
-
-DEFAULT_JSON_PATH = "backend/data/places_bootstrap.json"
 
 
 def extract_basic_info_from_nearby_search(nearby_result: Dict, api_key: str) -> Dict:
@@ -84,10 +82,9 @@ def extract_basic_info_from_nearby_search(nearby_result: Dict, api_key: str) -> 
 def save_basic_info_to_json(
     nearby_results: List[Dict],
     api_key: str,
-    json_path: str = DEFAULT_JSON_PATH,
 ) -> List[str]:
     """
-    Save basic info from nearby_search results to JSON immediately.
+    Save basic info from nearby_search results to database immediately.
     
     For each nearby_result:
     - Extract basic info using extract_basic_info_from_nearby_search
@@ -95,16 +92,17 @@ def save_basic_info_to_json(
     - Update place object with basic info
     - Set nearby_search_flag = True
     - Set places_details_flag = False (not yet enriched)
-    - Save to JSON
+    - Save to database
     
     Args:
         nearby_results: List of nearby_search result dictionaries
         api_key: Google Places API key for processing photos
-        json_path: Path to JSON file
         
     Returns:
         List of place_ids that were saved
     """
+    from backend.enrichment.db_storage import load_places
+    
     logger.info(f"[save_basic_info_to_json] Saving basic info for {len(nearby_results)} places")
     
     # Extract place_ids first
@@ -121,10 +119,10 @@ def save_basic_info_to_json(
         return []
     
     # Upsert place_ids (creates minimal entries for new ones)
-    upsert_place_ids(json_path, place_ids)
+    upsert_place_ids(place_ids)
     
     # Load places after upsert
-    places = load_places_json(json_path)
+    places = load_places(place_ids)
     
     # Update each place with basic info
     saved_place_ids = []
@@ -159,9 +157,9 @@ def save_basic_info_to_json(
         if not existing_place.get("places_details_flag", False):
             existing_place["places_details_flag"] = False
         
-        # Save to JSON (handle errors gracefully)
+        # Save to database (handle errors gracefully)
         try:
-            upsert_place(json_path, existing_place)
+            upsert_place(existing_place)
             saved_place_ids.append(place_id)
         except Exception as e:
             logger.error(f"[save_basic_info_to_json] Failed to save {place_id}: {e}", exc_info=True)
@@ -251,7 +249,6 @@ def select_top_n_places(
 def process_nearby_search_sync(
     cfg: Config,
     results: List[Dict],
-    json_path: str = DEFAULT_JSON_PATH,
 ) -> List[str]:
     """
     Process nearby_search results: upsert place_ids and optionally fetch place_details.
@@ -262,15 +259,13 @@ def process_nearby_search_sync(
     Args:
         cfg: Config object
         results: List of nearby_search result dictionaries
-        json_path: Path to JSON file
         
     Returns:
         List of place_ids that were processed
     """
+    from backend.enrichment.db_storage import load_places
+    
     logger.info(f"[process_nearby_search_sync] Starting processing of {len(results)} nearby_search results")
-    print(f"DEBUG: [process_nearby_search_sync] Starting processing of {len(results)} nearby_search results")
-    print(f"DEBUG: [process_nearby_search_sync] JSON path: {json_path}")
-    print(f"DEBUG: [process_nearby_search_sync] Absolute JSON path: {os.path.abspath(json_path)}")
     
     # Extract place_ids from results (new API uses "id" field)
     place_ids = []
@@ -281,43 +276,28 @@ def process_nearby_search_sync(
         if place_id:
             place_ids.append(place_id)
             logger.debug(f"[process_nearby_search_sync] Result {i+1}: {display_name} -> {place_id}")
-            if i < 3:  # Print first 3
-                print(f"DEBUG: [process_nearby_search_sync] Result {i+1}: {display_name} -> {place_id}")
         else:
             logger.warning(f"[process_nearby_search_sync] Result {i+1} has no id: {result.keys()}")
-            print(f"DEBUG: [process_nearby_search_sync] WARNING: Result {i+1} has no id")
     
     if not place_ids:
         logger.warning("[process_nearby_search_sync] No place_ids found in nearby_search results")
-        print(f"DEBUG: [process_nearby_search_sync] ERROR: No place_ids found in results!")
         return []
     
     logger.info(f"[process_nearby_search_sync] Extracted {len(place_ids)} place_ids")
-    print(f"DEBUG: [process_nearby_search_sync] Extracted {len(place_ids)} place_ids: {place_ids[:5]}")
-    
-    # Check JSON file state before upsert
-    places_before = load_places_json(json_path)
-    logger.debug(f"[process_nearby_search_sync] Places in JSON before upsert: {len(places_before)}")
-    print(f"DEBUG: [process_nearby_search_sync] Places in JSON BEFORE upsert: {len(places_before)}")
     
     # Upsert place_ids (creates minimal entries for new ones)
     logger.info(f"[process_nearby_search_sync] Calling upsert_place_ids...")
-    print(f"DEBUG: [process_nearby_search_sync] Calling upsert_place_ids...")
-    new_place_ids = upsert_place_ids(json_path, place_ids)
+    new_place_ids = upsert_place_ids(place_ids)
     
     if new_place_ids:
         logger.info(f"[process_nearby_search_sync] Created {len(new_place_ids)} new place entries")
-        print(f"DEBUG: [process_nearby_search_sync] Created {len(new_place_ids)} new place entries: {new_place_ids}")
     else:
         logger.info(f"[process_nearby_search_sync] All {len(place_ids)} places already existed")
-        print(f"DEBUG: [process_nearby_search_sync] All {len(place_ids)} places already existed")
     
-    # Load all places after upsert
+    # Load places after upsert
     logger.debug(f"[process_nearby_search_sync] Loading places after upsert...")
-    print(f"DEBUG: [process_nearby_search_sync] Loading places after upsert...")
-    places = load_places_json(json_path)
-    logger.info(f"[process_nearby_search_sync] Places in JSON after upsert: {len(places)}")
-    print(f"DEBUG: [process_nearby_search_sync] Places in JSON AFTER upsert: {len(places)}")
+    places = load_places(place_ids)
+    logger.info(f"[process_nearby_search_sync] Places in database after upsert: {len(places)}")
     
     # Create a mapping of place_id to nearby_search result for extracting binary attributes (new API uses "id")
     place_id_to_result = {result.get("id"): result for result in results if result.get("id")}
@@ -350,7 +330,7 @@ def process_nearby_search_sync(
                 # Pass nearby_search result to extract binary attributes from it
                 updated_place = enrich_place_details_sync(cfg, place_id, existing_place, nearby_result)
                 logger.debug(f"[process_nearby_search_sync] Successfully enriched {place_id}, upserting...")
-                upsert_place(json_path, updated_place)
+                upsert_place(updated_place)
                 logger.info(f"[process_nearby_search_sync] Enriched place details for {place_id}")
             except Exception as e:
                 logger.error(f"[process_nearby_search_sync] Failed to enrich place details for {place_id}: {e}", exc_info=True)
@@ -360,12 +340,6 @@ def process_nearby_search_sync(
         processed.append(place_id)
     
     logger.info(f"[process_nearby_search_sync] Completed processing {len(processed)} places")
-    print(f"DEBUG: [process_nearby_search_sync] Completed processing {len(processed)} places")
-    
-    # Final verification
-    final_places = load_places_json(json_path)
-    logger.info(f"[process_nearby_search_sync] Final places count in JSON: {len(final_places)}")
-    print(f"DEBUG: [process_nearby_search_sync] Final places count in JSON: {len(final_places)}")
     
     return processed
 
@@ -373,7 +347,6 @@ def process_nearby_search_sync(
 def process_enrichment_async(
     cfg: Config,
     place_ids: Optional[List[str]] = None,
-    json_path: str = DEFAULT_JSON_PATH,
 ) -> int:
     """
     Process async enrichment (Tavily + LLM) for places where enriched_flag is false.
@@ -383,22 +356,23 @@ def process_enrichment_async(
     Args:
         cfg: Config object
         place_ids: Optional list of place_ids to enrich. If None, processes all places needing enrichment.
-        json_path: Path to JSON file
         
     Returns:
         Count of places enriched
     """
-    places = load_places_json(json_path)
+    from backend.enrichment.db_storage import load_places
     
     # Determine which places to process
     if place_ids is None:
         # Process all places needing enrichment
+        places = load_all_places()
         place_ids_to_process = [
             pid for pid, place in places.items()
             if not place.get("enriched_flag", False)
         ]
     else:
         # Process only specified place_ids that need enrichment
+        places = load_places(place_ids)
         place_ids_to_process = [
             pid for pid in place_ids
             if pid in places and not places[pid].get("enriched_flag", False)
@@ -422,15 +396,14 @@ def process_enrichment_async(
             logger.warning(f"Place {place_id} already processed in this batch, skipping duplicate")
             continue
         
-        # Reload places from file before each enrichment to avoid race conditions
-        places = load_places_json(json_path)
+        # Reload place from database before each enrichment to avoid race conditions
+        from backend.enrichment.db_storage import load_place
+        existing_place = load_place(place_id)
         
-        if place_id not in places:
-            logger.warning(f"Place {place_id} not found in JSON file, skipping")
+        if not existing_place:
+            logger.warning(f"Place {place_id} not found in database, skipping")
             processed_place_ids.add(place_id)
             continue
-        
-        existing_place = places[place_id]
         
         # Double-check enriched_flag after reload (might have been enriched by another process)
         if existing_place.get("enriched_flag", False):
@@ -460,16 +433,16 @@ def process_enrichment_async(
             if not updated_place.get("enriched_flag", False):
                 logger.warning(f"Place {place_id} enriched but enriched_flag not set to True")
             
-            upsert_place(json_path, updated_place)
+            upsert_place(updated_place)
             
-            # Verify the save worked by checking the file
-            places_after = load_places_json(json_path)
-            if place_id in places_after and places_after[place_id].get("enriched_flag", False):
+            # Verify the save worked by checking the database
+            place_after = load_place(place_id)
+            if place_after and place_after.get("enriched_flag", False):
                 enriched_count += 1
                 processed_place_ids.add(place_id)
-                logger.info(f"Completed async enrichment for {place_id} ({enriched_count}/{len(place_ids_to_process)}) - verified in file")
+                logger.info(f"Completed async enrichment for {place_id} ({enriched_count}/{len(place_ids_to_process)}) - verified in database")
             else:
-                logger.error(f"Place {place_id} enriched but enriched_flag not found in file after upsert!")
+                logger.error(f"Place {place_id} enriched but enriched_flag not found in database after upsert!")
                 processed_place_ids.add(place_id)
         except AlreadyProcessingError:
             logger.warning(f"Place {place_id} is already being processed, skipping")
@@ -484,17 +457,14 @@ def process_enrichment_async(
     return enriched_count
 
 
-def get_places_needing_enrichment(json_path: str = DEFAULT_JSON_PATH) -> List[str]:
+def get_places_needing_enrichment() -> List[str]:
     """
     Get list of place_ids where enriched_flag is false.
     
-    Args:
-        json_path: Path to JSON file
-        
     Returns:
         List of place_ids needing enrichment
     """
-    places = load_places_json(json_path)
+    places = load_all_places()
     return [
         pid for pid, place in places.items()
         if not place.get("enriched_flag", False)

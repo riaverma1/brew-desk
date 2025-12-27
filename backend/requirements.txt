@@ -6,3 +6,4 @@ pydantic
 langchain-openai
 langchain-tavily
 tavily-python
+psycopg2-binary

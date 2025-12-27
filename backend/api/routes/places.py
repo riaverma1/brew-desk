@@ -11,10 +11,9 @@ from pydantic import BaseModel
 
 from backend.enrichment.types import Config
 from backend.enrichment.google_places import nearby_search
-from backend.api.services.json_service import (
+from backend.api.services.db_service import (
     get_places_data,
     get_enrichment_status,
-    DEFAULT_JSON_PATH,
 )
 from backend.api.services.enrichment_service import (
     process_places_sync,
@@ -31,7 +30,7 @@ from backend.enrichment.place_enrichment import (
     enrich_place_details_sync,
     enrich_place_web_async,
 )
-from backend.enrichment.json_storage import load_places_json, upsert_place
+from backend.enrichment.db_storage import load_all_places, upsert_place
 
 logger = logging.getLogger(__name__)
 
@@ -161,7 +160,6 @@ async def nearby_search_endpoint(
             saved_place_ids = save_basic_info_to_json(
                 all_results,
                 api_key,
-                json_path=DEFAULT_JSON_PATH,
             )
             logger.info(f"Saved basic info for {len(saved_place_ids)} places")
         except Exception as e:
@@ -171,7 +169,8 @@ async def nearby_search_endpoint(
         
         # Pre-select top-5 places for enrichment (before triggering background task)
         # This allows us to mark them as enriching in the response
-        places_data_temp = load_places_json(DEFAULT_JSON_PATH)
+        from backend.enrichment.db_storage import load_places
+        places_data_temp = load_places(place_ids)
         top_n_place_ids = select_top_n_places(
             places_data_temp,
             place_ids,
@@ -197,7 +196,6 @@ async def nearby_search_endpoint(
                     request.lat,
                     request.lng,
                     request.radius,
-                    json_path=DEFAULT_JSON_PATH,
                 )
             except Exception as e:
                 # Log but don't re-raise - FastAPI will handle it
@@ -206,8 +204,8 @@ async def nearby_search_endpoint(
         background_tasks.add_task(safe_background_task)
         logger.info("Triggered background task for scoring and top-5 enrichment")
         
-        # Get basic data from JSON (immediately, no waiting for enrichment)
-        places_data = get_places_data(place_ids, json_path=DEFAULT_JSON_PATH)
+        # Get basic data from database (immediately, no waiting for enrichment)
+        places_data = get_places_data(place_ids)
         
         # Build response with places and enrichment status
         places_response = []
@@ -281,7 +279,6 @@ def score_and_enrich_top_n_background(
     user_lat: float,
     user_lng: float,
     max_radius_m: float,
-    json_path: str = DEFAULT_JSON_PATH,
 ):
     """
     Background task: Score all places, select top-5, and enrich them.
@@ -299,16 +296,12 @@ def score_and_enrich_top_n_background(
         user_lat: User's latitude
         user_lng: User's longitude
         max_radius_m: Maximum radius in meters
-        json_path: Path to JSON file
     """
-    import concurrent.futures
+    from backend.enrichment.db_storage import load_places, load_place
     
     logger.info(f"[score_and_enrich_top_n_background] Starting background enrichment task")
     
     try:
-        # Load places from JSON
-        places = load_places_json(json_path)
-        
         # Extract place_ids from nearby_results
         place_ids = [r.get("id") for r in nearby_results if r.get("id")]
         place_ids = list(dict.fromkeys(place_ids))  # Deduplicate
@@ -316,6 +309,9 @@ def score_and_enrich_top_n_background(
         if not place_ids:
             logger.warning("[score_and_enrich_top_n_background] No place_ids found")
             return
+        
+        # Load places from database
+        places = load_places(place_ids)
         
         # Select top-5 places based on scoring
         top_n_place_ids = select_top_n_places(
@@ -339,13 +335,11 @@ def score_and_enrich_top_n_background(
         # Enrich each top-n place
         for place_id in top_n_place_ids:
             try:
-                # Reload places to get latest data
-                places = load_places_json(json_path)
-                if place_id not in places:
-                    logger.warning(f"[score_and_enrich_top_n_background] Place {place_id} not found in JSON")
+                # Reload place to get latest data
+                existing_place = load_place(place_id)
+                if not existing_place:
+                    logger.warning(f"[score_and_enrich_top_n_background] Place {place_id} not found in database")
                     continue
-                
-                existing_place = places[place_id]
                 
                 # Skip if already enriched
                 if existing_place.get("enriched_flag", False):
@@ -362,7 +356,7 @@ def score_and_enrich_top_n_background(
                 
                 try:
                     updated_place = enrich_place_details_sync(cfg, place_id, existing_place, nearby_result)
-                    upsert_place(json_path, updated_place)
+                    upsert_place(updated_place)
                     logger.info(f"[score_and_enrich_top_n_background] Completed place_details for {place_id}")
                 except Exception as e:
                     logger.error(f"[score_and_enrich_top_n_background] place_details failed for {place_id}: {e}", exc_info=True)
@@ -372,10 +366,9 @@ def score_and_enrich_top_n_background(
                 logger.info(f"[score_and_enrich_top_n_background] Running Tavily for {place_id}")
                 
                 # Reload to get updated place data
-                places = load_places_json(json_path)
-                if place_id not in places:
+                existing_place = load_place(place_id)
+                if not existing_place:
                     continue
-                existing_place = places[place_id]
                 place_obj = existing_place.get("place", {})
                 
                 if not place_obj:
@@ -384,7 +377,7 @@ def score_and_enrich_top_n_background(
                 
                 try:
                     updated_place = enrich_place_web_async(cfg, place_obj, existing_place)
-                    upsert_place(json_path, updated_place)
+                    upsert_place(updated_place)
                     logger.info(f"[score_and_enrich_top_n_background] Completed Tavily + LLM for {place_id}")
                 except Exception as e:
                     logger.error(f"[score_and_enrich_top_n_background] Tavily/LLM failed for {place_id}: {e}", exc_info=True)
@@ -440,12 +433,11 @@ async def enrich_place_endpoint(place_id: str):
             include_types=tuple([]),
         )
         
-        # Load place from JSON
-        places = load_places_json(DEFAULT_JSON_PATH)
-        if place_id not in places:
+        # Load place from database
+        from backend.enrichment.db_storage import load_place
+        existing_place = load_place(place_id)
+        if not existing_place:
             raise HTTPException(status_code=404, detail=f"Place {place_id} not found")
-        
-        existing_place = places[place_id]
         
         # Check if already enriched
         if existing_place.get("enriched_flag", False):
@@ -481,7 +473,7 @@ async def enrich_place_endpoint(place_id: str):
         logger.info(f"Running place_details enrichment for {place_id}")
         try:
             updated_place = enrich_place_details_sync(cfg, place_id, existing_place, nearby_result=None)
-            upsert_place(DEFAULT_JSON_PATH, updated_place)
+            upsert_place(updated_place)
             logger.info(f"Completed place_details for {place_id}")
         except Exception as e:
             logger.error(f"place_details failed for {place_id}: {e}", exc_info=True)
@@ -491,11 +483,10 @@ async def enrich_place_endpoint(place_id: str):
         logger.info(f"Running Tavily enrichment for {place_id}")
         
         # Reload to get updated place data
-        places = load_places_json(DEFAULT_JSON_PATH)
-        if place_id not in places:
+        existing_place = load_place(place_id)
+        if not existing_place:
             raise HTTPException(status_code=404, detail=f"Place {place_id} not found after place_details")
         
-        existing_place = places[place_id]
         place_obj = existing_place.get("place", {})
         
         if not place_obj:
@@ -503,18 +494,17 @@ async def enrich_place_endpoint(place_id: str):
         
         try:
             updated_place = enrich_place_web_async(cfg, place_obj, existing_place)
-            upsert_place(DEFAULT_JSON_PATH, updated_place)
+            upsert_place(updated_place)
             logger.info(f"Completed Tavily + LLM for {place_id}")
         except Exception as e:
             logger.error(f"Tavily/LLM failed for {place_id}: {e}", exc_info=True)
             # Return partial data if available
         
         # Reload final data
-        places = load_places_json(DEFAULT_JSON_PATH)
-        if place_id not in places:
+        final_place = load_place(place_id)
+        if not final_place:
             raise HTTPException(status_code=404, detail=f"Place {place_id} not found after enrichment")
         
-        final_place = places[place_id]
         final_place_obj = final_place.get("place", {})
         
         # Return updated place data
@@ -566,7 +556,7 @@ async def get_places_data_endpoint(
         if not place_id_list:
             return {"places": []}
         
-        places_data = get_places_data(place_id_list, json_path=DEFAULT_JSON_PATH)
+        places_data = get_places_data(place_id_list)
         
         places_response = []
         for place_id in place_id_list:
@@ -632,7 +622,7 @@ async def get_enrichment_status_endpoint(
         if not place_id_list:
             return {}
         
-        status = get_enrichment_status(place_id_list, json_path=DEFAULT_JSON_PATH)
+        status = get_enrichment_status(place_id_list)
         
         # Add enriching status from memory
         for place_id in place_id_list:
