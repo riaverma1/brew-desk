@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: coffee-app-backend
+    env: python
+    region: oregon  # or your preferred region
+    buildCommand: pip install -r backend/requirements.txt
+    # Alternative: python -m uvicorn backend.api.main:app --host 0.0.0.0 --port $PORT
+    startCommand: python -m uvicorn backend.api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHONPATH
+        value: /opt/render/project/src
+      # Add your other environment variables in Render dashboard:
+      # - GOOGLE_PLACES_API_KEY
+      # - TAVILY_API_KEY
+      # - OPENAI_API_KEY
+      # - DATABASE_URL
+      # - ALLOWED_ORIGINS
+
