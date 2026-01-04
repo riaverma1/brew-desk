@@ -736,11 +736,29 @@ Address: {neighborhood or address}
         response = llm.invoke(prompt)
         content = response.content if hasattr(response, 'content') else str(response)
         
-        # Parse JSON array
-        import json
-        queries = json.loads(content.strip())
-        if isinstance(queries, list) and all(isinstance(q, str) for q in queries):
-            return queries[:3]  # Limit to 3 queries
+        # Strip markdown code fences if present
+        content = content.strip()
+        if content.startswith("```json"):
+            content = content[7:]
+        elif content.startswith("```"):
+            content = content[3:]
+        if content.endswith("```"):
+            content = content[:-3]
+        content = content.strip()
+        
+        # Check if content is empty
+        if not content:
+            logger.warning("LLM returned empty response for query generation, using fallback")
+        else:
+            # Parse JSON array
+            queries = json.loads(content)
+            if isinstance(queries, list) and all(isinstance(q, str) for q in queries):
+                logger.debug(f"Successfully generated {len(queries)} queries from LLM")
+                return queries[:3]  # Limit to 3 queries
+            else:
+                logger.warning(f"LLM returned invalid format (expected list of strings), using fallback. Content: {content[:200]}")
+    except json.JSONDecodeError as e:
+        logger.warning(f"Failed to parse JSON from LLM response: {e}. Content: {content[:200] if 'content' in locals() else 'N/A'}, using fallback")
     except Exception as e:
         logger.warning(f"Failed to generate queries with LLM: {e}, using fallback")
     

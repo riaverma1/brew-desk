@@ -122,10 +122,11 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
 ```
 
 **Important Notes:**
-- `FASTAPI_BASE_URL` should be your Render backend URL
+- `FASTAPI_BASE_URL` should be your Render backend URL (this is used server-side only in Next.js API routes)
 - `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` is different from `GOOGLE_PLACES_API_KEY`
   - Maps JavaScript API key is for displaying the map in the frontend
   - Places API key is for searching places in the backend
+- Note: The frontend no longer needs `NEXT_PUBLIC_FASTAPI_BASE_URL` because all backend calls are proxied through Next.js API routes
 
 ## Step 4: Redeploy Services
 
@@ -256,7 +257,7 @@ After setting environment variables:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `FASTAPI_BASE_URL` | Yes | Render backend URL |
+| `FASTAPI_BASE_URL` | Yes | Render backend URL (used server-side in Next.js API routes) |
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Yes | Google Maps JavaScript API key |
 
 ## Additional Resources
