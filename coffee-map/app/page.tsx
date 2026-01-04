@@ -446,9 +446,8 @@ export default function Home() {
       }
 
       try {
-        const FASTAPI_BASE_URL = process.env.NEXT_PUBLIC_FASTAPI_BASE_URL || "http://localhost:8000";
         const statusRes = await fetch(
-          `${FASTAPI_BASE_URL}/api/places/status?place_ids=${placeIds.join(",")}`
+          `/api/places/status?place_ids=${placeIds.join(",")}`
         );
         const statusData = await statusRes.json();
 
@@ -470,7 +469,7 @@ export default function Home() {
         // If any places completed enrichment, fetch updated data
         if (completed.size > 0) {
           const dataRes = await fetch(
-            `${FASTAPI_BASE_URL}/api/places/data?place_ids=${Array.from(completed).join(",")}`
+            `/api/places/data?place_ids=${Array.from(completed).join(",")}`
           );
           const data = await dataRes.json();
 
@@ -881,7 +880,6 @@ export default function Home() {
 
         // Store enrichPlace function globally for InfoWindow buttons
         (window as any).enrichPlace = async (placeId: string) => {
-          const FASTAPI_BASE_URL = process.env.NEXT_PUBLIC_FASTAPI_BASE_URL || "http://localhost:8000";
           const button = document.getElementById(`enrich-btn-${placeId}`);
           
           if (button) {
@@ -894,7 +892,7 @@ export default function Home() {
           setEnrichingPlaces((prev) => new Set(prev).add(placeId));
           
           try {
-            const response = await fetch(`${FASTAPI_BASE_URL}/api/places/enrich/${placeId}`, {
+            const response = await fetch(`/api/places/enrich/${placeId}`, {
               method: "POST",
             });
             
