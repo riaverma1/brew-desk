@@ -424,6 +424,11 @@ def score_and_enrich_top_n_background(
             logger.info(f"{request_id_str} [score_and_enrich_top_n_background] No places selected for enrichment (all already enriched)")
             return
         
+        # Check again after scoring - if a newer request came in, stop processing
+        if request_id and _latest_request_id != request_id:
+            logger.info(f"{request_id_str} [score_and_enrich_top_n_background] Stopping after scoring - newer request ({_latest_request_id}) has priority")
+            return
+        
         logger.info(f"{request_id_str} [score_and_enrich_top_n_background] Selected top-{len(top_n_place_ids)} places: {top_n_place_ids}")
         
         # Create mapping of place_id to nearby_result
@@ -485,10 +490,15 @@ def score_and_enrich_top_n_background(
                 
                 try:
                     updated_place = enrich_place_web_async(cfg, place_obj, existing_place)
+                    # IMPORTANT: Always save Tavily results immediately after Tavily runs
+                    # Tavily is expensive, so we preserve the results even if a newer request comes in
                     upsert_place(updated_place)
-                    logger.info(f"{request_id_str} [score_and_enrich_top_n_background] Completed Tavily + LLM for {place_id}")
+                    logger.info(f"{request_id_str} [score_and_enrich_top_n_background] Completed Tavily + LLM for {place_id}, saved to database")
+                    # Note: We don't check for cancellation here because Tavily results are already saved
+                    # Even if a newer request comes in, we've preserved the expensive Tavily data
                 except Exception as e:
                     logger.error(f"{request_id_str} [score_and_enrich_top_n_background] Tavily/LLM failed for {place_id}: {e}", exc_info=True)
+                    # Even on error, Tavily results should have been saved by enrich_place_web_async if Tavily ran
                     # Continue to next place
                 
                 # Clear enriching flag when done (success or failure)
