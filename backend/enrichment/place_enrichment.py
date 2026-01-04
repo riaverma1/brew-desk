@@ -6,7 +6,7 @@ import json
 import logging
 import re
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import os
 
@@ -696,10 +696,13 @@ def enrich_place_web_async(cfg: Config, place: Dict, existing_place: Dict) -> Di
         return existing_place
 
 
-def _generate_tavily_queries(place: Dict) -> List[str]:
+def _generate_and_select_best_query(place: Dict) -> Tuple[List[str], str]:
     """
-    Use LLM to generate optimized Tavily search queries for a place.
-    Returns 2-3 query variations that are likely to find WFH-relevant information.
+    Use LLM to generate optimized Tavily search queries AND select the best one in a single call.
+    This combines generation and selection to avoid redundant prompts and LLM calls.
+    
+    Returns:
+        Tuple of (all_queries, best_query)
     """
     name = place.get("name", "Unknown")
     address = place.get("formatted_address") or place.get("address", "")
@@ -725,8 +728,18 @@ Generate queries that are likely to find:
 - Review sites
 - Social media mentions
 
-Return ONLY a JSON array of query strings, no other text. Example:
-["Is {name} good for working laptop wifi", "{name} {address} laptop friendly wifi outlets", "{name} coffee shop remote work review"]
+Then, select the SINGLE best query from the ones you generated. The best query should:
+1. Be most specific to this location (includes name/address)
+2. Use terminology likely to appear in reviews/posts
+3. Be most likely to surface relevant WFH information
+4. Balance specificity with searchability
+
+Return ONLY a JSON object with this exact structure:
+{{
+  "queries": ["query1", "query2", "query3"],
+  "best_query": "the single best query from the list above",
+  "reasoning": "brief explanation for why this is the best query (max 50 words)"
+}}
 
 Place name: {name}
 Address: {neighborhood or address}
@@ -750,32 +763,47 @@ Address: {neighborhood or address}
         if not content:
             logger.warning("LLM returned empty response for query generation, using fallback")
         else:
-            # Parse JSON array
-            queries = json.loads(content)
-            if isinstance(queries, list) and all(isinstance(q, str) for q in queries):
-                logger.debug(f"Successfully generated {len(queries)} queries from LLM")
-                return queries[:3]  # Limit to 3 queries
+            # Parse JSON response
+            result = json.loads(content)
+            queries = result.get("queries", [])
+            best_query = result.get("best_query", "")
+            reasoning = result.get("reasoning", "")
+            
+            if isinstance(queries, list) and all(isinstance(q, str) for q in queries) and len(queries) > 0:
+                # Validate that best_query is in the queries list
+                if best_query and best_query in queries:
+                    logger.info(f"Generated {len(queries)} queries and selected best: '{best_query}' (Reason: {reasoning})")
+                    return queries[:3], best_query
+                elif best_query:
+                    logger.warning(f"Best query '{best_query}' not in generated queries list, using first query")
+                    return queries[:3], queries[0]
+                else:
+                    logger.warning("No best_query in LLM response, using first query")
+                    return queries[:3], queries[0]
             else:
-                logger.warning(f"LLM returned invalid format (expected list of strings), using fallback. Content: {content[:200]}")
+                logger.warning(f"LLM returned invalid queries format, using fallback. Content: {content[:200]}")
     except json.JSONDecodeError as e:
         logger.warning(f"Failed to parse JSON from LLM response: {e}. Content: {content[:200] if 'content' in locals() else 'N/A'}, using fallback")
     except Exception as e:
-        logger.warning(f"Failed to generate queries with LLM: {e}, using fallback")
+        logger.warning(f"Failed to generate/select queries with LLM: {e}, using fallback")
     
     # Fallback to template-based queries
     base_location = neighborhood or address
-    return [
+    fallback_queries = [
         f"Is {name} in {base_location} good for working laptop wifi outlets",
         f"{name} {base_location} laptop friendly wifi review",
         f"{name} coffee shop remote work laptop"
     ]
+    return fallback_queries, fallback_queries[0]
+
+
 
 
 def _run_tavily_search(place: Dict) -> Dict:
     """
     Run Tavily search for a place using the Tavily Python client directly.
-    Uses LLM to generate optimized queries, then runs multiple searches and combines results.
-    This matches the API playground behavior but with smarter query generation.
+    Uses LLM to generate optimized queries, then selects the best query using an optimizer,
+    and uses only that best query to reduce API costs (1 credit per place instead of 3).
     
     Returns:
         Dictionary with query, results, and excerpts
@@ -783,9 +811,8 @@ def _run_tavily_search(place: Dict) -> Dict:
     name = place.get("name", "Unknown")
     address = place.get("formatted_address") or place.get("address", "")
     
-    # Generate optimized queries using LLM
-    queries = _generate_tavily_queries(place)
-    primary_query = queries[0] if queries else f"Is {name} good for working laptop wifi outlets"
+    # Generate optimized queries AND select the best one in a single LLM call
+    queries, best_query = _generate_and_select_best_query(place)
     
     logger.info(f"Generated {len(queries)} Tavily queries for {name}: {queries}")
     
@@ -797,7 +824,7 @@ def _run_tavily_search(place: Dict) -> Dict:
         if not tavily_api_key:
             logger.error("TAVILY_API_KEY environment variable not set")
             return {
-                "query": primary_query,
+                "query": best_query,
                 "queries": queries,
                 "results": [],
                 "excerpts": [],
@@ -808,41 +835,40 @@ def _run_tavily_search(place: Dict) -> Dict:
         if TAVILY_CLIENT_AVAILABLE:
             client = TavilyClient(api_key=tavily_api_key)
             
-            # Run each query and combine results (deduplicate by URL)
-            for query in queries:
-                try:
-                    response = client.search(
-                        query=query,
-                        max_results=5,  # Fewer per query since we're running multiple
-                        search_depth="basic",
-                        include_answer=False,
-                        include_raw_content=False,
-                    )
-                    
-                    results_list = response.get("results", [])
-                    for item in results_list:
-                        if isinstance(item, dict):
-                            url = item.get("url", "")
-                            if url and url not in seen_urls:
-                                seen_urls.add(url)
-                                content = item.get("content", "")
-                                # Clean the snippet to remove noise
-                                cleaned_content = _clean_tavily_snippet(content)
-                                all_results.append({
-                                    "url": url,
-                                    "title": item.get("title", ""),
-                                    "snippet": cleaned_content[:500] if cleaned_content else "",
-                                    "score": item.get("score", 0.0),
-                                })
-                except Exception as e:
-                    logger.warning(f"Tavily search failed for query '{query}': {e}")
+            # Use only best query to reduce API costs (1 credit per place instead of 3)
+            try:
+                response = client.search(
+                    query=best_query,
+                    max_results=5,  # Limit to 5 URLs
+                    search_depth="basic",
+                    include_answer=False,
+                    include_raw_content=False,
+                )
+                
+                results_list = response.get("results", [])
+                for item in results_list:
+                    if isinstance(item, dict):
+                        url = item.get("url", "")
+                        if url and url not in seen_urls:
+                            seen_urls.add(url)
+                            content = item.get("content", "")
+                            # Clean the snippet to remove noise
+                            cleaned_content = _clean_tavily_snippet(content)
+                            all_results.append({
+                                "url": url,
+                                "title": item.get("title", ""),
+                                "snippet": cleaned_content[:500] if cleaned_content else "",
+                                "score": item.get("score", 0.0),
+                            })
+            except Exception as e:
+                logger.warning(f"Tavily search failed for query '{best_query}': {e}")
             
-            tavily_results = all_results[:8]  # Limit total results
+            tavily_results = all_results[:5]  # Limit total results to 5 URLs
         else:
             # Fallback to LangChain wrapper - use primary query only
             logger.warning("Tavily client not available, using LangChain wrapper (may have issues)")
             tavily_search = TavilySearch(
-                max_results=8,
+                max_results=5,
                 topic="general",
                 include_answer=False,
                 include_raw_content=False,
@@ -850,7 +876,7 @@ def _run_tavily_search(place: Dict) -> Dict:
             )
             
             # Run search - LangChain wrapper returns list directly
-            results = tavily_search.invoke(primary_query)
+            results = tavily_search.invoke(best_query)
             
             # Handle different return formats from LangChain
             if isinstance(results, list):
@@ -861,7 +887,7 @@ def _run_tavily_search(place: Dict) -> Dict:
                 results_list = []
             
             tavily_results = []
-            for item in results_list:
+            for item in results_list[:5]:  # Limit to 5 URLs
                 if isinstance(item, dict):
                     content = item.get("content", "")
                     # Clean the snippet to remove noise
@@ -873,7 +899,7 @@ def _run_tavily_search(place: Dict) -> Dict:
                         "score": item.get("score", 0.0),
                     })
         
-        logger.info(f"Tavily search for {name} returned {len(tavily_results)} unique results from {len(queries)} queries")
+        logger.info(f"Tavily search for {name} returned {len(tavily_results)} unique results using best query: {best_query}")
         if not tavily_results:
             logger.warning(
                 f"Tavily search returned empty results for all queries: {queries}"
@@ -890,16 +916,17 @@ def _run_tavily_search(place: Dict) -> Dict:
         ]
         
         return {
-            "query": primary_query,  # Store primary query for reference
-            "queries": queries,  # Store all queries used
+            "query": best_query,  # Store best selected query for reference
+            "queries": queries,  # Store all candidate queries generated
             "results": tavily_results,
             "excerpts": excerpts,
         }
     except Exception as e:
         logger.error(f"Tavily search failed: {e}", exc_info=True)
+        fallback_query = queries[0] if queries else f"Is {name} good for working laptop wifi outlets"
         return {
-            "query": primary_query,
-            "queries": queries if 'queries' in locals() else [primary_query],
+            "query": best_query if 'best_query' in locals() else fallback_query,
+            "queries": queries if 'queries' in locals() else [fallback_query],
             "results": [],
             "excerpts": [],
         }
