@@ -81,11 +81,13 @@ async def write_place_and_mention(
         ).execute()
 
         # Step 2: insert mention ON CONFLICT DO NOTHING
+        # place_name_raw='' marks this as an original single-crawl row
         resp = db.table("mentions").upsert(
             {
                 "place_id": resolved.place_id,
                 "source_id": source_id,
                 "url": raw_mention.url,
+                "place_name_raw": "",
                 "evidence_snippet": extraction.evidence_snippet,
                 "method": "llm",
                 "wifi_confidence": extraction.wifi_confidence,
@@ -93,13 +95,79 @@ async def write_place_and_mention(
                 "noise_confidence": extraction.noise_confidence,
                 "laptop_confidence": extraction.laptop_confidence,
             },
-            on_conflict="url",
+            on_conflict="url,place_name_raw",
             ignore_duplicates=True,
         ).execute()
 
         return len(resp.data) > 0
 
     return await asyncio.to_thread(_query)
+
+
+async def write_multi_mention(
+    resolved: ResolvedPlace,
+    region_id: str | None,
+    source_id: str,
+    extraction: ExtractionResult,
+    url: str,
+    place_name_raw: str,
+) -> bool:
+    """
+    Write a single resolved place from a multi-mention source (Reddit thread,
+    blog list, etc.). place_name_raw is the lowercased extracted place name —
+    used as the secondary dedup key so multiple places can share the same URL.
+
+    1. UPSERT places ON CONFLICT (place_id)
+    2. INSERT INTO mentions ON CONFLICT (url, place_name_raw) DO NOTHING
+    Returns True if mention was inserted (new), False if duplicate.
+    """
+    def _query():
+        db = get_supabase()
+
+        place_data: dict = {
+            "place_id": resolved.place_id,
+            "name": resolved.name,
+            "address": resolved.address,
+            "lat": resolved.lat,
+            "lng": resolved.lng,
+            "last_enriched_at": datetime.now(timezone.utc).isoformat(),
+        }
+        # Only set region_id if provided — avoids overwriting an existing region
+        # with NULL when called from the retroactive matcher without a region context
+        if region_id:
+            place_data["region_id"] = region_id
+
+        db.table("places").upsert(place_data, on_conflict="place_id").execute()
+
+        resp = db.table("mentions").upsert(
+            {
+                "place_id": resolved.place_id,
+                "source_id": source_id,
+                "url": url,
+                "place_name_raw": place_name_raw,
+                "evidence_snippet": extraction.evidence_snippet,
+                "method": "llm",
+                "wifi_confidence": extraction.wifi_confidence,
+                "outlet_confidence": extraction.outlet_confidence,
+                "noise_confidence": extraction.noise_confidence,
+                "laptop_confidence": extraction.laptop_confidence,
+            },
+            on_conflict="url,place_name_raw",
+            ignore_duplicates=True,
+        ).execute()
+
+        return len(resp.data) > 0
+
+    return await asyncio.to_thread(_query)
+
+
+async def mark_mention_multi_processed(mention_id: str) -> None:
+    """Set is_multi_processed=TRUE on the original crawl row after retroactive processing."""
+    def _query():
+        db = get_supabase()
+        db.table("mentions").update({"is_multi_processed": True}).eq("id", mention_id).execute()
+
+    await asyncio.to_thread(_query)
 
 
 async def write_unmatched_mention(
@@ -110,7 +178,7 @@ async def write_unmatched_mention(
     """
     Save a mention with place_id = NULL when place resolver found no match.
     Allows future pairing when new regions are seeded.
-    INSERT ON CONFLICT (url) DO NOTHING — returns True if newly inserted.
+    INSERT ON CONFLICT (url, place_name_raw) DO NOTHING — returns True if newly inserted.
     """
     def _query():
         db = get_supabase()
@@ -119,6 +187,7 @@ async def write_unmatched_mention(
                 "place_id": None,
                 "source_id": source_id,
                 "url": raw_mention.url,
+                "place_name_raw": "",
                 "evidence_snippet": extraction.evidence_snippet,
                 "method": "llm",
                 "wifi_confidence": extraction.wifi_confidence,
@@ -126,7 +195,7 @@ async def write_unmatched_mention(
                 "noise_confidence": extraction.noise_confidence,
                 "laptop_confidence": extraction.laptop_confidence,
             },
-            on_conflict="url",
+            on_conflict="url,place_name_raw",
             ignore_duplicates=True,
         ).execute()
         return len(resp.data) > 0

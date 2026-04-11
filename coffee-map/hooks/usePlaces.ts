@@ -42,9 +42,22 @@ export function usePlaces(bounds: MapBounds | null): {
       .then((data) => {
         if (controller.signal.aborted) return
         setPlaces((prev) => {
+          const incomingMap = new Map(data.places.map((p) => [p.place_id, p]))
+          const updated = prev.map((p) => {
+            const fresh = incomingMap.get(p.place_id)
+            if (!fresh) return p
+            return {
+              ...p,
+              photos: fresh.photos?.length ? fresh.photos : p.photos,
+              primary_type: fresh.primary_type ?? p.primary_type,
+              rating: fresh.rating ?? p.rating,
+              user_rating_count: fresh.user_rating_count ?? p.user_rating_count,
+              regular_opening_hours: fresh.regular_opening_hours ?? p.regular_opening_hours,
+            }
+          })
           const existingIds = new Set(prev.map((p) => p.place_id))
-          const newPlaces = data.places.filter((p) => !existingIds.has(p.place_id))
-          return newPlaces.length > 0 ? [...prev, ...newPlaces] : prev
+          const added = data.places.filter((p) => !existingIds.has(p.place_id))
+          return added.length > 0 ? [...updated, ...added] : updated
         })
         setRegionStatus(data.region_status)
       })
