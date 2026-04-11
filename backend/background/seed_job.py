@@ -38,6 +38,10 @@ async def trigger_seed(region_id: str) -> None:
         center_lng = (region["min_lng"] + region["max_lng"]) / 2
         city_slug = region["city_slug"]
 
+        # Record start time before crawl so retroactive matcher can scope to this run
+        from datetime import datetime, timezone
+        crawl_started_at = datetime.now(timezone.utc)
+
         # Step 2: run crawler
         from crawler.orchestrator import run_for_region
 
@@ -49,14 +53,32 @@ async def trigger_seed(region_id: str) -> None:
         )
 
         # Step 3: mark seeded
-        from datetime import datetime, timezone
-
         db = supabase_client.get_supabase()
         db.table("regions").update(
             {"status": "seeded", "last_crawled_at": datetime.now(timezone.utc).isoformat()}
         ).eq("id", region_id).execute()
 
         logger.info("Seed job completed for region %s", region_id)
+
+        # Step 4: retroactive multi-mention resolution — only for mentions created
+        # during this crawl run. Runs inline so failures are isolated below.
+        try:
+            from background.retroactive_matcher import run_retroactive_match
+            from config import get_settings
+            logger.info("Seed job: starting retroactive match for region %s", region_id)
+            summary = await run_retroactive_match(
+                center_lat=center_lat,
+                center_lng=center_lng,
+                settings=get_settings(),
+                region_id=region_id,
+                since=crawl_started_at,
+            )
+            logger.info("Seed job: retroactive match complete — %s", summary)
+        except Exception as retro_exc:
+            # Never bubble up — region stays seeded even if retroactive match fails
+            logger.warning(
+                "Seed job: retroactive match failed for region %s: %s", region_id, retro_exc
+            )
 
     except Exception as exc:
         logger.exception("Seed job failed for region %s: %s", region_id, exc)

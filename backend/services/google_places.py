@@ -50,31 +50,30 @@ async def nearby_search_parallel(
     api_key: str,
 ) -> list[dict]:
     """
-    Fire 3 concurrent Nearby Search requests (cafe, bakery, library).
-    Returns list of {place_id, photo_urls} dicts, deduplicated.
+    Single Nearby Search request with no includedTypes filter.
+    Returns up to 20 results of any place type — filter_eligible_places
+    cross-references against Supabase so non-WFH results are dropped automatically.
 
-    Note: 'coffee_shop' is NOT a valid nearbysearch type — use 'cafe' only.
-    Do not combine rankby=distance and radius — mutually exclusive.
+    Previously fired 3 concurrent requests filtered to cafe/bakery/library, which
+    excluded places Google categorizes differently (e.g. restaurant, juice_bar).
     """
-    types = ["cafe", "bakery", "library"]
+    headers = {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": api_key,
+        "X-Goog-FieldMask": NEARBY_FIELD_MASK,
+    }
+    body = {
+        "locationRestriction": {
+            "circle": {
+                "center": {"latitude": lat, "longitude": lng},
+                "radius": float(radius_meters),
+            }
+        },
+        "maxResultCount": 20,
+    }
 
-    async def _search_one(place_type: str, client: httpx.AsyncClient) -> list[dict]:
-        headers = {
-            "Content-Type": "application/json",
-            "X-Goog-Api-Key": api_key,
-            "X-Goog-FieldMask": NEARBY_FIELD_MASK,
-        }
-        body = {
-            "includedTypes": [place_type],
-            "locationRestriction": {
-                "circle": {
-                    "center": {"latitude": lat, "longitude": lng},
-                    "radius": float(radius_meters),
-                }
-            },
-            "maxResultCount": 20,
-        }
-        try:
+    try:
+        async with httpx.AsyncClient() as client:
             resp = await client.post(NEARBY_SEARCH_URL, headers=headers, json=body, timeout=10)
             resp.raise_for_status()
             return [
@@ -89,23 +88,9 @@ async def nearby_search_parallel(
                 for p in resp.json().get("places", [])
                 if "id" in p
             ]
-        except Exception as exc:
-            logger.warning("Nearby Search failed for type=%s: %s", place_type, exc)
-            return []
-
-    async with httpx.AsyncClient() as client:
-        results = await asyncio.gather(*[_search_one(t, client) for t in types])
-
-    seen: set[str] = set()
-    deduplicated: list[dict] = []
-    for places in results:
-        for p in places:
-            pid = p["place_id"]
-            if pid not in seen:
-                seen.add(pid)
-                deduplicated.append(p)
-
-    return deduplicated
+    except Exception as exc:
+        logger.warning("Nearby Search failed: %s", exc)
+        return []
 
 
 async def text_search(
