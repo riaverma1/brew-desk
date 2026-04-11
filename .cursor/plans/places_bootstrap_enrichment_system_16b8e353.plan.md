@@ -34,6 +34,7 @@ todos:
     status: pending
     dependencies:
       - update-bootstrap
+isProject: false
 ---
 
 # Places Bootstrap Enrichment System
@@ -103,8 +104,6 @@ flowchart TB
 }
 ```
 
-
-
 ### 2. `google_places.py` - Enhanced Place Details
 
 **Purpose**: Fetch place data from Google Places API**Changes**:
@@ -113,8 +112,8 @@ flowchart TB
 - Since Place Data Fields are part of Place Details, we enhance the existing function rather than creating a new one
 - Endpoint: `GET https://places.googleapis.com/v1/places/{place_id}`
 - Use `X-Goog-FieldMask` header to request fields:
-    - Core: `id`, `displayName`, `formattedAddress`, `location`, `types`, `rating`, `userRatingCount`, `priceLevel`, `businessStatus`, `currentOpeningHours`, `website`, `reviews`
-    - Binary attributes: `restroom`, `servesCoffee`, `goodForGroups`, `accessibilityOptions`, `parkingOptions` (if available in API)
+  - Core: `id`, `displayName`, `formattedAddress`, `location`, `types`, `rating`, `userRatingCount`, `priceLevel`, `businessStatus`, `currentOpeningHours`, `website`, `reviews`
+  - Binary attributes: `restroom`, `servesCoffee`, `goodForGroups`, `accessibilityOptions`, `parkingOptions` (if available in API)
 - Reference: [Place Details (New)](https://developers.google.com/maps/documentation/places/web-service/place-details) and [Place Data Fields (New)](https://developers.google.com/maps/documentation/places/web-service/data-fields)
 
 **Functions**:
@@ -139,7 +138,7 @@ flowchart TB
 - `accessibilityOptions`: From API field (e.g., `wheelchairAccessibleEntrance`) if available, else `null`
 - `parkingOptions`: From API field (e.g., `parkingOptions`) if available, else `null`
 - Extracts `neighborhood` from address components or geometry
-- **Saves all Google Maps reviews to `sources.google_reviews`**:
+- **Saves all Google Maps reviews to `sources.google_reviews**`:
 - `fetched_at`: ISO timestamp
 - `reviews`: Full review array from API
 - Saves full place_details response to `sources.google_details`:
@@ -154,17 +153,17 @@ flowchart TB
 - Uses TavilySearch directly or calls a helper function to search for place
 - Constructs query from place name + location (e.g., "Is Birch Coffee in Flatiron good for working laptop wifi outlets")
 - Gets Tavily search results and excerpts
-- **Saves all Tavily content to `sources.tavily`**:
-    - `fetched_at`: ISO timestamp
-    - `query`: The search query used
-    - `results`: Full Tavily search results array (with url, title, snippet, score)
-    - `excerpts`: Full Tavily excerpts array (with url, text) if available
+- **Saves all Tavily content to `sources.tavily**`:
+  - `fetched_at`: ISO timestamp
+  - `query`: The search query used
+  - `results`: Full Tavily search results array (with url, title, snippet, score)
+  - `excerpts`: Full Tavily excerpts array (with url, text) if available
 - **Step 2: Derive attributes using LLM** (combines Google reviews + Tavily results):
 - Calls new function `derive_attributes_from_evidence()` (see below)
 - This function takes:
-    - Google reviews (from `sources.google_reviews.reviews` in existing_place)
-    - Tavily results and excerpts (from `sources.tavily` just saved)
-    - Place information (name, address, etc.)
+  - Google reviews (from `sources.google_reviews.reviews` in existing_place)
+  - Tavily results and excerpts (from `sources.tavily` just saved)
+  - Place information (name, address, etc.)
 - Uses LLM to analyze ALL evidence together and derive attributes with confidence scores
 - Returns structure matching schema's `derived` section
 - Updates flags: `enriched_flag=True`, `enriched_at`, `enriched_version`
@@ -182,10 +181,10 @@ flowchart TB
 - Uses LLM (ChatOpenAI) with structured output to derive attributes
 - LLM analyzes BOTH Google reviews AND Tavily content together
 - For each attribute, LLM provides:
-    - `value`: The attribute value (e.g., "free", "many", "yes", "quiet")
-    - `confidence`: Float 0.0-1.0 based on strength of evidence from ALL sources
-    - `sources`: Array of source identifiers (e.g., `["google_reviews", "tavily_https://example.com"]`)
-    - `evidence`: Array of specific evidence snippets from both sources (e.g., `["Review: 'Fast Wi-Fi, worked here for hours'", "Tavily excerpt: 'The cafe offers free WiFi and plenty of outlets'"]`)
+  - `value`: The attribute value (e.g., "free", "many", "yes", "quiet")
+  - `confidence`: Float 0.0-1.0 based on strength of evidence from ALL sources
+  - `sources`: Array of source identifiers (e.g., `["google_reviews", "tavily_https://example.com"]`)
+  - `evidence`: Array of specific evidence snippets from both sources (e.g., `["Review: 'Fast Wi-Fi, worked here for hours'", "Tavily excerpt: 'The cafe offers free WiFi and plenty of outlets'"]`)
 - **Output**: Returns `derived` section matching schema:
 - `has_wifi`: `{value: "free"|"paid"|"none", confidence: float, sources: [], evidence: []}`
 - `has_outlets`: `{value: "many"|"few"|"none", confidence: float, sources: [], evidence: []}`
@@ -207,8 +206,8 @@ flowchart TB
 - For each place_id (new or existing):
 - Loads place from JSON using dictionary lookup
 - If `places_details_flag` is false: 
-    - Call `place_enrichment.enrich_place_details_sync()`
-    - Upsert updated place to JSON
+  - Call `place_enrichment.enrich_place_details_sync()`
+  - Upsert updated place to JSON
 - Returns list of place_ids that were processed
 - **Does NOT call Tavily or async enrichment**
 
@@ -284,8 +283,6 @@ All cleaned content is saved to `sources`:
 }
 ```
 
-
-
 ## Usage Pattern
 
 ### Sync (during nearby_search):
@@ -299,8 +296,6 @@ results = google_places.nearby_search_with_sync(cfg, place_type="cafe")
 # 3. Does NOT call Tavily
 ```
 
-
-
 ### Async (separate call):
 
 ```python
@@ -310,8 +305,6 @@ places_manager.process_enrichment_async(cfg, place_ids=place_ids)
 # Or process all places needing enrichment:
 places_manager.process_enrichment_async(cfg)
 ```
-
-
 
 ## Files to Create/Modify
 
@@ -359,3 +352,4 @@ See `sandbox.ipynb` section for a complete test script demonstrating:
 
 - The existing `web_searches.enrich_place_with_agent()` only looks at Tavily results, not Google reviews
 - We need a separate LLM call that considers BOTH sources together
+
