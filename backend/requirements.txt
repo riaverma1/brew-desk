@@ -1,9 +1,9 @@
-requests
-python-dotenv
 fastapi
 uvicorn[standard]
 pydantic
-langchain-openai
-langchain-tavily
-tavily-python
-psycopg2-binary
+pydantic-settings
+supabase
+httpx
+openai
+python-dotenv
+apscheduler
