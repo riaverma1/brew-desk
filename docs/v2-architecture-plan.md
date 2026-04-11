@@ -52,7 +52,6 @@ coffee_app/
 │       ├── sources/
 │       │   ├── tavily_crawler.py
 │       │   ├── brave_crawler.py
-│       │   ├── yelp_crawler.py
 │       │   └── instagram_crawler.py
 │       ├── place_resolver.py
 │       ├── llm_extractor.py
@@ -224,7 +223,7 @@ Key gotcha: All boolean attrs on `PlacePin` are `| null` — newly crawled place
 ### `backend/config.py`
 **Purpose:** Centralized env var reads via `pydantic-settings`; fails loudly at startup if any required key is missing.
 
-Key class: `Settings(BaseSettings)` with fields for all API keys (`OPENAI_API_KEY`, `TAVILY_API_KEY`, `BRAVE_SEARCH_API_KEY`, `YELP_API_KEY`, `GOOGLE_PLACES_API_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`), and tunable thresholds (`pin_score_threshold=6.0`, `pin_laptop_confidence_threshold=0.7`). Inject via `Depends(get_settings)` in routers — never import at module level (breaks unit test injection). No Reddit keys.
+Key class: `Settings(BaseSettings)` with fields for all API keys (`OPENAI_API_KEY`, `TAVILY_API_KEY`, `BRAVE_SEARCH_API_KEY`, `GOOGLE_PLACES_API_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`), and tunable thresholds (`pin_score_threshold=6.0`, `pin_laptop_confidence_threshold=0.7`). Inject via `Depends(get_settings)` in routers — never import at module level (breaks unit test injection). No Reddit keys.
 
 ---
 
@@ -297,7 +296,7 @@ Key gotchas:
 - `coffee_shop` is NOT a valid Google Places `nearbysearch` type — use `cafe` only
 - Do not combine `rankby=distance` and `radius` — mutually exclusive in the API
 - 3 types × 20 results = up to ~60 raw candidates before dedup
-- Google Places reviews are NOT used as a crawler content source — Tavily, Brave, and Yelp cover that
+- Google Places reviews are NOT used as a crawler content source — Tavily and Brave cover that
 
 ---
 
@@ -414,7 +413,7 @@ async def run_for_region(region_id: str, center_lat: float, center_lng: float, c
 ```
 
 Sequence:
-1. Tavily → Brave → Yelp → Instagram (sequential, not parallel, to respect Google Places Text Search rate limits since all sources feed the same place resolver)
+1. Tavily → Brave → Instagram (sequential, not parallel, to respect Google Places Text Search rate limits since all sources feed the same place resolver)
 2. For each `RawMention`: resolve → extract → write
 3. After all mentions written: `db_writer.recompute_boolean_attrs_for_region(region_id)`
 
@@ -483,23 +482,6 @@ async def fetch_brave_mentions(city_slug: str, queries: list[str] | None = None)
 Uses the same multi-query pattern as Tavily but targets neighborhood-level queries where Tavily coverage may thin out. URLs discovered here are scraped with `httpx` for content. Deduplicates against URLs already collected by Tavily (pass seen_urls set into both crawlers).
 
 Key gotcha: Brave Search API requires `Accept: application/json` and `X-Subscription-Token` headers. Rate limit varies by plan — add 0.3s delay between requests.
-
----
-
-### `backend/crawler/sources/yelp_crawler.py`
-**Purpose:** Free structured source. Searches Yelp Fusion API for cafes in the region, returns business data + review snippets. No place resolution needed — Yelp returns lat/lng directly, confirmed against Google `place_id` via Text Search.
-
-```python
-async def fetch_yelp_mentions(city_slug: str) -> list[RawMention]
-# GET https://api.yelp.com/v3/businesses/search
-#   ?term=coffee&location=Manhattan,NYC&categories=cafes&limit=50
-# Paginates with offset up to 200 results
-# Each business: name, address, lat/lng, rating, up to 3 review snippets
-```
-
-Each Yelp business becomes a `RawMention` per review snippet. The business `name + address` is passed to `place_resolver` to confirm Google `place_id` (one Text Search call per unique business, cached within the crawl run). Free tier: 500 calls/day.
-
-Key gotcha: Yelp review snippets are short (snippet only, not full review text). They're still valuable as structured signal — a snippet saying "great wifi, lots of outlets" is enough for high-confidence extraction.
 
 ---
 
@@ -771,7 +753,6 @@ GOOGLE_PLACES_API_KEY=              # Separate from browser key; restrict by Ren
 OPENAI_API_KEY=
 TAVILY_API_KEY=
 BRAVE_SEARCH_API_KEY=               # Brave Web Search API subscription token
-YELP_API_KEY=                       # Yelp Fusion API key (free tier: 500 calls/day)
 FRONTEND_URL=                       # For CORS allow_origins
 
 # Tunable thresholds (optional, have defaults)
