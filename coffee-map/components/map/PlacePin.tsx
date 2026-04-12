@@ -30,10 +30,10 @@ export function PlacePin({ map, place, onClick }: PlacePinProps) {
       map,
       position: { lat: place.lat, lng: place.lng },
       title: place.name,
-      content: pin.element,
+      content: pin,
     })
 
-    marker.addListener('click', () => onClick(place.place_id))
+    marker.addListener('gmp-click', () => onClick(place.place_id))
     markerRef.current = marker
 
     return () => {
