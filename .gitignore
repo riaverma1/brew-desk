@@ -16,6 +16,7 @@ eggs/
 .eggs/
 lib/
 lib64/
+!coffee-map/lib/
 parts/
 sdist/
 var/
