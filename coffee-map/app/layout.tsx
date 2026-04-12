@@ -5,6 +5,15 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'WFH Coffee Shop Finder',
   description: 'Find laptop-friendly coffee shops in NYC',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Coffee Map',
+  },
+  icons: {
+    apple: '/icons/apple-touch-icon.png',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
