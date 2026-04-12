@@ -46,6 +46,7 @@ todos:
     status: pending
     dependencies:
       - ad_hoc_endpoint
+isProject: false
 ---
 
 # Restructure Enrichment for Latency and Cost Reduction
@@ -159,9 +160,9 @@ todos:
 - **Wait for both to complete** before running LLM
 - Run LLM derivation on all available evidence (Google reviews + Tavily)
 - Handle partial evidence cases:
-    - If place_details succeeds but Tavily fails: set `places_details_flag=True`, `tavily_flag=False`, `enriched_flag=True` (LLM uses only Google reviews)
-    - If Tavily succeeds but place_details fails: set `places_details_flag=False`, `tavily_flag=True`, `enriched_flag=True` (LLM uses only Tavily)
-    - If both succeed: set both flags to True, `enriched_flag=True`
+  - If place_details succeeds but Tavily fails: set `places_details_flag=True`, `tavily_flag=False`, `enriched_flag=True` (LLM uses only Google reviews)
+  - If Tavily succeeds but place_details fails: set `places_details_flag=False`, `tavily_flag=True`, `enriched_flag=True` (LLM uses only Tavily)
+  - If both succeed: set both flags to True, `enriched_flag=True`
 
 ### 7. Add Ad-hoc Enrichment Endpoint
 
@@ -171,12 +172,12 @@ todos:
 - Check if place exists
 - Check if already enriched (`enriched_flag = True`)
 - If not enriched:
-    - Run place_details enrichment (synchronous/immediate) - fetches reviews + binary attributes
-    - Run Tavily enrichment (synchronous/immediate)
-    - Wait for both to complete before running LLM
-    - Run LLM derivation on all available evidence
-    - Handle partial evidence cases (same logic as background task)
-    - Return updated place data
+  - Run place_details enrichment (synchronous/immediate) - fetches reviews + binary attributes
+  - Run Tavily enrichment (synchronous/immediate)
+  - Wait for both to complete before running LLM
+  - Run LLM derivation on all available evidence
+  - Handle partial evidence cases (same logic as background task)
+  - Return updated place data
 - If already enriched, return existing data
 
 ### 8. Update Frontend
@@ -296,3 +297,4 @@ sequenceDiagram
 ## Files to Modify
 
 1. `backend/enrichment/places_manager.py` - Add basic info extraction/saving, top-n selection
+

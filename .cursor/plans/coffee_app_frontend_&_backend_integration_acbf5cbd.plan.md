@@ -2,6 +2,7 @@
 name: Coffee App Frontend & Backend Integration
 overview: Build a Google Maps-like frontend that displays nearby coffee/work-friendly places with WFH filters, tooltips showing attributes, and automatic enrichment. The frontend calls a Next.js API which proxies to a FastAPI Python backend that manages the places_bootstrap.json file and handles sync/async enrichment.
 todos: []
+isProject: false
 ---
 
 # Coffee App Frontend & Backend Integration
@@ -19,7 +20,7 @@ The system has three layers (Option A - Next.js API Route as proxy):
 - Proxies to FastAPI backend
 - Passes responses back to frontend
 
-3. **FastAPI Backend**: 
+1. **FastAPI Backend**:
 
 - **Single point of contact** for all Google Places API calls (API key stays server-side)
 - Manages places_bootstrap.json
@@ -158,13 +159,13 @@ flowchart TB
 - **Response 2 (via polling)**: Frontend polls `GET /api/places/status` and `GET /api/places/data` to get updated derived attributes when async enrichment completes
 - **Note**: This is the main endpoint that orchestrates the entire flow
 
-2. `GET /api/places/data` - Get enriched place data (for refreshing after async enrichment)
+1. `GET /api/places/data` - Get enriched place data (for refreshing after async enrichment)
 
 - Query params: `place_ids` (comma-separated)
 - Output: Full place objects with `place`, `derived`, `sources` from JSON file
 - Returns current state from JSON (may have partial data if async enrichment in progress)
 
-3. `GET /api/places/status` - Check current enrichment status (read-only, for polling)
+1. `GET /api/places/status` - Check current enrichment status (read-only, for polling)
 
 - Query params: `place_ids` (comma-separated)
 - Output: `{"place_id": {"places_details_flag": bool, "enriched_flag": bool, "enriching": bool}}`
@@ -202,7 +203,7 @@ flowchart TB
 - FastAPI handles: Google Places API call, enrichment orchestration, JSON file operations
 - Returns places with enriched data + enrichment status
 
-3. Forward response to frontend (no transformation needed, just pass through)
+1. Forward response to frontend (no transformation needed, just pass through)
 
 **Google Maps Types Filter (passed to FastAPI):**
 
@@ -235,13 +236,13 @@ flowchart TB
 - Checkboxes for: has_wifi, has_outlets, is_laptop_friendly, noise_level, seating_availability, seating_comfort, open_after_7pm
 - Filter by place detail attributes: restroom, outdoorSeating, etc.
 
-2. `components/PlaceTooltip.tsx` - Enhanced InfoWindow
+1. `components/PlaceTooltip.tsx` - Enhanced InfoWindow
 
 - Display all non-unknown attributes
 - "Show evidence" button
 - Enrichment status indicator (icon if enriching)
 
-3. `components/EvidenceModal.tsx` - Modal showing evidence excerpts
+1. `components/EvidenceModal.tsx` - Modal showing evidence excerpts
 
 - Display evidence from `derived[attribute].evidence`
 - Show sources from `derived[attribute].sources`
@@ -293,8 +294,6 @@ type EnrichedPlace = {
 };
 ```
 
-
-
 ## File Structure
 
 ```javascript
@@ -326,8 +325,6 @@ coffee-map/
     page.tsx             # Modified with filters and tooltips
 ```
 
-
-
 ## Key Implementation Notes
 
 1. **FastAPI Setup:**
@@ -340,7 +337,7 @@ coffee-map/
 - **REMOVED from Next.js**: All Google Places API calls removed from `coffee-map/app/api/places/route.ts`
 - **Optional caching**: Can add response caching for Google API calls to reduce costs (Redis or in-memory)
 
-2. **Enrichment Orchestration:**
+1. **Enrichment Orchestration:**
 
 - `process_nearby_search_sync()` - Already exists, use for sync enrichment
 - Calls `enrich_place_details_sync()` → `upsert_place()` → **automatically sets `places_details_flag=True` in JSON**
@@ -349,20 +346,20 @@ coffee-map/
 - Track enrichment status in memory (dict: `{place_id: {"enriching": bool}}`) for real-time status
 - **Important**: Flags are automatically persisted to JSON when enrichment completes - no manual flag updates needed
 
-3. **Frontend Filtering:**
+1. **Frontend Filtering:**
 
 - Filter places client-side after receiving from API
 - Filter by derived attributes (has_wifi, has_outlets, etc.)
 - Filter by place detail attributes (restroom, outdoorSeating, etc.)
 - Show "unknown" values in filters as optional (don't exclude)
 
-4. **Tooltip Display:**
+1. **Tooltip Display:**
 
 - Show all attributes where `value !== "unknown"` and `value !== null`
 - Format: "WiFi: Free (70% confidence)" or "Outlets: Many"
 - "Show evidence" button opens modal with evidence excerpts
 
-5. **Enrichment Status & Two-Response Flow:**
+1. **Enrichment Status & Two-Response Flow:**
 
 - **Response 1 (Immediate)**: 
 - FastAPI waits for sync enrichment (place_details) to complete
@@ -385,3 +382,4 @@ coffee-map/
 - `GOOGLE_PLACES_API_KEY` - **Required**: Used server-side for all Google Places API calls
 - `TAVILY_API_KEY` - Required for async enrichment
 - `OPENAI_API_KEY` - Required for LLM-based attribute derivation
+

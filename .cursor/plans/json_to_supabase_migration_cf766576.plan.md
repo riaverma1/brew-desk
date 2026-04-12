@@ -49,6 +49,7 @@ todos:
     status: pending
     dependencies:
       - setup_db_connection
+isProject: false
 ---
 
 # JSON to Supabase Postgres Migration Plan
@@ -90,7 +91,7 @@ Create a `places` table in Supabase with:
 
 **Indexes**:
 
-- **`place_id` (PRIMARY KEY)**: Automatically creates a unique B-tree index
+- `**place_id` (PRIMARY KEY)**: Automatically creates a unique B-tree index
   - **Benefits**: 
     - O(log n) lookups by place_id (all queries will use this)
     - Enforces uniqueness (prevents duplicate place_ids)
@@ -265,17 +266,18 @@ DATABASE_URL=postgresql://user:pass@host:port/dbname
 
 ## Migration Checklist
 
-- [ ] Create Supabase table schema
-- [ ] Set up database connection
-- [ ] Create migration script
-- [ ] Run migration (one-time)
-- [ ] Verify data integrity
-- [ ] Rename json_storage.py → db_storage.py and update functions
-- [ ] Rename json_service.py → db_service.py and update functions
-- [ ] Update all imports across codebase
-- [ ] Remove path/json_path parameters from function calls
-- [ ] Test concurrent operations
-- [ ] Remove file lock dependencies
-- [ ] Delete old json_storage.py and json_service.py files
-- [ ] Update documentation
-- [ ] Keep JSON file as backup (optional)
+- Create Supabase table schema
+- Set up database connection
+- Create migration script
+- Run migration (one-time)
+- Verify data integrity
+- Rename json_storage.py → db_storage.py and update functions
+- Rename json_service.py → db_service.py and update functions
+- Update all imports across codebase
+- Remove path/json_path parameters from function calls
+- Test concurrent operations
+- Remove file lock dependencies
+- Delete old json_storage.py and json_service.py files
+- Update documentation
+- Keep JSON file as backup (optional)
+
