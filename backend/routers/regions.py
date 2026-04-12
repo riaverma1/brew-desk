@@ -1,5 +1,5 @@
 """
-Admin-only routes for region inspection and manual seed triggering.
+Admin-only routes for region inspection and manual seed/resolve triggering.
 Not called by the frontend. Protected by X-Admin-Key header.
 """
 from __future__ import annotations
@@ -31,38 +31,52 @@ async def list_regions() -> list[RegionRow]:
 
 @router.post("/{region_id}/seed", dependencies=[Depends(_require_admin)])
 async def manual_seed(region_id: str) -> dict:
-    from background.seed_job import trigger_seed
+    """Manually trigger the full pipeline (crawl → resolve) for a region."""
     import asyncio
-
+    from background.seed_job import trigger_seed
     asyncio.create_task(trigger_seed(region_id))
     return {"status": "seed triggered", "region_id": region_id}
 
 
-class RetroactiveMatchRequest(BaseModel):
+class ResolveRequest(BaseModel):
     center_lat: float
     center_lng: float
-    region_id: str | None = None
+    region_id: str
 
 
-@router.post("/retroactive-match", dependencies=[Depends(_require_admin)])
-async def trigger_retroactive_match(
-    req: RetroactiveMatchRequest,
+@router.post("/{region_id}/enrich", dependencies=[Depends(_require_admin)])
+async def enrich_region_places(
+    region_id: str,
     background_tasks: BackgroundTasks,
     settings: Settings = Depends(get_settings),
 ) -> dict:
     """
-    Trigger retroactive multi-mention resolution for all unprocessed crawl rows.
-    Runs as a FastAPI BackgroundTask (non-blocking). since=None means all rows.
-    Protected by X-Admin-Key header.
+    Batch-enrich all places in a region that have last_enriched_at IS NULL.
+    Calls Place Details API for each place_id. Rate-limited to 5 req/s.
+    Runs as a background task — returns immediately.
     """
-    from background.retroactive_matcher import run_retroactive_match
+    from background.enrich_job import enrich_unenriched_places
+
+    background_tasks.add_task(enrich_unenriched_places, region_id, settings.google_places_api_key)
+    return {"status": "enrichment started", "region_id": region_id}
+
+
+@router.post("/resolve", dependencies=[Depends(_require_admin)])
+async def trigger_resolve(
+    req: ResolveRequest,
+    background_tasks: BackgroundTasks,
+) -> dict:
+    """
+    Manually trigger Step 2 (resolve) for a region.
+    Useful if the resolver failed mid-run or if new mentions need resolution.
+    Runs as a FastAPI BackgroundTask (non-blocking).
+    """
+    from background.resolver_job import resolve_for_region
 
     background_tasks.add_task(
-        run_retroactive_match,
+        resolve_for_region,
+        req.region_id,
         req.center_lat,
         req.center_lng,
-        settings,
-        req.region_id,
-        None,  # since=None — process all unprocessed rows
     )
-    return {"status": "started", "region_id": req.region_id}
+    return {"status": "resolver started", "region_id": req.region_id}

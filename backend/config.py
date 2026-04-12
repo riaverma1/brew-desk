@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     pin_score_threshold: float = 0.0
     pin_laptop_confidence_threshold: float = 0.0
     nearby_search_radius_meters: int = 1500
-    place_resolver_similarity_threshold: float = 0.65
+    place_resolver_similarity_threshold: float = 0.70
     place_resolver_distance_threshold_meters: int = 300
 
 
