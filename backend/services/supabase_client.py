@@ -48,7 +48,7 @@ async def get_places_by_ids(
                 .gte("laptop_confidence", laptop_confidence_threshold)
                 .execute()
             )
-            eligible_ids = list({row["place_id"] for row in mentions_resp.data})
+            eligible_ids = list({row["place_id"] for row in mentions_resp.data if row["place_id"]})
             if not eligible_ids:
                 return []
         else:
@@ -59,6 +59,27 @@ async def get_places_by_ids(
             query = query.gte("wfh_score", score_threshold)
         return query.execute().data
 
+    return await asyncio.to_thread(_query)
+
+
+async def get_places_in_bounds(bounds: MapBounds) -> list[dict]:
+    """
+    Return all places within viewport lat/lng bounds.
+    No filters — every row in the places table is a resolver-created, vetted place.
+    Used for diagnostics and admin tooling; the hot path uses get_places_by_ids.
+    """
+    def _query():
+        db = get_supabase()
+        return (
+            db.table("places")
+            .select("*")
+            .gte("lat", bounds.south)
+            .lte("lat", bounds.north)
+            .gte("lng", bounds.west)
+            .lte("lng", bounds.east)
+            .execute()
+            .data
+        )
     return await asyncio.to_thread(_query)
 
 
@@ -161,6 +182,21 @@ async def insert_mention_if_new(mention_data: dict) -> bool:
             .execute()
         )
         return len(resp.data) > 0
+
+    return await asyncio.to_thread(_query)
+
+
+async def get_unenriched_places(region_id: str | None = None) -> list[dict]:
+    """
+    Return places that have never been enriched with Google data (last_enriched_at IS NULL).
+    Optionally filtered to a specific region. Returns only place_id column.
+    """
+    def _query():
+        db = get_supabase()
+        q = db.table("places").select("place_id").is_("last_enriched_at", "null")
+        if region_id:
+            q = q.eq("region_id", region_id)
+        return q.execute().data
 
     return await asyncio.to_thread(_query)
 

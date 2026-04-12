@@ -3,15 +3,21 @@ Entry point for seeding a cold region. Called via FastAPI BackgroundTasks
 or manually via the /regions/{id}/seed admin route.
 
 Sequence:
-  1. Conditional UPDATE cold→crawling (idempotency lock — 0 rows = already claimed)
-  2. run crawler orchestrator
-  3. Mark region as seeded
-  4. On exception: roll back to cold so next pan can retry
+  1. Conditional UPDATE cold→crawling (idempotency lock)
+  2. Launch crawler (Step 1) and streaming resolver (Step 2) CONCURRENTLY
+       - Crawler writes raw mentions (place_id=NULL)
+       - Resolver polls every 30s, assigns place_ids as mentions come in
+       - First pins appear ~30s into the crawl, not after it finishes
+  3. Crawl finishes → signal crawl_done event
+  4. Resolver does final pass + boolean attr recompute
+  5. Mark region as seeded
+  6. On exception: roll back to cold so next pan can retry
 """
 from __future__ import annotations
 
 import asyncio
 import logging
+from datetime import datetime, timezone
 
 from services import supabase_client
 
@@ -22,13 +28,12 @@ async def trigger_seed(region_id: str) -> None:
     # Step 1: atomically claim the region (TOCTOU-safe)
     claimed = await supabase_client.claim_region_for_crawl(region_id)
     if not claimed:
-        logger.info("Region %s already claimed by another worker — aborting.", region_id)
+        logger.info("Region %s already claimed — aborting.", region_id)
         return
 
     logger.info("Seed job started for region %s", region_id)
 
     try:
-        # Fetch region details needed by the orchestrator
         regions = await supabase_client.list_all_regions()
         region = next((r for r in regions if r["id"] == region_id), None)
         if not region:
@@ -38,19 +43,51 @@ async def trigger_seed(region_id: str) -> None:
         center_lng = (region["min_lng"] + region["max_lng"]) / 2
         city_slug = region["city_slug"]
 
-        # Record start time before crawl so retroactive matcher can scope to this run
-        from datetime import datetime, timezone
-        crawl_started_at = datetime.now(timezone.utc)
-
-        # Step 2: run crawler
         from crawler.orchestrator import run_for_region
+        from background.resolver_job import resolve_streaming
 
-        await run_for_region(
-            region_id=region_id,
-            center_lat=center_lat,
-            center_lng=center_lng,
-            city_slug=city_slug,
+        # Event signals the resolver when the crawl has finished writing mentions
+        crawl_done = asyncio.Event()
+
+        async def _crawl():
+            await run_for_region(
+                region_id=region_id,
+                center_lat=center_lat,
+                center_lng=center_lng,
+                city_slug=city_slug,
+            )
+            logger.info("Seed job: crawl complete — signalling resolver")
+            crawl_done.set()
+
+        # Step 2: run crawler and resolver concurrently.
+        # Crawler writes raw mentions; resolver picks them up every 30s.
+        crawl_task = asyncio.create_task(_crawl())
+        resolve_task = asyncio.create_task(
+            resolve_streaming(region_id, center_lat, center_lng, crawl_done)
         )
+
+        # Wait for crawl to finish (or fail)
+        try:
+            await crawl_task
+        except Exception as crawl_exc:
+            # Crawl failed — cancel the resolver, surface the error
+            resolve_task.cancel()
+            try:
+                await resolve_task
+            except (asyncio.CancelledError, Exception):
+                pass
+            raise crawl_exc
+
+        # Crawl succeeded — wait for resolver to finish its final pass
+        try:
+            summary = await resolve_task
+            logger.info("Seed job: resolver complete — %s", summary)
+        except Exception as resolve_exc:
+            # Resolver failure is isolated — region still gets seeded
+            logger.warning(
+                "Seed job: resolver failed for region %s: %s — proceeding to seeded",
+                region_id, resolve_exc,
+            )
 
         # Step 3: mark seeded
         db = supabase_client.get_supabase()
@@ -60,29 +97,8 @@ async def trigger_seed(region_id: str) -> None:
 
         logger.info("Seed job completed for region %s", region_id)
 
-        # Step 4: retroactive multi-mention resolution — only for mentions created
-        # during this crawl run. Runs inline so failures are isolated below.
-        try:
-            from background.retroactive_matcher import run_retroactive_match
-            from config import get_settings
-            logger.info("Seed job: starting retroactive match for region %s", region_id)
-            summary = await run_retroactive_match(
-                center_lat=center_lat,
-                center_lng=center_lng,
-                settings=get_settings(),
-                region_id=region_id,
-                since=crawl_started_at,
-            )
-            logger.info("Seed job: retroactive match complete — %s", summary)
-        except Exception as retro_exc:
-            # Never bubble up — region stays seeded even if retroactive match fails
-            logger.warning(
-                "Seed job: retroactive match failed for region %s: %s", region_id, retro_exc
-            )
-
     except Exception as exc:
         logger.exception("Seed job failed for region %s: %s", region_id, exc)
-        # Step 4: roll back to cold so next map pan can retry
         try:
             await supabase_client.set_region_status(region_id, "cold")
         except Exception as rollback_exc:

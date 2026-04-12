@@ -130,10 +130,27 @@ async def resolve_place(
     best: ResolvedPlace | None = None
     best_sim = 0.0
 
+    # First word of the query — almost always the most distinctive token
+    # (e.g. "Flop" in "Flop House", "Blue" in "Blue Bottle")
+    query_first_word = place_name.lower().split()[0] if place_name.split() else place_name.lower()
+
     for candidate in candidates:
         sim = difflib.SequenceMatcher(None, place_name.lower(), candidate["name"].lower()).ratio()
         if sim < similarity_threshold:
             continue
+
+        # Guard: first word must bear some resemblance to the candidate's first word.
+        # Prevents "Flop House" → "Lava House" (sim 0.667 passes threshold but
+        # first-word sim "flop"/"lava" = 0.0, well below 0.5).
+        candidate_first_word = candidate["name"].lower().split()[0] if candidate["name"].split() else ""
+        first_word_sim = difflib.SequenceMatcher(None, query_first_word, candidate_first_word).ratio()
+        if first_word_sim < 0.5:
+            logger.debug(
+                "  Resolver: rejected %r → %r (overall sim=%.2f OK but first-word sim=%.2f too low)",
+                place_name, candidate["name"], sim, first_word_sim,
+            )
+            continue
+
         lat2, lng2 = candidate.get("lat"), candidate.get("lng")
         if lat2 is None or lng2 is None:
             continue

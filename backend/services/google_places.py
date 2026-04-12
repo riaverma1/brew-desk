@@ -1,12 +1,16 @@
 """
 Google Places API wrapper for V2.
 
-Two uses only:
-  1. Nearby Search (map pan hot path) — fires 3 concurrent type requests
+Three uses:
+  1. Nearby Search (map pan hot path) — up to 20 results around a point
   2. Text Search (place resolver) — used by crawler only
+  3. Place Details (batch enrichment) — fetches photos/rating/hours by place_id
 
-Never requests reviews, photos, opening_hours, or editorial summaries —
-those trigger Enterprise SKU billing (~$0.040/req vs ~$0.006/req basic).
+Billing notes:
+  - Basic fields (id, displayName, location): ~$0.003/req
+  - Atmosphere fields (rating, userRatingCount): ~$0.005/req
+  - Advanced fields (regularOpeningHours, photos): ~$0.010/req
+  Never request reviews or editorial summaries — those trigger Enterprise SKU.
 """
 from __future__ import annotations
 
@@ -17,8 +21,9 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
-NEARBY_SEARCH_URL = "https://places.googleapis.com/v1/places:searchNearby"
-TEXT_SEARCH_URL = "https://places.googleapis.com/v1/places:searchText"
+NEARBY_SEARCH_URL   = "https://places.googleapis.com/v1/places:searchNearby"
+TEXT_SEARCH_URL     = "https://places.googleapis.com/v1/places:searchText"
+PLACE_DETAILS_URL   = "https://places.googleapis.com/v1/places/{place_id}"
 
 # Nearby field mask — Basic + Atmosphere + Advanced tiers
 # primaryType is Basic; rating/userRatingCount are Atmosphere; regularOpeningHours is Advanced
@@ -27,6 +32,8 @@ NEARBY_FIELD_MASK = (
     "places.primaryType,places.rating,places.userRatingCount,places.regularOpeningHours"
 )
 TEXT_SEARCH_FIELD_MASK = "places.id,places.displayName,places.location,places.formattedAddress"
+# Place Details field mask — same fields as nearby search minus the list wrapper
+DETAILS_FIELD_MASK = "id,photos,primaryType,rating,userRatingCount,regularOpeningHours"
 
 
 def _photo_urls(place: dict, api_key: str, max_photos: int = 3) -> list[str]:
@@ -131,3 +138,32 @@ async def text_search(
             "formatted_address": p.get("formattedAddress", ""),
         })
     return places
+
+
+async def get_place_details(place_id: str, api_key: str) -> dict | None:
+    """
+    Fetch photos, rating, hours for a single known place_id via Place Details API.
+    Used for batch backfill of places that have never been enriched via nearby search.
+
+    Returns a dict ready to pass to supabase_client.save_google_place_data, or None on failure.
+    """
+    url = PLACE_DETAILS_URL.format(place_id=place_id)
+    headers = {
+        "X-Goog-Api-Key": api_key,
+        "X-Goog-FieldMask": DETAILS_FIELD_MASK,
+    }
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(url, headers=headers, timeout=10)
+            resp.raise_for_status()
+            p = resp.json()
+            return {
+                "photo_urls": _photo_urls(p, api_key),
+                "primary_type": p.get("primaryType"),
+                "rating": p.get("rating"),
+                "user_rating_count": p.get("userRatingCount"),
+                "regular_opening_hours": p.get("regularOpeningHours"),
+            }
+    except Exception as exc:
+        logger.warning("Place Details failed for %s: %s", place_id, exc)
+        return None
