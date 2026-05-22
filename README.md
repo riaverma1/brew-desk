@@ -1,6 +1,14 @@
-# WFH Coffee Shop Finder — V2
+# BtwnMeetings
+
+**Find your next workspace between meetings.**
 
 A map app that shows coffee shops, cafes, and libraries in Manhattan that are good for working from home. Every pin on the map has been validated by real mentions from Reddit, Instagram, blogs, and other web sources — not just Google reviews.
+
+Architecture:
+
+Frontend: Next.js (deployed on Vercel)
+Backend: FastAPI (deployed on Render free tier)
+Database: Supabase PostgreSQL
 
 ---
 

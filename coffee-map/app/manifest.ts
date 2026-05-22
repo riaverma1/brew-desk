@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'WFH Coffee Shop Finder',
-    short_name: 'Coffee Map',
-    description: 'Find laptop-friendly coffee shops in NYC',
+    name: 'BtwnMeetings',
+    short_name: 'BtwnMeetings',
+    description: 'Find your next workspace between meetings.',
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',
