@@ -33,48 +33,60 @@ export function MapContainer() {
   // Initialize map, then pan to user's location if geolocation is available
   useEffect(() => {
     if (!mapDivRef.current || mapRef.current) return
-    if (typeof window === 'undefined' || !window.google?.maps) return
 
-    const mapId = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID
-    if (!mapId) {
-      console.warn('NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID not set — AdvancedMarkerElement may fail.')
+    const initMap = () => {
+      if (!mapDivRef.current || mapRef.current) return
+      if (!window.google?.maps) return
+
+      const mapId = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID
+      if (!mapId) {
+        console.warn('NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID not set — AdvancedMarkerElement may fail.')
+      }
+
+      const map = new google.maps.Map(mapDivRef.current, {
+        center: DEFAULT_CENTER,
+        zoom: DEFAULT_ZOOM,
+        mapId: mapId ?? '',
+        disableDefaultUI: false,
+        clickableIcons: false,
+      })
+      mapRef.current = map
+
+      // Request location — browser will prompt the user for permission
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          async (pos) => {
+            const { lat, lng } = { lat: pos.coords.latitude, lng: pos.coords.longitude }
+            map.panTo({ lat, lng })
+            map.setZoom(14)
+
+            // Green dot for current location
+            const { AdvancedMarkerElement } = await google.maps.importLibrary('marker') as google.maps.MarkerLibrary
+            const dot = document.createElement('div')
+            dot.style.cssText = `
+              width: 16px; height: 16px; border-radius: 50%;
+              background: #22c55e; border: 2.5px solid white;
+              box-shadow: 0 0 0 2px #22c55e;
+            `
+            userMarkerRef.current = new AdvancedMarkerElement({ map, position: { lat, lng }, content: dot })
+          },
+          () => {
+            // Permission denied or unavailable — stay on NYC default
+          },
+          { timeout: 8000, maximumAge: 60_000 }
+        )
+      }
+
+      setMapReady(true)
     }
 
-    const map = new google.maps.Map(mapDivRef.current, {
-      center: DEFAULT_CENTER,
-      zoom: DEFAULT_ZOOM,
-      mapId: mapId ?? '',
-      disableDefaultUI: false,
-      clickableIcons: false,
-    })
-    mapRef.current = map
-
-    // Request location — browser will prompt the user for permission
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          const { lat, lng } = { lat: pos.coords.latitude, lng: pos.coords.longitude }
-          map.panTo({ lat, lng })
-          map.setZoom(14)
-
-          // Green dot for current location
-          const { AdvancedMarkerElement } = await google.maps.importLibrary('marker') as google.maps.MarkerLibrary
-          const dot = document.createElement('div')
-          dot.style.cssText = `
-            width: 16px; height: 16px; border-radius: 50%;
-            background: #22c55e; border: 2.5px solid white;
-            box-shadow: 0 0 0 2px #22c55e;
-          `
-          userMarkerRef.current = new AdvancedMarkerElement({ map, position: { lat, lng }, content: dot })
-        },
-        () => {
-          // Permission denied or unavailable — stay on NYC default
-        },
-        { timeout: 8000, maximumAge: 60_000 }
-      )
+    if (window.google?.maps) {
+      initMap()
+    } else {
+      const script = document.querySelector<HTMLScriptElement>('script[src*="maps.googleapis.com"]')
+      script?.addEventListener('load', initMap)
+      return () => script?.removeEventListener('load', initMap)
     }
-
-    setMapReady(true)
   }, [])
 
   const handlePinClick = (placeId: string) => {
