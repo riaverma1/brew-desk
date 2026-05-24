@@ -83,6 +83,15 @@ export function InfoCard({ placeId, place, onClose }: InfoCardProps) {
             {formatPrimaryType(place.primary_type)}
           </span>
         )}
+        {place.rating != null && (
+          <span className="text-xs text-gray-700 flex items-center gap-1">
+            <span className="text-amber-400">★</span>
+            {place.rating.toFixed(1)}
+            {place.user_rating_count != null && (
+              <span className="text-gray-400">({place.user_rating_count.toLocaleString()})</span>
+            )}
+          </span>
+        )}
         <a
           href={googleMapsUrl(place)}
           target="_blank"
