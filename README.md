@@ -2,14 +2,26 @@
 
 **Find your next workspace between meetings.**
 
-A map app that shows coffee shops, cafes, and libraries in Manhattan that are good for working from home. Every pin on the map has been validated by real mentions from Reddit, Instagram, blogs, and other web sources — not just Google reviews.
+A map that shows WFH-friendly coffee shops, cafes, and libraries in Manhattan. Every pin is backed by real web mentions (Reddit, blogs, Instagram), and its dynamically updated to account for changes in the location. 
 
-Architecture:
+Users can see wifi/outlets/noise level attributes and read the actual sources that mentioned the place.
 
-Frontend: Next.js (deployed on Vercel)
-Backend: FastAPI (deployed on Render free tier)
-Database: Supabase PostgreSQL
+**Target user:** NYC knowledge workers who need a spot to work between back-to-back meetings and want something better than "coffee shop near me."
 
+---
+ 
+## Current architecture (v2)
+ 
+| Layer | Tech | Status |
+|-------|------|--------|
+| Frontend | Next.js 14, TypeScript, Tailwind, Google Maps JS | ✅ Deployed on Vercel |
+| Backend | FastAPI, Python 3.11 | ✅ Deployed on Render (free tier) |
+| Database | Supabase PostgreSQL | ✅ Live |
+| Crawler | Tavily + Brave + Instagram → GPT-4o-mini → Supabase | ✅ Built, Manhattan seeded |
+| Coverage | Manhattan only (other boroughs commented out) | 🔲 Phase 2 |
+ 
+**How it works:** A background crawler pre-populates the DB with enriched places. When a user pans the map, the backend queries Supabase. Pins only appear for places that have real web mentions and a mapped google location.
+ 
 ---
 
 ## How it works (high level)
@@ -187,27 +199,24 @@ mentions      — individual mentions linking source → place (or NULL for unma
 
 ## Running locally
 
-**Backend**
+**Terminal 1 — Backend**
 ```bash
 cd backend
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-# copy .env.local with SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
-# GOOGLE_PLACES_API_KEY, OPENAI_API_KEY, TAVILY_API_KEY, BRAVE_SEARCH_API_KEY,
-# FRONTEND_URL=http://localhost:3000
 uvicorn main:app --port 8000
 ```
+Requires `backend/.env.local` with: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GOOGLE_PLACES_API_KEY`, `OPENAI_API_KEY`, `TAVILY_API_KEY`, `BRAVE_SEARCH_API_KEY`, `FRONTEND_URL=http://localhost:3000`
 
-**Frontend**
+**Terminal 2 — Frontend**
 ```bash
 cd coffee-map
 npm install
-# copy .env.local with NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-# NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID, BACKEND_URL=http://localhost:8000
 npm run dev
 ```
+Requires `coffee-map/.env.local` with: `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, `NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID`, `BACKEND_URL=http://localhost:8000`
 
-Open `http://localhost:3000`. The map will load — if Manhattan hasn't been crawled, it will auto-trigger in the background.
+Open `http://localhost:3000`.
 
 **Trigger a crawl manually**
 ```bash

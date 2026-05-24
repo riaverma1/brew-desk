@@ -8,23 +8,44 @@ import type {
   NearbySearchResponse,
 } from '@/types'
 
+const EMPTY_NEARBY: NearbySearchResponse = { places: [], region_status: null, region_id: null }
+
 export async function fetchNearbyPlaces(
   req: NearbySearchRequest,
   signal?: AbortSignal
 ): Promise<NearbySearchResponse> {
-  try {
-    const resp = await fetch('/api/places', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(req),
-      signal,
-      cache: 'no-store',
-    })
-    if (!resp.ok) return { places: [], region_status: null, region_id: null }
-    return resp.json()
-  } catch {
-    return { places: [], region_status: null, region_id: null }
+  const maxAttempts = 4
+  const baseDelay = 2000
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    if (signal?.aborted) return EMPTY_NEARBY
+
+    try {
+      const resp = await fetch('/api/places', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(req),
+        signal,
+        cache: 'no-store',
+      })
+
+      if (resp.ok) return resp.json()
+
+      // Don't retry on client errors
+      if (resp.status < 500) return EMPTY_NEARBY
+    } catch (err) {
+      if ((err as Error)?.name === 'AbortError') return EMPTY_NEARBY
+    }
+
+    if (attempt < maxAttempts - 1) {
+      await new Promise<void>((resolve, reject) => {
+        const timer = setTimeout(resolve, baseDelay * 2 ** attempt)
+        signal?.addEventListener('abort', () => { clearTimeout(timer); reject() }, { once: true })
+      }).catch(() => null)
+    }
   }
+
+  return EMPTY_NEARBY
 }
 
 export async function fetchMentions(
