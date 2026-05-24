@@ -49,16 +49,19 @@ async def enrich_region_places(
     region_id: str,
     background_tasks: BackgroundTasks,
     settings: Settings = Depends(get_settings),
+    force: bool = False,
 ) -> dict:
     """
-    Batch-enrich all places in a region that have last_enriched_at IS NULL.
-    Calls Place Details API for each place_id. Rate-limited to 5 req/s.
+    Batch-enrich places in a region via Place Details API. Rate-limited to 5 req/s.
     Runs as a background task — returns immediately.
+
+    force=true re-enriches all places regardless of last_enriched_at (use to
+    fix stale/broken photo URLs after a photo pipeline change).
     """
     from background.enrich_job import enrich_unenriched_places
 
-    background_tasks.add_task(enrich_unenriched_places, region_id, settings.google_places_api_key)
-    return {"status": "enrichment started", "region_id": region_id}
+    background_tasks.add_task(enrich_unenriched_places, region_id, settings.google_places_api_key, force=force)
+    return {"status": "enrichment started", "region_id": region_id, "force": force}
 
 
 @router.post("/resolve", dependencies=[Depends(_require_admin)])

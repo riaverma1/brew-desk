@@ -36,17 +36,31 @@ TEXT_SEARCH_FIELD_MASK = "places.id,places.displayName,places.location,places.fo
 DETAILS_FIELD_MASK = "id,photos,primaryType,rating,userRatingCount,regularOpeningHours"
 
 
-def _photo_urls(place: dict, api_key: str, max_photos: int = 3) -> list[str]:
-    """Convert Google Places photo resource names to usable media URLs."""
+async def _resolve_photo_urls(place: dict, api_key: str, max_photos: int = 3) -> list[str]:
+    """Resolve Google Places photo names to CDN URLs that work from any browser.
+
+    Using skipHttpRedirect=true makes the API return a JSON body with a photoUri
+    pointing to googleusercontent.com — no key embedded, no IP restrictions.
+    """
     photos = place.get("photos", [])[:max_photos]
     urls = []
-    for photo in photos:
-        name = photo.get("name", "")
-        if name:
-            urls.append(
-                f"https://places.googleapis.com/v1/{name}/media"
-                f"?maxHeightPx=600&maxWidthPx=800&key={api_key}"
-            )
+    async with httpx.AsyncClient() as client:
+        for photo in photos:
+            name = photo.get("name", "")
+            if not name:
+                continue
+            try:
+                resp = await client.get(
+                    f"https://places.googleapis.com/v1/{name}/media",
+                    params={"maxHeightPx": 600, "maxWidthPx": 800,
+                            "key": api_key, "skipHttpRedirect": "true"},
+                    timeout=5,
+                )
+                uri = resp.json().get("photoUri", "")
+                if uri:
+                    urls.append(uri)
+            except Exception:
+                pass
     return urls
 
 
@@ -86,7 +100,6 @@ async def nearby_search_parallel(
             return [
                 {
                     "place_id": p["id"],
-                    "photo_urls": _photo_urls(p, api_key),
                     "primary_type": p.get("primaryType"),
                     "rating": p.get("rating"),
                     "user_rating_count": p.get("userRatingCount"),
@@ -158,7 +171,7 @@ async def get_place_details(place_id: str, api_key: str) -> dict | None:
             resp.raise_for_status()
             p = resp.json()
             return {
-                "photo_urls": _photo_urls(p, api_key),
+                "photo_urls": await _resolve_photo_urls(p, api_key),
                 "primary_type": p.get("primaryType"),
                 "rating": p.get("rating"),
                 "user_rating_count": p.get("userRatingCount"),

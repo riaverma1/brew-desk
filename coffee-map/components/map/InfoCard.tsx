@@ -74,6 +74,7 @@ export function InfoCard({ placeId, place, onClose }: InfoCardProps) {
               src={url}
               alt={`${place.name} photo ${i + 1}`}
               className="h-28 w-40 object-cover rounded-lg flex-shrink-0"
+              onError={(e) => { e.currentTarget.style.display = 'none' }}
             />
           ))}
         </div>

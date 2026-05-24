@@ -21,14 +21,16 @@ logger = logging.getLogger(__name__)
 _DETAILS_DELAY = 0.2   # 5 req/s — safe default, well under 100 req/s quota
 
 
-async def enrich_unenriched_places(region_id: str, api_key: str) -> dict:
+async def enrich_unenriched_places(region_id: str, api_key: str, force: bool = False) -> dict:
     """
     Fetch Place Details for every place in the region with last_enriched_at IS NULL.
     Writes photos, primary_type, rating, user_rating_count, regular_opening_hours.
 
+    force=True re-enriches all places regardless of last_enriched_at.
     Returns {"enriched": N, "failed": M, "skipped": K}.
     """
-    rows = await supabase_client.get_unenriched_places(region_id)
+    rows = await (supabase_client.get_all_places_in_region(region_id) if force
+                  else supabase_client.get_unenriched_places(region_id))
     total = len(rows)
     logger.info("Enrich job: %d unenriched places found for region %s", total, region_id)
 

@@ -201,6 +201,15 @@ async def get_unenriched_places(region_id: str | None = None) -> list[dict]:
     return await asyncio.to_thread(_query)
 
 
+async def get_all_places_in_region(region_id: str) -> list[dict]:
+    """Return all places in a region regardless of enrichment status. Returns only place_id."""
+    def _query():
+        db = get_supabase()
+        return db.table("places").select("place_id").eq("region_id", region_id).execute().data
+
+    return await asyncio.to_thread(_query)
+
+
 async def list_all_regions() -> list[dict]:
     def _query():
         db = get_supabase()

@@ -10,15 +10,22 @@ Users can see wifi/outlets/noise level attributes and read the actual sources th
 
 ---
  
-## Current architecture (v2)
+## Current architecture
  
-| Layer | Tech | Status |
-|-------|------|--------|
-| Frontend | Next.js 14, TypeScript, Tailwind, Google Maps JS | ✅ Deployed on Vercel |
-| Backend | FastAPI, Python 3.11 | ✅ Deployed on Render (free tier) |
-| Database | Supabase PostgreSQL | ✅ Live |
-| Crawler | Tavily + Brave + Instagram → GPT-4o-mini → Supabase | ✅ Built, Manhattan seeded |
-| Coverage | Manhattan only (other boroughs commented out) | 🔲 Phase 2 |
+### Tech stack
+
+| Layer | Tech |
+|-------|------|
+| Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS |
+| Map | Google Maps JS API — AdvancedMarkerElement (requires mapId) |
+| Backend | FastAPI, Python 3.11, pydantic-settings |
+| Database | Supabase (Postgres) — supabase-py v2 wrapped in `asyncio.to_thread` |
+| Web search | Tavily API, Brave Search API |
+| LLM | OpenAI GPT-4o-mini (place resolver + WFH attribute extractor) |
+| Place lookup | Google Places API (New) — Nearby Search + Text Search |
+| Hosting | Frontend: Vercel · Backend: Render |
+
+---
  
 **How it works:** A background crawler pre-populates the DB with enriched places. When a user pans the map, the backend queries Supabase. Pins only appear for places that have real web mentions and a mapped google location.
  
@@ -182,27 +189,12 @@ mentions      — individual mentions linking source → place (or NULL for unma
 
 ---
 
-## Tech stack
-
-| Layer | Tech |
-|-------|------|
-| Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS |
-| Map | Google Maps JS API — AdvancedMarkerElement (requires mapId) |
-| Backend | FastAPI, Python 3.11, pydantic-settings |
-| Database | Supabase (Postgres) — supabase-py v2 wrapped in `asyncio.to_thread` |
-| Web search | Tavily API, Brave Search API |
-| LLM | OpenAI GPT-4o-mini (place resolver + WFH attribute extractor) |
-| Place lookup | Google Places API (New) — Nearby Search + Text Search |
-| Hosting | Frontend: Vercel · Backend: Render |
-
----
-
 ## Running locally
 
 **Terminal 1 — Backend**
 ```bash
+source .venv/bin/activate
 cd backend
-python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn main:app --port 8000
 ```
@@ -219,9 +211,14 @@ Requires `coffee-map/.env.local` with: `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, `NEXT_
 Open `http://localhost:3000`.
 
 **Trigger a crawl manually**
+runs the full pipeline (web crawl → place resolver → enrich)
 ```bash
 curl -X POST http://localhost:8000/regions/{region_id}/seed
 ```
+example region_id = 65be0415-597d-40e1-89e4-a63f6e6c8e97
+
+**Trigger enriching the google places details for existing places**
+curl -X POST "http://localhost:8000/regions/{region_id}" -H "X-Admin-Key: random-secret-admin-key"
 
 **Required Supabase migrations** (run in SQL editor in order):
 ```
