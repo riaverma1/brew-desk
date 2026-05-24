@@ -20,8 +20,14 @@ from crawler.sources import brave_crawler, instagram_crawler, tavily_crawler
 
 logger = logging.getLogger(__name__)
 
-# Hard stop — expand in Phase 2
-ALLOWED_CITY_SLUGS = {"nyc-manhattan"}
+ALLOWED_CITY_SLUGS = {
+    "nyc-manhattan",
+    "nyc-queens",
+    "nyc-brooklyn",
+    "chicago",
+    "phoenix",
+    "albuquerque",
+}
 
 
 def _platform_from_url(url: str, crawler_source: str) -> tuple[str, str]:

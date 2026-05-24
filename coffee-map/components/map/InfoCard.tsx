@@ -40,8 +40,8 @@ export function InfoCard({ placeId, place, onClose }: InfoCardProps) {
 
   return (
     <div className="
-      fixed bottom-0 left-0 right-0 z-30 bg-white shadow-xl rounded-t-2xl max-h-[70vh] overflow-y-auto border-t-4 border-green-600
-      md:absolute md:top-4 md:right-4 md:bottom-auto md:left-auto md:w-80 md:rounded-xl md:max-h-[calc(100vh-2rem)] md:border-t-4 md:border-l-0
+      fixed bottom-0 left-0 right-0 z-30 bg-white shadow-xl rounded-t-2xl max-h-[70vh] overflow-y-auto border-t-4 border-amber-900
+      md:fixed md:top-[4.5rem] md:right-4 md:bottom-auto md:left-auto md:w-80 md:rounded-xl md:max-h-[calc(100vh-5rem)] md:border-l-0
     ">
       {/* Header */}
       <div className="flex items-start justify-between p-4 border-b border-gray-100">
