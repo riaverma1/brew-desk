@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useMapBounds } from '@/hooks/useMapBounds'
 import { usePlaces } from '@/hooks/usePlaces'
 import type { PlacePin as PlacePinType } from '@/types'
@@ -89,12 +89,20 @@ export function MapContainer() {
     }
   }, [])
 
-  const handlePinClick = (placeId: string) => {
+  // BUG-3: stable reference prevents PlacePin useEffect from re-running on every render
+  const handlePinClick = useCallback((placeId: string) => {
     const place = places.find((p) => p.place_id === placeId) ?? null
     setSelectedPlace(place)
-  }
+  }, [places])
 
   const handleCloseCard = () => setSelectedPlace(null)
+
+  // BUG-6: re-anchor selectedPlace when places refresh after a pan
+  useEffect(() => {
+    if (!selectedPlace) return
+    const found = places.find((p) => p.place_id === selectedPlace.place_id)
+    setSelectedPlace(found ?? null)
+  }, [places])
 
   return (
     <div className="relative w-full h-full">
@@ -121,6 +129,15 @@ export function MapContainer() {
       )}
 
       {/* Status indicators */}
+      {isLoading && places.length === 0 && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-white border border-gray-200 shadow-md rounded-full px-4 py-2 text-sm text-gray-700 flex items-center gap-2 pointer-events-none select-none">
+          <svg className="w-3.5 h-3.5 text-gray-400 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+          </svg>
+          <span>Connecting&hellip;</span>
+        </div>
+      )}
       <CrawlingIndicator visible={regionStatus === 'crawling'} />
       <ColdRegionBanner visible={regionStatus === 'cold'} />
     </div>
