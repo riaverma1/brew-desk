@@ -40,13 +40,13 @@ export function InfoCard({ placeId, place, onClose }: InfoCardProps) {
 
   return (
     <div className="
-      fixed bottom-0 left-0 right-0 z-30 bg-white shadow-xl rounded-t-2xl max-h-[70vh] overflow-y-auto
-      md:absolute md:top-4 md:right-4 md:bottom-auto md:left-auto md:w-80 md:rounded-xl md:max-h-[calc(100vh-2rem)]
+      fixed bottom-0 left-0 right-0 z-30 bg-white shadow-xl rounded-t-2xl max-h-[70vh] overflow-y-auto border-t-4 border-green-600
+      md:absolute md:top-4 md:right-4 md:bottom-auto md:left-auto md:w-80 md:rounded-xl md:max-h-[calc(100vh-2rem)] md:border-t-4 md:border-l-0
     ">
       {/* Header */}
       <div className="flex items-start justify-between p-4 border-b border-gray-100">
         <div className="flex-1 min-w-0">
-          <h2 className="font-semibold text-gray-900 truncate">{place.name}</h2>
+          <h2 className="text-lg font-semibold text-gray-900 truncate">{place.name}</h2>
           {place.address && (
             <p className="text-xs text-gray-500 mt-0.5 truncate">{place.address}</p>
           )}
@@ -95,7 +95,17 @@ export function InfoCard({ placeId, place, onClose }: InfoCardProps) {
 
       {/* Today's hours */}
       {hours && (
-        <div className="px-4 py-2 border-b border-gray-100">
+        <div className="px-4 py-2 border-b border-gray-100 flex items-center gap-2 flex-wrap">
+          {place.regular_opening_hours?.openNow != null && (
+            <span className={`flex items-center gap-1 text-xs font-medium ${
+              place.regular_opening_hours.openNow ? 'text-green-600' : 'text-red-500'
+            }`}>
+              <span className={`h-1.5 w-1.5 rounded-full ${
+                place.regular_opening_hours.openNow ? 'bg-green-500' : 'bg-red-400'
+              }`} />
+              {place.regular_opening_hours.openNow ? 'Open' : 'Closed'}
+            </span>
+          )}
           <p className="text-xs text-gray-600">{hours}</p>
         </div>
       )}

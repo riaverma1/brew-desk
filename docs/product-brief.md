@@ -1,12 +1,12 @@
-# BtwnMeetings — Product Brief & Triage
+# BrewDesk — Product Brief & Triage
 
-> **Purpose of this doc:** Track what needs to get fixed, polished, and built to get BtwnMeetings to a "showable" state. Also captures the early thinking for v3. Use this as the source of truth for GitHub Issues.
+> **Purpose of this doc:** Track what needs to get fixed, polished, and built to get BrewDesk to a "showable" state. Also captures the early thinking for v3. Use this as the source of truth for GitHub Issues.
 
 ---
 
 ## What the app is
 
-**BtwnMeetings** — Find your next workspace between meetings.
+**BrewDesk** — Find your next workspace between meetings.
 
 A map that shows WFH-friendly coffee shops, cafes, and libraries in Manhattan. Every pin is backed by real web mentions (Reddit, blogs, Instagram) — not just Google ratings. Users can see wifi/outlets/noise level attributes and read the actual sources that mentioned the place.
 
@@ -230,7 +230,7 @@ Note: `MentionCard` currently doesn't receive `place.name` as a prop — either 
 ## UI & Branding gaps (fix before showing anyone)
 
 ### 🎨 UI-1: No visible branding or identity
-`page.tsx` is just a full-screen map — no header, no logo, no app name visible, no tagline. A first-time visitor has no idea what "BtwnMeetings" is or what they're looking at. This is the most important thing to fix before showing the app to anyone.
+`page.tsx` is just a full-screen map — no header, no logo, no app name visible, no tagline. A first-time visitor has no idea what "BrewDesk" is or what they're looking at. This is the most important thing to fix before showing the app to anyone.
 
 **What to build:** A minimal sticky header (40–48px) with the app name, a one-line tagline ("Find your next workspace between meetings"), and optionally a "?" or "About" link. Should be transparent/blurred over the map, not a solid block.
 **Labels:** `ui`, `branding`, `high priority`

@@ -1,4 +1,4 @@
-# BtwnMeetings
+# BrewDesk
 
 **Find your next workspace between meetings.**
 

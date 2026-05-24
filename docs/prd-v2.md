@@ -1,4 +1,4 @@
-# BtwnMeetings — V2 PRD
+# BrewDesk — V2 PRD
 
 > **Status:** Draft · May 2026
 > **Scope:** V2 = the first "showable" product + post-launch feature set. V1 was the inline-scraping prototype. The current technical build (pre-built DB, background crawler) is the V2 architecture — this PRD defines the **product** layer on top of it.
@@ -7,7 +7,7 @@
 
 ## Problem
 
-NYC knowledge workers need a spot to work between meetings and currently get no useful signal from "coffee shop near me." Google Maps shows ratings and distance — not whether there's wifi, free outlets, or a noise level compatible with a video call. BtwnMeetings surfaces real WFH signal from Reddit, blogs, and Instagram, but the app today is unpolished, unbranded, and not shareable.
+NYC knowledge workers need a spot to work between meetings and currently get no useful signal from "coffee shop near me." Google Maps shows ratings and distance — not whether there's wifi, free outlets, or a noise level compatible with a video call. BrewDesk surfaces real WFH signal from Reddit, blogs, and Instagram, but the app today is unpolished, unbranded, and not shareable.
 
 **V2 goal:** Ship a product someone could actually use and share — not just a working prototype.
 
@@ -79,7 +79,7 @@ Generic fallback gives users no reason to trust the pin. Valid mentions without 
 ### UI & branding gaps (must fix — app is invisible without these)
 
 **UI-1 · No visible app identity**
-`page.tsx` is a full-screen map. A first-time visitor has no idea what BtwnMeetings is.
+`page.tsx` is a full-screen map. A first-time visitor has no idea what BrewDesk is.
 - Build: minimal sticky header (40–48px), blurred/transparent overlay — app name, tagline ("Find your next workspace between meetings"), optional "?" link
 
 **UI-4 · No way to filter by open now**
@@ -172,7 +172,7 @@ CREATE TABLE nominations (
 
 ### F-3 · Borough expansion: Brooklyn + Queens _(medium priority)_
 
-**Why:** Many BtwnMeetings users live or work outside Manhattan — Brooklyn especially.
+**Why:** Many BrewDesk users live or work outside Manhattan — Brooklyn especially.
 
 **What to build:**
 - Uncomment Brooklyn/Queens rows in `supabase/seed/nyc_regions.sql`

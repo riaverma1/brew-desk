@@ -7,13 +7,13 @@ const geistSans = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
 
 export const metadata: Metadata = {
-  title: 'BtwnMeetings',
+  title: 'BrewDesk',
   description: 'Find your next workspace between meetings.',
   manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'BtwnMeetings',
+    title: 'BrewDesk',
   },
   icons: {
     apple: '/icons/apple-touch-icon.png',
@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           strategy="afterInteractive"
         />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased h-screen">{children}</body>
     </html>
   )
 }

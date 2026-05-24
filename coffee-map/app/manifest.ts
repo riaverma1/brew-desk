@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'BtwnMeetings',
-    short_name: 'BtwnMeetings',
+    name: 'BrewDesk',
+    short_name: 'BrewDesk',
     description: 'Find your next workspace between meetings.',
     start_url: '/',
     display: 'standalone',

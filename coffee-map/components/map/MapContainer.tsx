@@ -4,9 +4,11 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useMapBounds } from '@/hooks/useMapBounds'
 import { usePlaces } from '@/hooks/usePlaces'
 import type { PlacePin as PlacePinType } from '@/types'
+import { Header } from '@/components/Header'
 import { ColdRegionBanner } from './ColdRegionBanner'
 import { CrawlingIndicator } from './CrawlingIndicator'
 import { InfoCard } from './InfoCard'
+import { MapLegend } from './MapLegend'
 import { PlacePin } from './PlacePin'
 
 // NYC fallback center (used only if geolocation is denied/unavailable)
@@ -26,9 +28,15 @@ export function MapContainer() {
   const userMarkerRef = useRef<google.maps.marker.AdvancedMarkerElement | null>(null)
   const [mapReady, setMapReady] = useState(false)
   const [selectedPlace, setSelectedPlace] = useState<PlacePinType | null>(null)
+  const [openNowOnly, setOpenNowOnly] = useState(false)
+  const [showOnboarding, setShowOnboarding] = useState(false)
 
   const bounds = useMapBounds(mapReady ? mapRef.current : null)
   const { places, regionStatus, isLoading } = usePlaces(bounds)
+
+  const visiblePlaces = openNowOnly
+    ? places.filter((p) => p.regular_opening_hours?.openNow === true)
+    : places
 
   // Initialize map, then pan to user's location if geolocation is available
   useEffect(() => {
@@ -89,6 +97,24 @@ export function MapContainer() {
     }
   }, [])
 
+  // Show onboarding tooltip once per browser, auto-dismiss after 6s
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (!localStorage.getItem('brewdesk_onboarded')) {
+      setShowOnboarding(true)
+      const timer = setTimeout(() => {
+        setShowOnboarding(false)
+        localStorage.setItem('brewdesk_onboarded', '1')
+      }, 6000)
+      return () => clearTimeout(timer)
+    }
+  }, [])
+
+  const dismissOnboarding = () => {
+    setShowOnboarding(false)
+    localStorage.setItem('brewdesk_onboarded', '1')
+  }
+
   // BUG-3: stable reference prevents PlacePin useEffect from re-running on every render
   const handlePinClick = useCallback((placeId: string) => {
     const place = places.find((p) => p.place_id === placeId) ?? null
@@ -105,12 +131,15 @@ export function MapContainer() {
   }, [places])
 
   return (
-    <div className="relative w-full h-full">
+    <div className="flex flex-col w-full h-full">
+      <Header openNowOnly={openNowOnly} onToggleOpenNow={() => setOpenNowOnly((v) => !v)} />
+
+      <div className="relative flex-1 min-h-0">
       <div ref={mapDivRef} className="w-full h-full" />
 
       {/* Place pins */}
       {mapReady && mapRef.current &&
-        places.map((place) => (
+        visiblePlaces.map((place) => (
           <PlacePin
             key={place.place_id}
             map={mapRef.current!}
@@ -138,8 +167,26 @@ export function MapContainer() {
           <span>Connecting&hellip;</span>
         </div>
       )}
+      {isLoading && places.length > 0 && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-white/90 backdrop-blur-sm shadow-md rounded-full px-3 py-1 text-sm text-gray-600 flex items-center gap-2 pointer-events-none select-none">
+          <span className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
+          Finding spots&hellip;
+        </div>
+      )}
       <CrawlingIndicator visible={regionStatus === 'crawling'} />
       <ColdRegionBanner visible={regionStatus === 'cold'} />
+
+      <MapLegend />
+
+      {showOnboarding && (
+        <button
+          onClick={dismissOnboarding}
+          className="absolute bottom-20 left-1/2 -translate-x-1/2 z-20 bg-white/95 backdrop-blur-sm shadow-lg rounded-xl px-4 py-2.5 text-sm text-gray-700 max-w-xs text-center"
+        >
+          Scores are based on community mentions from Reddit, Instagram & more. Tap to dismiss.
+        </button>
+      )}
+      </div>
     </div>
   )
 }
