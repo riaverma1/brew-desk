@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     description: 'Find your next workspace between meetings.',
     url: APP_URL,
     siteName: 'BrewDesk',
-    images: [{ width: 1200, height: 630, alt: 'BrewDesk — Find your next workspace between meetings.' }],
+
     type: 'website',
   },
   twitter: {
