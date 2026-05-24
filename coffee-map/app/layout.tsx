@@ -6,7 +6,8 @@ import './globals.css'
 const geistSans = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://brewdesk.vercel.app'
+const rawAppUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://brewdesk.vercel.app'
+const APP_URL = rawAppUrl.startsWith('http') ? rawAppUrl : `https://${rawAppUrl}`
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
