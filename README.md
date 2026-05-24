@@ -8,6 +8,7 @@ Users can see wifi/outlets/noise level attributes and read the actual sources th
 
 **Target user:** NYC knowledge workers who need a spot to work between back-to-back meetings and want something better than "coffee shop near me."
 
+The data curated is fundamentally different from Google reviews — it's editorial and social, not star ratings. We're pulling signals from blogs, subreddits, Instagram accounts to keep it recent, relevant, and interesting.
 ---
  
 ## Current architecture

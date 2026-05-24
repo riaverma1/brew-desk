@@ -354,6 +354,108 @@ These are the questions to answer when it's time to spec v3. Don't build toward 
 
 ---
 
+## Professional polish — what separates "developer project" from "real product"
+
+These aren't bugs and they're not features — they're the layer of craft that makes someone trust the app when they land on it for the first time. Most of these are 1–4 hour tasks.
+
+---
+
+### 🌐 POL-1: Custom domain
+**Current:** Likely `btwn-meetings.vercel.app` or similar.
+**Fix:** Register `btwnmeetings.com` or `btwn.app` (~$12/yr on Namecheap or Cloudflare). Point to Vercel. This is the single highest-leverage signal that this is a real product.
+**Labels:** `polish`, `infra`, `v1`
+
+---
+
+### 📱 POL-2: Mobile layout — bottom sheet instead of side panel
+**Current:** The InfoCard is a fixed side panel that works on desktop but is likely clipped, broken, or unusable on a phone screen. The map probably doesn't fill correctly either.
+**Fix:** On mobile (`< 768px`), replace the side panel with a bottom sheet that slides up on pin tap. Map takes full screen. This is the most-visited layout since most demos happen on someone's phone.
+Key implementation: detect mobile with a `useMediaQuery` hook or CSS breakpoint; conditionally render `<BottomSheet>` vs `<SidePanel>`.
+**Labels:** `polish`, `mobile`, `ux`, `v1`
+
+---
+
+### 🔖 POL-3: Favicon + browser tab title
+**Current:** Default Next.js favicon (or blank). Tab title probably says "Create Next App."
+**Fix:** Add a custom favicon (a simple coffee cup or map pin SVG works — doesn't need a designer). Set `<title>BrewDesk — Find your next WFH spot in Manhattan</title>` in `layout.tsx`. Takes 20 minutes.
+**Labels:** `polish`, `branding`, `good first issue`, `v1`
+
+---
+
+### 🖼️ POL-4: OG / social preview tags
+**Current:** Pasting the URL into iMessage, Slack, or Twitter shows nothing or the Next.js default.
+**Fix:** Add `<meta property="og:title">`, `<meta property="og:description">`, and `<meta property="og:image">` to `layout.tsx`. Use a simple static screenshot of the map as the OG image (upload to `/public`). The description should be the pitch in one sentence.
+```tsx
+<meta property="og:title" content="BrewDesk — WFH spots in Manhattan" />
+<meta property="og:description" content="Find your next workspace between meetings. Every pin is backed by real Reddit and web mentions." />
+<meta property="og:image" content="https://btwnmeetings.com/og-image.png" />
+```
+**Labels:** `polish`, `seo`, `good first issue`, `v1`
+
+---
+
+### 📲 POL-5: PWA — "Add to Home Screen"
+**Current:** No PWA manifest. The app can't be installed to a phone home screen.
+**Fix:** Add `public/manifest.json` with app name, icons (192×192 and 512×512 PNGs), `display: "standalone"`, and `theme_color`. Reference it in `layout.tsx`. This gives you a native-app-feeling install moment that's a great demo: "you can save it to your phone."
+**Labels:** `polish`, `mobile`, `v1`
+
+---
+
+### 💬 POL-6: Empty states and error states
+**Current:** If no places load (cold start, no data in viewport, network error), the map is just... empty. No message, no context.
+**Fix:** Three states to handle:
+- **No places yet:** "We haven't found WFH spots here yet — try zooming to Manhattan"
+- **Backend cold start / loading:** A warm "Waking up the server..." message (see BUG-4)
+- **Generic error:** "Something went wrong — tap to retry"
+These should be friendly, on-brand messages — not blank screens or developer error strings.
+**Labels:** `polish`, `ux`, `v1`
+
+---
+
+### ℹ️ POL-7: About / landing moment
+**Current:** Someone landing on the URL cold has zero context. The map is just there.
+**Fix:** One of:
+- A simple `/about` page linked from the header with a 3-sentence explainer + screenshot
+- Or a first-visit modal (shown once, stored in `localStorage`) that explains what the map is in 2–3 sentences
+- Or both — the modal for first-timers, the page for sharing
+
+The copy: *"BrewDesk finds WFH-friendly coffee shops in Manhattan backed by real mentions from Reddit, blogs, and Instagram — not just Google ratings. Every pin has a WFH score based on wifi, outlets, noise level, and laptop-friendliness."*
+**Labels:** `polish`, `onboarding`, `v1`
+
+---
+
+### 🔐 POL-8: Auth stub — Google Sign-In (optional, unlocks personalization)
+**Current:** No auth. Personalized features (save favorites, set score preferences, nominate a place) require login.
+**Fix:** Add Supabase Auth with Google OAuth. The login button lives in the header — shows "Sign in" when logged out, avatar when logged in. Supabase handles the OAuth flow; no custom auth server needed.
+
+Auth is **not required for showable** — but adding the button (even if it just signs you in and shows your avatar) signals "this is a real product with a roadmap." Without it, features like saving favorites and nominatin places can't persist.
+
+MVP scope: Sign in with Google → user row in Supabase `users` table → session stored client-side. Everything behind auth is gated until logged in.
+**Labels:** `polish`, `auth`, `v2`
+
+---
+
+### 🎨 POL-9: Custom 404 page
+**Current:** Default Next.js 404 — dead giveaway.
+**Fix:** Add `app/not-found.tsx` with the app's branding, a friendly message, and a link back to the map.
+**Labels:** `polish`, `good first issue`, `v1`
+
+---
+
+### 📊 POL-10: Analytics (Vercel Analytics or PostHog)
+**Current:** No visibility into who's using the app, what they click, where they drop off.
+**Fix:** Add Vercel Analytics (free, zero config for Next.js — just `npm install @vercel/analytics` and add `<Analytics />` to `layout.tsx`). Or PostHog for more granular event tracking (pin clicks, InfoCard opens, filter usage). Start with Vercel Analytics since it's free and instant.
+**Labels:** `polish`, `infra`, `v2`
+
+---
+
+### 🔒 POL-11: Privacy policy + Terms (minimal)
+**Current:** None.
+**Fix:** Even a simple `/privacy` page stating you don't sell data and don't store PII beyond what Google auth provides covers you legally and signals maturity. Generate a minimal one via a template (Termly, etc.) and host it as a static page.
+**Labels:** `polish`, `legal`, `v2`
+
+---
+
 ## Priority order for "showable"
 
 Work in this order:
@@ -376,9 +478,22 @@ Work in this order:
 **Nice to have before showing:**
 12. **UI-2** — Map legend / what do the pins mean?
 
+**Professional polish (do alongside bugs — most are 1–4 hours each):**
+13. **POL-3** — Favicon + tab title (20 min)
+14. **POL-4** — OG/social preview tags (30 min)
+15. **POL-9** — Custom 404 page (20 min)
+16. **POL-7** — About / first-visit explainer
+17. **POL-6** — Empty states and error states
+18. **POL-2** — Mobile bottom sheet layout
+19. **POL-5** — PWA manifest ("Add to Home Screen")
+20. **POL-1** — Custom domain (register + point to Vercel)
+
 **Post-showable features (build after first real demo):**
-13. **F-1** — Personalized score weighting
-14. **F-2** — Nominate a place
+21. **F-1** — Personalized score weighting
+22. **F-2** — Nominate a place
+23. **POL-8** — Auth (Google Sign-In via Supabase)
+24. **POL-10** — Analytics (Vercel Analytics)
+25. **POL-11** — Privacy policy + Terms
 
 ---
 

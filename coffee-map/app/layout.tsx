@@ -6,7 +6,10 @@ import './globals.css'
 const geistSans = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://brewdesk.vercel.app'
+
 export const metadata: Metadata = {
+  metadataBase: new URL(APP_URL),
   title: 'BrewDesk',
   description: 'Find your next workspace between meetings.',
   manifest: '/manifest.webmanifest',
@@ -18,6 +21,19 @@ export const metadata: Metadata = {
   icons: {
     apple: '/icons/apple-touch-icon.png',
   },
+  openGraph: {
+    title: 'BrewDesk',
+    description: 'Find your next workspace between meetings.',
+    url: APP_URL,
+    siteName: 'BrewDesk',
+    images: [{ width: 1200, height: 630, alt: 'BrewDesk — Find your next workspace between meetings.' }],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'BrewDesk',
+    description: 'Find your next workspace between meetings.',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -26,6 +42,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta name="theme-color" content="#6f4e37" />
         {/* Load Maps JS API with libraries=marker for AdvancedMarkerElement */}
         <Script
           src={`https://maps.googleapis.com/maps/api/js?key=${mapsApiKey}&libraries=marker&v=beta`}
