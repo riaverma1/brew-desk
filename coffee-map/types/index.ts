@@ -41,6 +41,7 @@ export interface MentionCard {
   handle_or_domain: string
   laptop_confidence: number
   mentioned_at: string | null
+  source_title: string | null
 }
 
 export interface NearbySearchRequest {

@@ -122,7 +122,9 @@ async def run_for_region(
             )
 
             for mention in mentions:
-                inserted = await db_writer.write_raw_mention(raw.url, source_id, mention)
+                inserted = await db_writer.write_raw_mention(
+                    raw.url, source_id, mention, source_title=raw.source_title
+                )
                 if inserted:
                     written += 1
                     logger.debug(

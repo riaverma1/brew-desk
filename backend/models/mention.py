@@ -13,6 +13,7 @@ class MentionCardResponse(BaseModel):
     handle_or_domain: str
     laptop_confidence: float
     mentioned_at: str | None = None
+    source_title: str | None = None
 
 
 class MentionsResponse(BaseModel):

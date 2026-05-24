@@ -104,7 +104,7 @@ async def get_mentions_for_place(place_id: str) -> list[dict]:
         db = get_supabase()
         resp = (
             db.table("mentions")
-            .select("*, sources(platform, handle_or_domain)")
+            .select("id, url, evidence_snippet, laptop_confidence, mentioned_at, source_title, sources(platform, handle_or_domain)")
             .eq("place_id", place_id)
             .order("laptop_confidence", desc=True)
             .limit(20)

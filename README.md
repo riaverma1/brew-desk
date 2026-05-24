@@ -213,9 +213,10 @@ Open `http://localhost:3000`.
 **Trigger a crawl manually**
 runs the full pipeline (web crawl → place resolver → enrich)
 ```bash
-curl -X POST http://localhost:8000/regions/{region_id}/seed
+curl -X POST -H "X-Admin-Key: random-secret-admin-key" http://localhost:8000/regions/{region_id}/seed
 ```
 example region_id = 65be0415-597d-40e1-89e4-a63f6e6c8e97
+
 
 **Trigger enriching the google places details for existing places**
 curl -X POST "http://localhost:8000/regions/{region_id}" -H "X-Admin-Key: random-secret-admin-key"

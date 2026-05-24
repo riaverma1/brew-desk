@@ -61,6 +61,7 @@ async def write_raw_mention(
     url: str,
     source_id: str,
     mention: MentionExtraction,
+    source_title: str | None = None,
 ) -> bool:
     """
     Step 1 (crawl): save a raw mention with place_id = NULL.
@@ -77,6 +78,7 @@ async def write_raw_mention(
                 "source_id": source_id,
                 "url": url,
                 "evidence_snippet": mention.evidence_snippet,
+                "source_title": source_title,
                 "method": "llm",
                 "wifi_confidence": mention.wifi_confidence,
                 "outlet_confidence": mention.outlet_confidence,

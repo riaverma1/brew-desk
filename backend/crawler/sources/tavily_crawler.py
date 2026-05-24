@@ -14,6 +14,7 @@ import asyncio
 import logging
 import time
 from dataclasses import dataclass, field
+from html.parser import HTMLParser
 
 import httpx
 
@@ -54,18 +55,74 @@ class RawMention:
     query: str
     source: str = "tavily"
     raw_content: str = ""
+    source_title: str | None = None
 
 
-async def _scrape_url(url: str, client: httpx.AsyncClient) -> str:
-    """Scrape a URL for full content, return truncated text."""
+class _TitleParser(HTMLParser):
+    """Minimal HTML parser — extracts og:title meta or first <title> tag."""
+    def __init__(self) -> None:
+        super().__init__()
+        self.title: str | None = None
+        self._in_title = False
+
+    def handle_starttag(self, tag: str, attrs: list) -> None:
+        if tag == "meta":
+            d = dict(attrs)
+            if d.get("property") == "og:title" and self.title is None:
+                val = (d.get("content") or "").strip()
+                if val:
+                    self.title = val
+        if tag == "title" and self.title is None:
+            self._in_title = True
+
+    def handle_data(self, data: str) -> None:
+        if self._in_title and self.title is None:
+            val = data.strip()
+            if val:
+                self.title = val
+                self._in_title = False
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "title":
+            self._in_title = False
+
+
+_BOILERPLATE_SEPS = (" | ", " - ", " : ", " – ", " — ")
+
+
+def _clean_title(raw: str | None) -> str | None:
+    """Strip site-name suffixes and reject boilerplate-only results."""
+    if not raw:
+        return None
+    t = raw.strip()
+    for sep in _BOILERPLATE_SEPS:
+        if sep in t:
+            t = t.split(sep)[0].strip()
+            break
+    return t if len(t) >= 5 else None
+
+
+def _extract_title_from_html(html: str) -> str | None:
+    """Parse og:title or <title> from raw HTML (first 5 KB is enough for <head>)."""
+    parser = _TitleParser()
+    try:
+        parser.feed(html[:5000])
+    except Exception:
+        return None
+    return _clean_title(parser.title)
+
+
+async def _scrape_url(url: str, client: httpx.AsyncClient) -> tuple[str, str | None]:
+    """Scrape a URL; return (truncated_content, page_title)."""
     try:
         resp = await client.get(url, timeout=10, follow_redirects=True)
         resp.raise_for_status()
-        # Return first 3000 chars as raw content
-        return resp.text[:3000]
+        html = resp.text
+        title = _extract_title_from_html(html)
+        return html[:3000], title
     except Exception as exc:
         logger.debug("Failed to scrape %s: %s", url, exc)
-        return ""
+        return "", None
 
 
 async def fetch_tavily_mentions(
@@ -113,8 +170,14 @@ async def fetch_tavily_mentions(
                     continue
                 seen.add(url)
                 snippet = result.get("content", "")
-                raw_content = await _scrape_url(url, client)
-                mentions.append(RawMention(url=url, snippet=snippet, query=query, raw_content=raw_content))
+                # Tavily API returns a title field; use it, fall back to HTML parse
+                api_title = _clean_title(result.get("title", ""))
+                raw_content, html_title = await _scrape_url(url, client)
+                source_title = api_title or html_title
+                mentions.append(RawMention(
+                    url=url, snippet=snippet, query=query,
+                    raw_content=raw_content, source_title=source_title,
+                ))
                 new_this_query += 1
 
             logger.info("  Tavily [%d/%d]: %d new URLs (running total: %d)", i, len(query_list), new_this_query, len(mentions))

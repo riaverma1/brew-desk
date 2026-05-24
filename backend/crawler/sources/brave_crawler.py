@@ -14,7 +14,7 @@ import logging
 
 import httpx
 
-from crawler.sources.tavily_crawler import RawMention
+from crawler.sources.tavily_crawler import RawMention, _clean_title
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +76,11 @@ async def fetch_brave_mentions(
                     continue
                 seen.add(url)
                 snippet = result.get("description", "")
-                mentions.append(RawMention(url=url, snippet=snippet, query=query, source="brave"))
+                source_title = _clean_title(result.get("title", ""))
+                mentions.append(RawMention(
+                    url=url, snippet=snippet, query=query,
+                    source="brave", source_title=source_title,
+                ))
 
             await asyncio.sleep(0.3)
 

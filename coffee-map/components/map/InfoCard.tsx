@@ -3,7 +3,6 @@
 import { useMentions } from '@/hooks/useMentions'
 import type { PlacePin } from '@/types'
 import { MentionCard } from '@/components/ui/MentionCard'
-import { ScoreBadge } from '@/components/ui/ScoreBadge'
 import { AttributePills } from './AttributePills'
 
 interface InfoCardProps {
@@ -47,10 +46,7 @@ export function InfoCard({ placeId, place, onClose }: InfoCardProps) {
       {/* Header */}
       <div className="flex items-start justify-between p-4 border-b border-gray-100">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h2 className="font-semibold text-gray-900 truncate">{place.name}</h2>
-            <ScoreBadge score={place.wfh_score} />
-          </div>
+          <h2 className="font-semibold text-gray-900 truncate">{place.name}</h2>
           {place.address && (
             <p className="text-xs text-gray-500 mt-0.5 truncate">{place.address}</p>
           )}
@@ -87,15 +83,6 @@ export function InfoCard({ placeId, place, onClose }: InfoCardProps) {
             {formatPrimaryType(place.primary_type)}
           </span>
         )}
-        {place.rating != null && (
-          <span className="text-xs text-gray-700 flex items-center gap-0.5">
-            <span className="text-yellow-500">★</span>
-            {place.rating.toFixed(1)}
-            {place.user_rating_count != null && (
-              <span className="text-gray-400 ml-0.5">({place.user_rating_count.toLocaleString()})</span>
-            )}
-          </span>
-        )}
         <a
           href={googleMapsUrl(place)}
           target="_blank"
@@ -128,7 +115,7 @@ export function InfoCard({ placeId, place, onClose }: InfoCardProps) {
         ) : (
           <div>
             {mentions.map((m) => (
-              <MentionCard key={m.id} mention={m} />
+              <MentionCard key={m.id} mention={m} placeName={place.name} />
             ))}
           </div>
         )}

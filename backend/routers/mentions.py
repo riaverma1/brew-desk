@@ -33,6 +33,7 @@ async def get_mentions(
             handle_or_domain=row["sources"]["handle_or_domain"],
             laptop_confidence=row["laptop_confidence"],
             mentioned_at=str(row["mentioned_at"]) if row.get("mentioned_at") else None,
+            source_title=row.get("source_title"),
         )
         for row in rows
     ]
