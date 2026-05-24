@@ -22,30 +22,37 @@ logger = logging.getLogger(__name__)
 
 TAVILY_SEARCH_URL = "https://api.tavily.com/search"
 
-MANHATTAN_QUERIES = [
-    # City-level
-    "best coffee shops work from laptop NYC 2024",
-    "WFH friendly cafe New York wifi outlets",
-    # Borough/neighborhood-level
-    "best cafes to work from Manhattan wifi",
-    "work from coffee shop Midtown outlets quiet",
-    "cafe wifi outlets Lower East Side Manhattan",
-    "coffee shop work SoHo Manhattan",
-    "WFH cafe Upper West Side laptop friendly",
-    # Attribute-focused
-    "NYC coffee shop strong wifi no time limit",
-    "quiet cafe Manhattan good for working",
-    "NYC cafe lots of outlets work from home",
-    # Site-targeted (surfaces Reddit + Yelp without direct API access)
-    "site:reddit.com coffee shop work laptop nyc manhattan",
-    "site:yelp.com best coffee shops work nyc manhattan",
-    "site:nymag.com best cafes work from home NYC",
-    "site:timeout.com best NYC cafes to work from",
+SLUG_DISPLAY: dict[str, tuple[str, str]] = {
+    "nyc-manhattan": ("NYC", "Manhattan"),
+    "nyc-queens":    ("NYC", "Queens"),
+    "nyc-brooklyn":  ("NYC", "Brooklyn"),
+    "chicago":       ("Chicago", "Chicago"),
+    "phoenix":       ("Phoenix", "Phoenix"),
+    "albuquerque":   ("Albuquerque", "Albuquerque"),
+}
+
+QUERY_TEMPLATES = [
+    "best coffee shops work from laptop {city} 2024",
+    "WFH friendly cafe {area} wifi outlets",
+    "best cafes to work from {area} wifi",
+    "work from coffee shop {area} outlets quiet",
+    "cafe wifi outlets {area}",
+    "coffee shop work {area}",
+    "WFH cafe {area} laptop friendly",
+    "{city} coffee shop strong wifi no time limit",
+    "quiet cafe {area} good for working",
+    "{city} cafe lots of outlets work from home",
+    "site:reddit.com coffee shop work laptop {city} {area}",
+    "site:yelp.com best coffee shops work {city} {area}",
+    "site:nymag.com best cafes work from home {city}",
+    "site:timeout.com best {city} cafes to work from",
 ]
 
-QUERIES_BY_SLUG: dict[str, list[str]] = {
-    "nyc-manhattan": MANHATTAN_QUERIES,
-}
+
+def queries_for_slug(slug: str) -> list[str]:
+    fallback = slug.replace("-", " ").title()
+    city, area = SLUG_DISPLAY.get(slug, (fallback, fallback))
+    return [q.format(city=city, area=area) for q in QUERY_TEMPLATES]
 
 
 @dataclass
@@ -135,7 +142,7 @@ async def fetch_tavily_mentions(
     Run multi-query Tavily search and scrape unique URLs for full content.
     Deduplicates by URL. Passes seen_urls set to avoid re-scraping Brave results.
     """
-    query_list = queries or QUERIES_BY_SLUG.get(city_slug, MANHATTAN_QUERIES)
+    query_list = queries or queries_for_slug(city_slug)
     seen = seen_urls or set()
     mentions: list[RawMention] = []
 

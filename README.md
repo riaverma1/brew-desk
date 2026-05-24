@@ -9,6 +9,7 @@ Users can see wifi/outlets/noise level attributes and read the actual sources th
 **Target user:** NYC knowledge workers who need a spot to work between back-to-back meetings and want something better than "coffee shop near me."
 
 The data curated is fundamentally different from Google reviews — it's editorial and social, not star ratings. We're pulling signals from blogs, subreddits, Instagram accounts to keep it recent, relevant, and interesting.
+
 ---
  
 ## Current architecture
@@ -222,24 +223,66 @@ example region_id = 65be0415-597d-40e1-89e4-a63f6e6c8e97
 **Trigger enriching the google places details for existing places**
 curl -X POST "http://localhost:8000/regions/{region_id}" -H "X-Admin-Key: random-secret-admin-key"
 
-**Required Supabase migrations** (run in SQL editor in order):
+---
+
+## Adding a new city or region
+
+Regions are **not** auto-created from map panning. The frontend only triggers a crawl for regions that already exist in the database with `status = 'cold'`. Follow these steps to add a new city:
+
+### Step 1 — Add the slug to the allowed list
+
+In `backend/crawler/orchestrator.py`, add the new slug to `ALLOWED_CITY_SLUGS`:
+
+```python
+ALLOWED_CITY_SLUGS = {
+    "nyc-manhattan",
+    "nyc-queens",
+    "my-new-city",   # add here
+}
 ```
-supabase_schema_docs/migrations/001_create_tables.sql
-supabase_schema_docs/migrations/002_create_indexes.sql
-supabase_schema_docs/migrations/003_create_triggers.sql
+
+### Step 2 — Add the display name for search queries
+
+In `backend/crawler/sources/tavily_crawler.py`, add an entry to `SLUG_DISPLAY`:
+
+```python
+SLUG_DISPLAY: dict[str, tuple[str, str]] = {
+    ...
+    "my-new-city": ("City Name", "Neighborhood or City Name"),
+}
 ```
-Plus the V2 additions:
+
+The tuple is `(city, area)` — both are substituted into the search query templates. For city-wide regions with no specific neighborhood, use the city name for both (e.g. `("Chicago", "Chicago")`).
+
+### Step 3 — Insert a row in Supabase
+
+The region row defines the bounding box the crawler and map detector use. Run this SQL in the Supabase SQL editor (Table Editor → SQL):
+
 ```sql
-ALTER TABLE places
-  ADD COLUMN IF NOT EXISTS photos JSONB DEFAULT '[]'::jsonb,
-  ADD COLUMN IF NOT EXISTS primary_type TEXT,
-  ADD COLUMN IF NOT EXISTS rating DOUBLE PRECISION,
-  ADD COLUMN IF NOT EXISTS user_rating_count INTEGER,
-  ADD COLUMN IF NOT EXISTS regular_opening_hours JSONB;
-
-ALTER TABLE mentions ALTER COLUMN place_id DROP NOT NULL;
-
-CREATE INDEX IF NOT EXISTS idx_mentions_unmatched
-  ON mentions (source_id) WHERE place_id IS NULL;
+INSERT INTO regions (city_slug, status, min_lat, max_lat, min_lng, max_lng)
+VALUES ('my-new-city', 'cold', <min_lat>, <max_lat>, <min_lng>, <max_lng>)
+ON CONFLICT (city_slug) DO NOTHING;
 ```
-And re-run `003_create_triggers.sql` after making `place_id` nullable (so the trigger guards against `NULL`).
+
+To find bounding box coordinates: open Google Maps, draw a rectangle around the area, and read off the lat/lng corners. Alternatively use [bboxfinder.com](http://bboxfinder.com).
+
+The bounding box determines:
+- Which viewport pans trigger a seed job for this region
+- The center point used by the place resolver (25km radius for candidate matching)
+
+### Step 4 — Also update `seed.sql`
+
+Add the same INSERT to `backend/supabase/seed.sql` so future `supabase db reset` runs include the new region automatically.
+
+### Step 5 — Trigger the crawl
+
+Once the DB row exists, panning the map over the region will automatically kick off the seed job (the frontend detects `status = 'cold'` and triggers it). You'll see the expansion banner appear.
+
+To trigger manually without a map pan:
+```bash
+# 1. Get the region_id from Supabase (regions table)
+# 2. Run:
+curl -X POST -H "X-Admin-Key: <your-admin-key>" http://localhost:8000/regions/{region_id}/seed
+```
+
+Pins will start appearing within ~3–5 minutes as the resolver processes mentions.

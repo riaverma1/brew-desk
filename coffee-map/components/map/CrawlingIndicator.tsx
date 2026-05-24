@@ -32,7 +32,7 @@ export function CrawlingIndicator({ visible }: CrawlingIndicatorProps) {
           d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
         />
       </svg>
-      <span>Finding spots in this area&hellip;</span>
+      <span>New region! Finding spots &mdash; pins will appear in 3&ndash;5 minutes&hellip;</span>
     </div>
   )
 }

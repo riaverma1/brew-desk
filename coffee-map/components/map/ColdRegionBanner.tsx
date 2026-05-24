@@ -17,21 +17,18 @@ export function ColdRegionBanner({ visible }: ColdRegionBannerProps) {
   useEffect(() => {
     if (!visible) {
       setDismissed(false)
-      return
     }
-    const timer = setTimeout(() => setDismissed(true), 8000)
-    return () => clearTimeout(timer)
   }, [visible])
 
   if (!visible || dismissed) return null
 
   return (
-    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 bg-white border border-gray-200 shadow-lg rounded-lg px-4 py-3 max-w-sm text-sm text-gray-700 flex items-center gap-3">
-      <span className="inline-block w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-      <span>Discovering workspaces in this area&hellip; check back soon.</span>
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 bg-white border border-amber-200 shadow-lg rounded-lg px-4 py-3 max-w-sm text-sm text-gray-700 flex items-center gap-3">
+      <span className="text-lg">🎉</span>
+      <span>This is a new region! Thank you for joining the expansion! Please wait 3&ndash;5 minutes for pins to appear.</span>
       <button
         onClick={() => setDismissed(true)}
-        className="ml-auto text-gray-400 hover:text-gray-600"
+        className="ml-auto text-gray-400 hover:text-gray-600 shrink-0"
         aria-label="Dismiss"
       >
         ✕
