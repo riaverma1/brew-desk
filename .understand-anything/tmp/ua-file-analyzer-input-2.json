@@ -1,0 +1,37 @@
+{
+  "projectRoot": "/Users/riaverma/github_repos/coffee_app",
+  "batchFiles": [
+    {"path": "backend/config.py", "language": "python", "sizeLines": 37, "fileCategory": "code"},
+    {"path": "backend/main.py", "language": "python", "sizeLines": 69, "fileCategory": "code"},
+    {"path": "backend/models/__init__.py", "language": "python", "sizeLines": 0, "fileCategory": "code"},
+    {"path": "backend/models/mention.py", "language": "python", "sizeLines": 20, "fileCategory": "code"},
+    {"path": "backend/models/place.py", "language": "python", "sizeLines": 46, "fileCategory": "code"},
+    {"path": "backend/models/region.py", "language": "python", "sizeLines": 15, "fileCategory": "code"},
+    {"path": "backend/routers/__init__.py", "language": "python", "sizeLines": 0, "fileCategory": "code"},
+    {"path": "backend/routers/mentions.py", "language": "python", "sizeLines": 40, "fileCategory": "code"},
+    {"path": "backend/routers/places.py", "language": "python", "sizeLines": 146, "fileCategory": "code"},
+    {"path": "backend/routers/regions.py", "language": "python", "sizeLines": 82, "fileCategory": "code"},
+    {"path": "backend/services/__init__.py", "language": "python", "sizeLines": 0, "fileCategory": "code"},
+    {"path": "backend/services/google_places.py", "language": "python", "sizeLines": 169, "fileCategory": "code"},
+    {"path": "backend/services/place_filter.py", "language": "python", "sizeLines": 45, "fileCategory": "code"},
+    {"path": "backend/services/region_detector.py", "language": "python", "sizeLines": 61, "fileCategory": "code"},
+    {"path": "backend/services/supabase_client.py", "language": "python", "sizeLines": 209, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "backend/config.py": [],
+    "backend/main.py": [],
+    "backend/models/__init__.py": [],
+    "backend/models/mention.py": [],
+    "backend/models/place.py": [],
+    "backend/models/region.py": [],
+    "backend/routers/__init__.py": [],
+    "backend/routers/mentions.py": [],
+    "backend/routers/places.py": [],
+    "backend/routers/regions.py": [],
+    "backend/services/__init__.py": [],
+    "backend/services/google_places.py": [],
+    "backend/services/place_filter.py": [],
+    "backend/services/region_detector.py": [],
+    "backend/services/supabase_client.py": []
+  }
+}

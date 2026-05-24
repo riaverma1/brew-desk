@@ -1,0 +1,632 @@
+{
+  "scriptCompleted": true,
+  "name": "BtwnMeetings",
+  "rawDescription": "",
+  "readmeHead": "# BtwnMeetings\n\n**Find your next workspace between meetings.**\n\nA map that shows WFH-friendly coffee shops, cafes, and libraries in Manhattan. Every pin is backed by real web mentions (Reddit, blogs, Instagram), and its dynamically updated to account for changes in the location. \n\nUsers can see wifi/outlets/noise level attributes and read the actual sources that mentioned the place.\n\n**Target user:** NYC knowledge workers who need a spot to work between back-to-back meetings and want something better than \"coffee shop near me.\"\n",
+  "languages": [
+    "config",
+    "css",
+    "javascript",
+    "json",
+    "markdown",
+    "python",
+    "sql",
+    "text",
+    "typescript",
+    "yaml"
+  ],
+  "frameworks": [
+    "FastAPI",
+    "Next.js",
+    "Pydantic",
+    "React",
+    "Tailwind CSS",
+    "Uvicorn"
+  ],
+  "files": [
+    {
+      "path": ".cursor/plans/coffee_app_frontend_&_backend_integration_acbf5cbd.plan.md",
+      "language": "markdown",
+      "sizeLines": 0,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".cursor/plans/json_to_supabase_migration_cf766576.plan.md",
+      "language": "markdown",
+      "sizeLines": 0,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".cursor/plans/migrate_to_vercel_+_railway_9ead5567.plan.md",
+      "language": "markdown",
+      "sizeLines": 0,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".cursor/plans/places_bootstrap_enrichment_system_16b8e353.plan.md",
+      "language": "markdown",
+      "sizeLines": 0,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".cursor/plans/restructure_enrichment_for_latency_and_cost_reduction_4d1a6478.plan.md",
+      "language": "markdown",
+      "sizeLines": 0,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".env.example",
+      "language": "config",
+      "sizeLines": 41,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".env.local",
+      "language": "config",
+      "sizeLines": 5,
+      "fileCategory": "config"
+    },
+    {
+      "path": "DEPLOYMENT.md",
+      "language": "markdown",
+      "sizeLines": 270,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "README.md",
+      "language": "markdown",
+      "sizeLines": 246,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "backend/.env.local",
+      "language": "config",
+      "sizeLines": 15,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/background/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/background/enrich_job.py",
+      "language": "python",
+      "sizeLines": 71,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/background/resolver_job.py",
+      "language": "python",
+      "sizeLines": 196,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/background/retroactive_matcher.py",
+      "language": "python",
+      "sizeLines": 258,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/background/scheduler.py",
+      "language": "python",
+      "sizeLines": 51,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/background/seed_job.py",
+      "language": "python",
+      "sizeLines": 105,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/config.py",
+      "language": "python",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/crawler/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/crawler/article_extractor.py",
+      "language": "python",
+      "sizeLines": 157,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/crawler/db_writer.py",
+      "language": "python",
+      "sizeLines": 197,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/crawler/llm_extractor.py",
+      "language": "python",
+      "sizeLines": 95,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/crawler/multi_mention_extractor.py",
+      "language": "python",
+      "sizeLines": 128,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/crawler/orchestrator.py",
+      "language": "python",
+      "sizeLines": 149,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/crawler/place_resolver.py",
+      "language": "python",
+      "sizeLines": 178,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/crawler/sources/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/crawler/sources/brave_crawler.py",
+      "language": "python",
+      "sizeLines": 84,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/crawler/sources/instagram_crawler.py",
+      "language": "python",
+      "sizeLines": 71,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/crawler/sources/tavily_crawler.py",
+      "language": "python",
+      "sizeLines": 124,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/main.py",
+      "language": "python",
+      "sizeLines": 69,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/models/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/models/mention.py",
+      "language": "python",
+      "sizeLines": 20,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/models/place.py",
+      "language": "python",
+      "sizeLines": 46,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/models/region.py",
+      "language": "python",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/requirements.txt",
+      "language": "text",
+      "sizeLines": 9,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "backend/routers/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/routers/mentions.py",
+      "language": "python",
+      "sizeLines": 40,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/routers/places.py",
+      "language": "python",
+      "sizeLines": 146,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/routers/regions.py",
+      "language": "python",
+      "sizeLines": 82,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/services/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/services/google_places.py",
+      "language": "python",
+      "sizeLines": 169,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/services/place_filter.py",
+      "language": "python",
+      "sizeLines": 45,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/services/region_detector.py",
+      "language": "python",
+      "sizeLines": 61,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/services/supabase_client.py",
+      "language": "python",
+      "sizeLines": 209,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/supabase/schema.sql",
+      "language": "sql",
+      "sizeLines": 248,
+      "fileCategory": "data"
+    },
+    {
+      "path": "backend/supabase/seed.sql",
+      "language": "sql",
+      "sizeLines": 9,
+      "fileCategory": "data"
+    },
+    {
+      "path": "coffee-map/README.md",
+      "language": "markdown",
+      "sizeLines": 36,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "coffee-map/app/api/places/[place_id]/mentions/route.ts",
+      "language": "typescript",
+      "sizeLines": 27,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/app/api/places/data/route.ts",
+      "language": "typescript",
+      "sizeLines": 48,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/app/api/places/enrich/[placeId]/route.ts",
+      "language": "typescript",
+      "sizeLines": 50,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/app/api/places/route.ts",
+      "language": "typescript",
+      "sizeLines": 29,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/app/api/places/status/route.ts",
+      "language": "typescript",
+      "sizeLines": 48,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/app/api/regions/route.ts",
+      "language": "typescript",
+      "sizeLines": 23,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/app/globals.css",
+      "language": "css",
+      "sizeLines": 26,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "coffee-map/app/layout.tsx",
+      "language": "typescript",
+      "sizeLines": 34,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/app/manifest.ts",
+      "language": "typescript",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/app/page.tsx",
+      "language": "typescript",
+      "sizeLines": 9,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/components/map/AttributePills.tsx",
+      "language": "typescript",
+      "sizeLines": 38,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/components/map/ColdRegionBanner.tsx",
+      "language": "typescript",
+      "sizeLines": 41,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/components/map/CrawlingIndicator.tsx",
+      "language": "typescript",
+      "sizeLines": 38,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/components/map/InfoCard.tsx",
+      "language": "typescript",
+      "sizeLines": 137,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/components/map/MapContainer.tsx",
+      "language": "typescript",
+      "sizeLines": 128,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/components/map/PlacePin.tsx",
+      "language": "typescript",
+      "sizeLines": 48,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/components/ui/MentionCard.tsx",
+      "language": "typescript",
+      "sizeLines": 30,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/components/ui/PlatformPill.tsx",
+      "language": "typescript",
+      "sizeLines": 23,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/components/ui/ScoreBadge.tsx",
+      "language": "typescript",
+      "sizeLines": 18,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/eslint.config.mjs",
+      "language": "javascript",
+      "sizeLines": 18,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/hooks/useMapBounds.ts",
+      "language": "typescript",
+      "sizeLines": 42,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/hooks/useMentions.ts",
+      "language": "typescript",
+      "sizeLines": 44,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/hooks/usePlaces.ts",
+      "language": "typescript",
+      "sizeLines": 73,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/lib/api-client.ts",
+      "language": "typescript",
+      "sizeLines": 65,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/lib/map-utils.ts",
+      "language": "typescript",
+      "sizeLines": 29,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/next.config.ts",
+      "language": "typescript",
+      "sizeLines": 8,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/package.json",
+      "language": "json",
+      "sizeLines": 27,
+      "fileCategory": "config"
+    },
+    {
+      "path": "coffee-map/postcss.config.mjs",
+      "language": "javascript",
+      "sizeLines": 7,
+      "fileCategory": "code"
+    },
+    {
+      "path": "coffee-map/tsconfig.json",
+      "language": "json",
+      "sizeLines": 34,
+      "fileCategory": "config"
+    },
+    {
+      "path": "coffee-map/types/index.ts",
+      "language": "typescript",
+      "sizeLines": 61,
+      "fileCategory": "code"
+    },
+    {
+      "path": "docs/supabase_schema_docs/migrations/001_create_tables.sql",
+      "language": "sql",
+      "sizeLines": 86,
+      "fileCategory": "data"
+    },
+    {
+      "path": "docs/supabase_schema_docs/migrations/002_create_indexes.sql",
+      "language": "sql",
+      "sizeLines": 24,
+      "fileCategory": "data"
+    },
+    {
+      "path": "docs/supabase_schema_docs/migrations/003_create_triggers.sql",
+      "language": "sql",
+      "sizeLines": 76,
+      "fileCategory": "data"
+    },
+    {
+      "path": "docs/supabase_schema_docs/migrations/004_multi_mention.sql",
+      "language": "sql",
+      "sizeLines": 44,
+      "fileCategory": "data"
+    },
+    {
+      "path": "docs/supabase_schema_docs/seed/nyc_regions.sql",
+      "language": "sql",
+      "sizeLines": 17,
+      "fileCategory": "data"
+    },
+    {
+      "path": "docs/v2-architecture-plan.md",
+      "language": "markdown",
+      "sizeLines": 794,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/v2-sequence-diagram.md",
+      "language": "markdown",
+      "sizeLines": 109,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "render.yaml",
+      "language": "yaml",
+      "sizeLines": 18,
+      "fileCategory": "config"
+    }
+  ],
+  "totalFiles": 84,
+  "filteredByIgnore": 45,
+  "estimatedComplexity": "moderate",
+  "importMap": {
+    ".cursor/plans/coffee_app_frontend_&_backend_integration_acbf5cbd.plan.md": [],
+    ".cursor/plans/json_to_supabase_migration_cf766576.plan.md": [],
+    ".cursor/plans/migrate_to_vercel_+_railway_9ead5567.plan.md": [],
+    ".cursor/plans/places_bootstrap_enrichment_system_16b8e353.plan.md": [],
+    ".cursor/plans/restructure_enrichment_for_latency_and_cost_reduction_4d1a6478.plan.md": [],
+    ".env.example": [],
+    ".env.local": [],
+    "DEPLOYMENT.md": [],
+    "README.md": [],
+    "backend/.env.local": [],
+    "backend/background/__init__.py": [],
+    "backend/background/enrich_job.py": [],
+    "backend/background/resolver_job.py": [],
+    "backend/background/retroactive_matcher.py": [],
+    "backend/background/scheduler.py": [],
+    "backend/background/seed_job.py": [],
+    "backend/config.py": [],
+    "backend/crawler/__init__.py": [],
+    "backend/crawler/article_extractor.py": [],
+    "backend/crawler/db_writer.py": [],
+    "backend/crawler/llm_extractor.py": [],
+    "backend/crawler/multi_mention_extractor.py": [],
+    "backend/crawler/orchestrator.py": [],
+    "backend/crawler/place_resolver.py": [],
+    "backend/crawler/sources/__init__.py": [],
+    "backend/crawler/sources/brave_crawler.py": [],
+    "backend/crawler/sources/instagram_crawler.py": [],
+    "backend/crawler/sources/tavily_crawler.py": [],
+    "backend/main.py": [],
+    "backend/models/__init__.py": [],
+    "backend/models/mention.py": [],
+    "backend/models/place.py": [],
+    "backend/models/region.py": [],
+    "backend/requirements.txt": [],
+    "backend/routers/__init__.py": [],
+    "backend/routers/mentions.py": [],
+    "backend/routers/places.py": [],
+    "backend/routers/regions.py": [],
+    "backend/services/__init__.py": [],
+    "backend/services/google_places.py": [],
+    "backend/services/place_filter.py": [],
+    "backend/services/region_detector.py": [],
+    "backend/services/supabase_client.py": [],
+    "backend/supabase/schema.sql": [],
+    "backend/supabase/seed.sql": [],
+    "coffee-map/README.md": [],
+    "coffee-map/app/api/places/[place_id]/mentions/route.ts": [],
+    "coffee-map/app/api/places/data/route.ts": [],
+    "coffee-map/app/api/places/enrich/[placeId]/route.ts": [],
+    "coffee-map/app/api/places/route.ts": [],
+    "coffee-map/app/api/places/status/route.ts": [],
+    "coffee-map/app/api/regions/route.ts": [],
+    "coffee-map/app/globals.css": [],
+    "coffee-map/app/layout.tsx": [
+      "coffee-map/app/globals.css"
+    ],
+    "coffee-map/app/manifest.ts": [],
+    "coffee-map/app/page.tsx": [],
+    "coffee-map/components/map/AttributePills.tsx": [],
+    "coffee-map/components/map/ColdRegionBanner.tsx": [],
+    "coffee-map/components/map/CrawlingIndicator.tsx": [],
+    "coffee-map/components/map/InfoCard.tsx": [
+      "coffee-map/components/map/AttributePills.tsx"
+    ],
+    "coffee-map/components/map/MapContainer.tsx": [
+      "coffee-map/components/map/ColdRegionBanner.tsx",
+      "coffee-map/components/map/CrawlingIndicator.tsx",
+      "coffee-map/components/map/InfoCard.tsx",
+      "coffee-map/components/map/PlacePin.tsx"
+    ],
+    "coffee-map/components/map/PlacePin.tsx": [],
+    "coffee-map/components/ui/MentionCard.tsx": [
+      "coffee-map/components/ui/PlatformPill.tsx"
+    ],
+    "coffee-map/components/ui/PlatformPill.tsx": [],
+    "coffee-map/components/ui/ScoreBadge.tsx": [],
+    "coffee-map/eslint.config.mjs": [],
+    "coffee-map/hooks/useMapBounds.ts": [],
+    "coffee-map/hooks/useMentions.ts": [],
+    "coffee-map/hooks/usePlaces.ts": [],
+    "coffee-map/lib/api-client.ts": [],
+    "coffee-map/lib/map-utils.ts": [],
+    "coffee-map/next.config.ts": [],
+    "coffee-map/package.json": [],
+    "coffee-map/postcss.config.mjs": [],
+    "coffee-map/tsconfig.json": [],
+    "coffee-map/types/index.ts": [],
+    "docs/supabase_schema_docs/migrations/001_create_tables.sql": [],
+    "docs/supabase_schema_docs/migrations/002_create_indexes.sql": [],
+    "docs/supabase_schema_docs/migrations/003_create_triggers.sql": [],
+    "docs/supabase_schema_docs/migrations/004_multi_mention.sql": [],
+    "docs/supabase_schema_docs/seed/nyc_regions.sql": [],
+    "docs/v2-architecture-plan.md": [],
+    "docs/v2-sequence-diagram.md": [],
+    "render.yaml": []
+  }
+}

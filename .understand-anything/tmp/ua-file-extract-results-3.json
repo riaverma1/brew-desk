@@ -1,0 +1,2934 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 17,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "backend/background/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "backend/background/enrich_job.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 71,
+      "nonEmptyLines": 54,
+      "functions": [
+        {
+          "name": "enrich_unenriched_places",
+          "startLine": 24,
+          "endLine": 71,
+          "params": [
+            "region_id",
+            "api_key"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "enrich_unenriched_places",
+          "line": 24,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "enrich_unenriched_places",
+          "callee": "supabase_client.get_unenriched_places",
+          "lineNumber": 31
+        },
+        {
+          "caller": "enrich_unenriched_places",
+          "callee": "len",
+          "lineNumber": 32
+        },
+        {
+          "caller": "enrich_unenriched_places",
+          "callee": "logger.info",
+          "lineNumber": 33
+        },
+        {
+          "caller": "enrich_unenriched_places",
+          "callee": "datetime.now(timezone.utc).isoformat",
+          "lineNumber": 40
+        },
+        {
+          "caller": "enrich_unenriched_places",
+          "callee": "datetime.now",
+          "lineNumber": 40
+        },
+        {
+          "caller": "enrich_unenriched_places",
+          "callee": "google_places.get_place_details",
+          "lineNumber": 44
+        },
+        {
+          "caller": "enrich_unenriched_places",
+          "callee": "asyncio.sleep",
+          "lineNumber": 48
+        },
+        {
+          "caller": "enrich_unenriched_places",
+          "callee": "details.get",
+          "lineNumber": 52
+        },
+        {
+          "caller": "enrich_unenriched_places",
+          "callee": "details.get",
+          "lineNumber": 54
+        },
+        {
+          "caller": "enrich_unenriched_places",
+          "callee": "details.get",
+          "lineNumber": 56
+        },
+        {
+          "caller": "enrich_unenriched_places",
+          "callee": "details.get",
+          "lineNumber": 58
+        },
+        {
+          "caller": "enrich_unenriched_places",
+          "callee": "details.get",
+          "lineNumber": 60
+        },
+        {
+          "caller": "enrich_unenriched_places",
+          "callee": "supabase_client.save_google_place_data",
+          "lineNumber": 63
+        },
+        {
+          "caller": "enrich_unenriched_places",
+          "callee": "logger.debug",
+          "lineNumber": 65
+        },
+        {
+          "caller": "enrich_unenriched_places",
+          "callee": "asyncio.sleep",
+          "lineNumber": 67
+        },
+        {
+          "caller": "enrich_unenriched_places",
+          "callee": "logger.info",
+          "lineNumber": 70
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "backend/background/resolver_job.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 196,
+      "nonEmptyLines": 160,
+      "functions": [
+        {
+          "name": "_fetch_unresolved_mentions",
+          "startLine": 37,
+          "endLine": 48,
+          "params": []
+        },
+        {
+          "name": "_resolve_batch",
+          "startLine": 51,
+          "endLine": 108,
+          "params": [
+            "region_id",
+            "center_lat",
+            "center_lng",
+            "resolve_cache"
+          ]
+        },
+        {
+          "name": "resolve_streaming",
+          "startLine": 111,
+          "endLine": 174,
+          "params": [
+            "region_id",
+            "center_lat",
+            "center_lng",
+            "crawl_done"
+          ]
+        },
+        {
+          "name": "resolve_for_region",
+          "startLine": 177,
+          "endLine": 196,
+          "params": [
+            "region_id",
+            "center_lat",
+            "center_lng"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_fetch_unresolved_mentions",
+          "line": 37,
+          "isDefault": false
+        },
+        {
+          "name": "_resolve_batch",
+          "line": 51,
+          "isDefault": false
+        },
+        {
+          "name": "resolve_streaming",
+          "line": 111,
+          "isDefault": false
+        },
+        {
+          "name": "resolve_for_region",
+          "line": 177,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_query",
+          "callee": "get_supabase",
+          "lineNumber": 40
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"mentions\")\n            .select(\"id, place_name_raw\")\n            .is_(\"place_id\", \"null\")\n            .execute",
+          "lineNumber": 42
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"mentions\")\n            .select(\"id, place_name_raw\")\n            .is_",
+          "lineNumber": 42
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"mentions\")\n            .select",
+          "lineNumber": 42
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table",
+          "lineNumber": 42
+        },
+        {
+          "caller": "_fetch_unresolved_mentions",
+          "callee": "asyncio.to_thread",
+          "lineNumber": 48
+        },
+        {
+          "caller": "_resolve_batch",
+          "callee": "get_settings",
+          "lineNumber": 65
+        },
+        {
+          "caller": "_resolve_batch",
+          "callee": "_fetch_unresolved_mentions",
+          "lineNumber": 66
+        },
+        {
+          "caller": "_resolve_batch",
+          "callee": "row[\"place_name_raw\"].strip",
+          "lineNumber": 76
+        },
+        {
+          "caller": "_resolve_batch",
+          "callee": "resolve_place",
+          "lineNumber": 83
+        },
+        {
+          "caller": "_resolve_batch",
+          "callee": "db_writer.assign_place_to_mention",
+          "lineNumber": 95
+        },
+        {
+          "caller": "_resolve_batch",
+          "callee": "logger.info",
+          "lineNumber": 97
+        },
+        {
+          "caller": "_resolve_batch",
+          "callee": "logger.debug",
+          "lineNumber": 100
+        },
+        {
+          "caller": "_resolve_batch",
+          "callee": "logger.warning",
+          "lineNumber": 104
+        },
+        {
+          "caller": "_resolve_batch",
+          "callee": "asyncio.sleep",
+          "lineNumber": 106
+        },
+        {
+          "caller": "resolve_streaming",
+          "callee": "logger.info",
+          "lineNumber": 135
+        },
+        {
+          "caller": "resolve_streaming",
+          "callee": "asyncio.wait_for",
+          "lineNumber": 140
+        },
+        {
+          "caller": "resolve_streaming",
+          "callee": "crawl_done.wait",
+          "lineNumber": 140
+        },
+        {
+          "caller": "resolve_streaming",
+          "callee": "logger.info",
+          "lineNumber": 142
+        },
+        {
+          "caller": "resolve_streaming",
+          "callee": "logger.info",
+          "lineNumber": 148
+        },
+        {
+          "caller": "resolve_streaming",
+          "callee": "_resolve_batch",
+          "lineNumber": 149
+        },
+        {
+          "caller": "resolve_streaming",
+          "callee": "logger.info",
+          "lineNumber": 152
+        },
+        {
+          "caller": "resolve_streaming",
+          "callee": "logger.info",
+          "lineNumber": 159
+        },
+        {
+          "caller": "resolve_streaming",
+          "callee": "_resolve_batch",
+          "lineNumber": 160
+        },
+        {
+          "caller": "resolve_streaming",
+          "callee": "logger.info",
+          "lineNumber": 163
+        },
+        {
+          "caller": "resolve_streaming",
+          "callee": "logger.info",
+          "lineNumber": 169
+        },
+        {
+          "caller": "resolve_streaming",
+          "callee": "db_writer.recompute_boolean_attrs_for_region",
+          "lineNumber": 170
+        },
+        {
+          "caller": "resolve_streaming",
+          "callee": "logger.info",
+          "lineNumber": 173
+        },
+        {
+          "caller": "resolve_for_region",
+          "callee": "logger.info",
+          "lineNumber": 188
+        },
+        {
+          "caller": "resolve_for_region",
+          "callee": "_resolve_batch",
+          "lineNumber": 190
+        },
+        {
+          "caller": "resolve_for_region",
+          "callee": "logger.info",
+          "lineNumber": 192
+        },
+        {
+          "caller": "resolve_for_region",
+          "callee": "db_writer.recompute_boolean_attrs_for_region",
+          "lineNumber": 193
+        },
+        {
+          "caller": "resolve_for_region",
+          "callee": "logger.info",
+          "lineNumber": 195
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "backend/background/retroactive_matcher.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 258,
+      "nonEmptyLines": 218,
+      "functions": [
+        {
+          "name": "_is_reddit_url",
+          "startLine": 34,
+          "endLine": 35,
+          "params": [
+            "url"
+          ]
+        },
+        {
+          "name": "_fetch_reddit_text",
+          "startLine": 38,
+          "endLine": 74,
+          "params": [
+            "url"
+          ]
+        },
+        {
+          "name": "_extract_comment_bodies",
+          "startLine": 77,
+          "endLine": 89,
+          "params": [
+            "children",
+            "parts",
+            "depth"
+          ]
+        },
+        {
+          "name": "_fetch_generic_text",
+          "startLine": 92,
+          "endLine": 105,
+          "params": [
+            "url"
+          ]
+        },
+        {
+          "name": "run_retroactive_match",
+          "startLine": 108,
+          "endLine": 258,
+          "params": [
+            "center_lat",
+            "center_lng",
+            "settings",
+            "region_id",
+            "since"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_is_reddit_url",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "_fetch_reddit_text",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "_extract_comment_bodies",
+          "line": 77,
+          "isDefault": false
+        },
+        {
+          "name": "_fetch_generic_text",
+          "line": 92,
+          "isDefault": false
+        },
+        {
+          "name": "run_retroactive_match",
+          "line": 108,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_is_reddit_url",
+          "callee": "url.lower",
+          "lineNumber": 35
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "url.rstrip",
+          "lineNumber": 44
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "httpx.AsyncClient",
+          "lineNumber": 46
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "client.get",
+          "lineNumber": 51
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "resp.raise_for_status",
+          "lineNumber": 52
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "resp.json",
+          "lineNumber": 53
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "isinstance",
+          "lineNumber": 58
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "len",
+          "lineNumber": 58
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "data[0].get(\"data\", {}).get",
+          "lineNumber": 59
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "data[0].get",
+          "lineNumber": 59
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "child.get",
+          "lineNumber": 61
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "post.get",
+          "lineNumber": 62
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "parts.append",
+          "lineNumber": 63
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "post.get",
+          "lineNumber": 64
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "parts.append",
+          "lineNumber": 65
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "isinstance",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "len",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "_extract_comment_bodies",
+          "lineNumber": 68
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "data[1].get(\"data\", {}).get",
+          "lineNumber": 68
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "data[1].get",
+          "lineNumber": 68
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "\"\\n\\n\".join",
+          "lineNumber": 70
+        },
+        {
+          "caller": "_fetch_reddit_text",
+          "callee": "logger.warning",
+          "lineNumber": 73
+        },
+        {
+          "caller": "_extract_comment_bodies",
+          "callee": "child.get",
+          "lineNumber": 82
+        },
+        {
+          "caller": "_extract_comment_bodies",
+          "callee": "data.get",
+          "lineNumber": 83
+        },
+        {
+          "caller": "_extract_comment_bodies",
+          "callee": "parts.append",
+          "lineNumber": 85
+        },
+        {
+          "caller": "_extract_comment_bodies",
+          "callee": "data.get",
+          "lineNumber": 86
+        },
+        {
+          "caller": "_extract_comment_bodies",
+          "callee": "isinstance",
+          "lineNumber": 87
+        },
+        {
+          "caller": "_extract_comment_bodies",
+          "callee": "replies.get(\"data\", {}).get",
+          "lineNumber": 88
+        },
+        {
+          "caller": "_extract_comment_bodies",
+          "callee": "replies.get",
+          "lineNumber": 88
+        },
+        {
+          "caller": "_extract_comment_bodies",
+          "callee": "_extract_comment_bodies",
+          "lineNumber": 89
+        },
+        {
+          "caller": "_fetch_generic_text",
+          "callee": "httpx.AsyncClient",
+          "lineNumber": 95
+        },
+        {
+          "caller": "_fetch_generic_text",
+          "callee": "client.get",
+          "lineNumber": 100
+        },
+        {
+          "caller": "_fetch_generic_text",
+          "callee": "resp.raise_for_status",
+          "lineNumber": 101
+        },
+        {
+          "caller": "_fetch_generic_text",
+          "callee": "logger.warning",
+          "lineNumber": 104
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "logger.info",
+          "lineNumber": 134
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "since.isoformat",
+          "lineNumber": 137
+        },
+        {
+          "caller": "_fetch_rows",
+          "callee": "get_supabase",
+          "lineNumber": 142
+        },
+        {
+          "caller": "_fetch_rows",
+          "callee": "db.table(\"mentions\")\n            .select(\"id, url, source_id\")\n            .eq(\"place_name_raw\", \"\")\n            .eq",
+          "lineNumber": 144
+        },
+        {
+          "caller": "_fetch_rows",
+          "callee": "db.table(\"mentions\")\n            .select(\"id, url, source_id\")\n            .eq",
+          "lineNumber": 144
+        },
+        {
+          "caller": "_fetch_rows",
+          "callee": "db.table(\"mentions\")\n            .select",
+          "lineNumber": 144
+        },
+        {
+          "caller": "_fetch_rows",
+          "callee": "db.table",
+          "lineNumber": 144
+        },
+        {
+          "caller": "_fetch_rows",
+          "callee": "query.gte",
+          "lineNumber": 150
+        },
+        {
+          "caller": "_fetch_rows",
+          "callee": "since.isoformat",
+          "lineNumber": 150
+        },
+        {
+          "caller": "_fetch_rows",
+          "callee": "query.execute",
+          "lineNumber": 151
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "asyncio.to_thread",
+          "lineNumber": 153
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "logger.info",
+          "lineNumber": 154
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "len",
+          "lineNumber": 154
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "_is_reddit_url",
+          "lineNumber": 168
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "_fetch_reddit_text",
+          "lineNumber": 169
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "_fetch_generic_text",
+          "lineNumber": 171
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "raw_text.strip",
+          "lineNumber": 173
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "logger.debug",
+          "lineNumber": 174
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "db_writer.mark_mention_multi_processed",
+          "lineNumber": 175
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "asyncio.sleep",
+          "lineNumber": 177
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "extract_all_mentions",
+          "lineNumber": 181
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "logger.info",
+          "lineNumber": 182
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "len",
+          "lineNumber": 185
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "place_resolver.resolve_place",
+          "lineNumber": 193
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "logger.debug",
+          "lineNumber": 204
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "llm_extractor.ExtractionResult",
+          "lineNumber": 212
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "db_writer.write_multi_mention",
+          "lineNumber": 224
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "mention.place_name.lower",
+          "lineNumber": 230
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "logger.info",
+          "lineNumber": 234
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "logger.warning",
+          "lineNumber": 239
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "db_writer.mark_mention_multi_processed",
+          "lineNumber": 247
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "logger.warning",
+          "lineNumber": 251
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "asyncio.sleep",
+          "lineNumber": 254
+        },
+        {
+          "caller": "run_retroactive_match",
+          "callee": "logger.info",
+          "lineNumber": 257
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "backend/background/scheduler.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 51,
+      "nonEmptyLines": 39,
+      "functions": [
+        {
+          "name": "start_scheduler",
+          "startLine": 13,
+          "endLine": 35,
+          "params": []
+        },
+        {
+          "name": "_recrawl_stale_regions",
+          "startLine": 38,
+          "endLine": 51,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "start_scheduler",
+          "line": 13,
+          "isDefault": false
+        },
+        {
+          "name": "_recrawl_stale_regions",
+          "line": 38,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "start_scheduler",
+          "callee": "logger.warning",
+          "lineNumber": 22
+        },
+        {
+          "caller": "start_scheduler",
+          "callee": "AsyncIOScheduler",
+          "lineNumber": 25
+        },
+        {
+          "caller": "start_scheduler",
+          "callee": "scheduler.add_job",
+          "lineNumber": 27
+        },
+        {
+          "caller": "start_scheduler",
+          "callee": "CronTrigger",
+          "lineNumber": 29
+        },
+        {
+          "caller": "start_scheduler",
+          "callee": "scheduler.start",
+          "lineNumber": 34
+        },
+        {
+          "caller": "start_scheduler",
+          "callee": "logger.info",
+          "lineNumber": 35
+        },
+        {
+          "caller": "_recrawl_stale_regions",
+          "callee": "supabase_client.list_all_regions",
+          "lineNumber": 43
+        },
+        {
+          "caller": "_recrawl_stale_regions",
+          "callee": "logger.info",
+          "lineNumber": 46
+        },
+        {
+          "caller": "_recrawl_stale_regions",
+          "callee": "len",
+          "lineNumber": 46
+        },
+        {
+          "caller": "_recrawl_stale_regions",
+          "callee": "supabase_client.set_region_status",
+          "lineNumber": 50
+        },
+        {
+          "caller": "_recrawl_stale_regions",
+          "callee": "trigger_seed",
+          "lineNumber": 51
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "backend/background/seed_job.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 105,
+      "nonEmptyLines": 87,
+      "functions": [
+        {
+          "name": "trigger_seed",
+          "startLine": 27,
+          "endLine": 105,
+          "params": [
+            "region_id"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "trigger_seed",
+          "line": 27,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "trigger_seed",
+          "callee": "supabase_client.claim_region_for_crawl",
+          "lineNumber": 29
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "logger.info",
+          "lineNumber": 31
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "logger.info",
+          "lineNumber": 34
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "supabase_client.list_all_regions",
+          "lineNumber": 37
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "next",
+          "lineNumber": 38
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "ValueError",
+          "lineNumber": 40
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "asyncio.Event",
+          "lineNumber": 50
+        },
+        {
+          "caller": "_crawl",
+          "callee": "run_for_region",
+          "lineNumber": 53
+        },
+        {
+          "caller": "_crawl",
+          "callee": "logger.info",
+          "lineNumber": 59
+        },
+        {
+          "caller": "_crawl",
+          "callee": "crawl_done.set",
+          "lineNumber": 60
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "asyncio.create_task",
+          "lineNumber": 64
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "_crawl",
+          "lineNumber": 64
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "asyncio.create_task",
+          "lineNumber": 65
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "resolve_streaming",
+          "lineNumber": 66
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "resolve_task.cancel",
+          "lineNumber": 74
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "logger.info",
+          "lineNumber": 84
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "logger.warning",
+          "lineNumber": 87
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "supabase_client.get_supabase",
+          "lineNumber": 93
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "db.table(\"regions\").update(\n            {\"status\": \"seeded\", \"last_crawled_at\": datetime.now(timezone.utc).isoformat()}\n        ).eq(\"id\", region_id).execute",
+          "lineNumber": 94
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "db.table(\"regions\").update(\n            {\"status\": \"seeded\", \"last_crawled_at\": datetime.now(timezone.utc).isoformat()}\n        ).eq",
+          "lineNumber": 94
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "db.table(\"regions\").update",
+          "lineNumber": 94
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "db.table",
+          "lineNumber": 94
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "datetime.now(timezone.utc).isoformat",
+          "lineNumber": 95
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "datetime.now",
+          "lineNumber": 95
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "logger.info",
+          "lineNumber": 98
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "logger.exception",
+          "lineNumber": 101
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "supabase_client.set_region_status",
+          "lineNumber": 103
+        },
+        {
+          "caller": "trigger_seed",
+          "callee": "logger.error",
+          "lineNumber": 105
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "backend/crawler/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "backend/crawler/article_extractor.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 157,
+      "nonEmptyLines": 132,
+      "functions": [
+        {
+          "name": "get_openai_client",
+          "startLine": 31,
+          "endLine": 35,
+          "params": [
+            "api_key"
+          ]
+        },
+        {
+          "name": "extract_all_mentions",
+          "startLine": 93,
+          "endLine": 157,
+          "params": [
+            "raw_text",
+            "openai_api_key"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "MentionExtraction",
+          "startLine": 84,
+          "endLine": 90,
+          "methods": [],
+          "properties": [
+            "place_name_raw",
+            "evidence_snippet",
+            "wifi_confidence",
+            "outlet_confidence",
+            "quiet_confidence",
+            "laptop_confidence"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_openai_client",
+          "line": 31,
+          "isDefault": false
+        },
+        {
+          "name": "MentionExtraction",
+          "line": 83,
+          "isDefault": false
+        },
+        {
+          "name": "extract_all_mentions",
+          "line": 93,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_openai_client",
+          "callee": "AsyncOpenAI",
+          "lineNumber": 34
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "raw_text.strip",
+          "lineNumber": 102
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "get_openai_client",
+          "lineNumber": 105
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "client.chat.completions.create",
+          "lineNumber": 109
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "json.loads",
+          "lineNumber": 126
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "data.get",
+          "lineNumber": 129
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "isinstance",
+          "lineNumber": 129
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "isinstance",
+          "lineNumber": 130
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "logger.warning",
+          "lineNumber": 131
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "type",
+          "lineNumber": 131
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "isinstance",
+          "lineNumber": 136
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "item.get(\"place_name_raw\", \"\").strip",
+          "lineNumber": 138
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "item.get",
+          "lineNumber": 138
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "results.append",
+          "lineNumber": 141
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "MentionExtraction",
+          "lineNumber": 142
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "item.get",
+          "lineNumber": 144
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "float",
+          "lineNumber": 145
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "item.get",
+          "lineNumber": 145
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "float",
+          "lineNumber": 146
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "item.get",
+          "lineNumber": 146
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "float",
+          "lineNumber": 147
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "item.get",
+          "lineNumber": 147
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "float",
+          "lineNumber": 148
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "item.get",
+          "lineNumber": 148
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "logger.info",
+          "lineNumber": 152
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "len",
+          "lineNumber": 152
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "logger.warning",
+          "lineNumber": 156
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 2,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "backend/crawler/db_writer.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 197,
+      "nonEmptyLines": 170,
+      "functions": [
+        {
+          "name": "ensure_source_exists",
+          "startLine": 27,
+          "endLine": 57,
+          "params": [
+            "platform",
+            "handle_or_domain",
+            "is_curated"
+          ]
+        },
+        {
+          "name": "write_raw_mention",
+          "startLine": 60,
+          "endLine": 91,
+          "params": [
+            "url",
+            "source_id",
+            "mention"
+          ]
+        },
+        {
+          "name": "assign_place_to_mention",
+          "startLine": 94,
+          "endLine": 128,
+          "params": [
+            "mention_id",
+            "resolved",
+            "region_id"
+          ]
+        },
+        {
+          "name": "recompute_boolean_attrs_for_region",
+          "startLine": 131,
+          "endLine": 197,
+          "params": [
+            "region_id"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ensure_source_exists",
+          "line": 27,
+          "isDefault": false
+        },
+        {
+          "name": "write_raw_mention",
+          "line": 60,
+          "isDefault": false
+        },
+        {
+          "name": "assign_place_to_mention",
+          "line": 94,
+          "isDefault": false
+        },
+        {
+          "name": "recompute_boolean_attrs_for_region",
+          "line": 131,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_query",
+          "callee": "get_supabase",
+          "lineNumber": 37
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"sources\").upsert(\n            {\n                \"platform\": platform,\n                \"handle_or_domain\": handle_or_domain,\n                \"is_curated\": is_curated,\n            },\n            on_conflict=\"platform,handle_or_domain\",\n            ignore_duplicates=True,\n        ).execute",
+          "lineNumber": 38
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"sources\").upsert",
+          "lineNumber": 38
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table",
+          "lineNumber": 38
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"sources\")\n            .select(\"id\")\n            .eq(\"platform\", platform)\n            .eq(\"handle_or_domain\", handle_or_domain)\n            .single()\n            .execute",
+          "lineNumber": 48
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"sources\")\n            .select(\"id\")\n            .eq(\"platform\", platform)\n            .eq(\"handle_or_domain\", handle_or_domain)\n            .single",
+          "lineNumber": 48
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"sources\")\n            .select(\"id\")\n            .eq(\"platform\", platform)\n            .eq",
+          "lineNumber": 48
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"sources\")\n            .select(\"id\")\n            .eq",
+          "lineNumber": 48
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"sources\")\n            .select",
+          "lineNumber": 48
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table",
+          "lineNumber": 48
+        },
+        {
+          "caller": "ensure_source_exists",
+          "callee": "asyncio.to_thread",
+          "lineNumber": 57
+        },
+        {
+          "caller": "_query",
+          "callee": "get_supabase",
+          "lineNumber": 72
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"mentions\").upsert(\n            {\n                \"place_id\": None,\n                \"place_name_raw\": mention.place_name_raw,\n                \"source_id\": source_id,\n                \"url\": url,\n                \"evidence_snippet\": mention.evidence_snippet,\n                \"method\": \"llm\",\n                \"wifi_confidence\": mention.wifi_confidence,\n                \"outlet_confidence\": mention.outlet_confidence,\n                \"quiet_confidence\": mention.quiet_confidence,\n                \"laptop_confidence\": mention.laptop_confidence,\n            },\n            on_conflict=\"url,place_name_raw\",\n            ignore_duplicates=True,\n        ).execute",
+          "lineNumber": 73
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"mentions\").upsert",
+          "lineNumber": 73
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table",
+          "lineNumber": 73
+        },
+        {
+          "caller": "_query",
+          "callee": "len",
+          "lineNumber": 89
+        },
+        {
+          "caller": "write_raw_mention",
+          "callee": "asyncio.to_thread",
+          "lineNumber": 91
+        },
+        {
+          "caller": "_query",
+          "callee": "get_supabase",
+          "lineNumber": 108
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"places\").upsert(\n            {\n                \"place_id\": resolved.place_id,\n                \"name\": resolved.name,\n                \"address\": resolved.address,\n                \"lat\": resolved.lat,\n                \"lng\": resolved.lng,\n                \"region_id\": region_id,\n            },\n            on_conflict=\"place_id\",\n        ).execute",
+          "lineNumber": 111
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"places\").upsert",
+          "lineNumber": 111
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table",
+          "lineNumber": 111
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"mentions\").update(\n            {\"place_id\": resolved.place_id}\n        ).eq(\"id\", mention_id).execute",
+          "lineNumber": 124
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"mentions\").update(\n            {\"place_id\": resolved.place_id}\n        ).eq",
+          "lineNumber": 124
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"mentions\").update",
+          "lineNumber": 124
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table",
+          "lineNumber": 124
+        },
+        {
+          "caller": "assign_place_to_mention",
+          "callee": "asyncio.to_thread",
+          "lineNumber": 128
+        },
+        {
+          "caller": "_query",
+          "callee": "get_supabase",
+          "lineNumber": 143
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"places\").select(\"place_id\").eq(\"region_id\", region_id).execute",
+          "lineNumber": 145
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"places\").select(\"place_id\").eq",
+          "lineNumber": 145
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"places\").select",
+          "lineNumber": 145
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table",
+          "lineNumber": 145
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"mentions\")\n                .select(\"wifi_confidence,outlet_confidence,quiet_confidence,laptop_confidence\")\n                .eq(\"place_id\", pid)\n                .execute",
+          "lineNumber": 153
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"mentions\")\n                .select(\"wifi_confidence,outlet_confidence,quiet_confidence,laptop_confidence\")\n                .eq",
+          "lineNumber": 153
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"mentions\")\n                .select",
+          "lineNumber": 153
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table",
+          "lineNumber": 153
+        },
+        {
+          "caller": "majority",
+          "callee": "sum",
+          "lineNumber": 163
+        },
+        {
+          "caller": "majority",
+          "callee": "len",
+          "lineNumber": 164
+        },
+        {
+          "caller": "noise_from_quiet",
+          "callee": "sum",
+          "lineNumber": 172
+        },
+        {
+          "caller": "noise_from_quiet",
+          "callee": "len",
+          "lineNumber": 172
+        },
+        {
+          "caller": "_query",
+          "callee": "majority",
+          "lineNumber": 186
+        },
+        {
+          "caller": "_query",
+          "callee": "majority",
+          "lineNumber": 187
+        },
+        {
+          "caller": "_query",
+          "callee": "majority",
+          "lineNumber": 188
+        },
+        {
+          "caller": "_query",
+          "callee": "noise_from_quiet",
+          "lineNumber": 190
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"places\").update(update_payload).eq(\"place_id\", pid).execute",
+          "lineNumber": 194
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"places\").update(update_payload).eq",
+          "lineNumber": 194
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table(\"places\").update",
+          "lineNumber": 194
+        },
+        {
+          "caller": "_query",
+          "callee": "db.table",
+          "lineNumber": 194
+        },
+        {
+          "caller": "recompute_boolean_attrs_for_region",
+          "callee": "asyncio.to_thread",
+          "lineNumber": 196
+        },
+        {
+          "caller": "recompute_boolean_attrs_for_region",
+          "callee": "logger.info",
+          "lineNumber": 197
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "backend/crawler/llm_extractor.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 95,
+      "nonEmptyLines": 79,
+      "functions": [
+        {
+          "name": "get_openai_client",
+          "startLine": 19,
+          "endLine": 23,
+          "params": [
+            "api_key"
+          ]
+        },
+        {
+          "name": "extract_wfh_attributes",
+          "startLine": 65,
+          "endLine": 95,
+          "params": [
+            "raw_text",
+            "place_name",
+            "openai_api_key"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ExtractionResult",
+          "startLine": 49,
+          "endLine": 59,
+          "methods": [],
+          "properties": [
+            "has_wifi",
+            "has_outlets",
+            "is_laptop_friendly",
+            "noise_level",
+            "seating_comfort",
+            "wifi_confidence",
+            "outlet_confidence",
+            "noise_confidence",
+            "laptop_confidence",
+            "evidence_snippet"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_openai_client",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "ExtractionResult",
+          "line": 49,
+          "isDefault": false
+        },
+        {
+          "name": "extract_wfh_attributes",
+          "line": 65,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_openai_client",
+          "callee": "AsyncOpenAI",
+          "lineNumber": 22
+        },
+        {
+          "caller": "extract_wfh_attributes",
+          "callee": "get_openai_client",
+          "lineNumber": 74
+        },
+        {
+          "caller": "extract_wfh_attributes",
+          "callee": "client.chat.completions.create",
+          "lineNumber": 78
+        },
+        {
+          "caller": "extract_wfh_attributes",
+          "callee": "json.loads",
+          "lineNumber": 91
+        },
+        {
+          "caller": "extract_wfh_attributes",
+          "callee": "ExtractionResult",
+          "lineNumber": 92
+        },
+        {
+          "caller": "extract_wfh_attributes",
+          "callee": "data.items",
+          "lineNumber": 92
+        },
+        {
+          "caller": "extract_wfh_attributes",
+          "callee": "logger.warning",
+          "lineNumber": 94
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 2,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "backend/crawler/multi_mention_extractor.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 128,
+      "nonEmptyLines": 105,
+      "functions": [
+        {
+          "name": "get_openai_client",
+          "startLine": 28,
+          "endLine": 32,
+          "params": [
+            "api_key"
+          ]
+        },
+        {
+          "name": "extract_all_mentions",
+          "startLine": 71,
+          "endLine": 128,
+          "params": [
+            "raw_text",
+            "openai_api_key"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "MultiMentionResult",
+          "startLine": 58,
+          "endLine": 68,
+          "methods": [],
+          "properties": [
+            "place_name",
+            "evidence_snippet",
+            "has_wifi",
+            "has_outlets",
+            "is_laptop_friendly",
+            "noise_level",
+            "wifi_confidence",
+            "outlet_confidence",
+            "noise_confidence",
+            "laptop_confidence"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_openai_client",
+          "line": 28,
+          "isDefault": false
+        },
+        {
+          "name": "MultiMentionResult",
+          "line": 58,
+          "isDefault": false
+        },
+        {
+          "name": "extract_all_mentions",
+          "line": 71,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_openai_client",
+          "callee": "AsyncOpenAI",
+          "lineNumber": 31
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "raw_text.strip",
+          "lineNumber": 79
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "get_openai_client",
+          "lineNumber": 82
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "client.chat.completions.create",
+          "lineNumber": 86
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "json.loads",
+          "lineNumber": 103
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "data.get",
+          "lineNumber": 106
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "isinstance",
+          "lineNumber": 106
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "isinstance",
+          "lineNumber": 107
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "logger.warning",
+          "lineNumber": 108
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "isinstance",
+          "lineNumber": 113
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "item.get",
+          "lineNumber": 113
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "results.append",
+          "lineNumber": 116
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "MultiMentionResult",
+          "lineNumber": 117
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "item.items",
+          "lineNumber": 118
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "logger.debug",
+          "lineNumber": 122
+        },
+        {
+          "caller": "extract_all_mentions",
+          "callee": "logger.warning",
+          "lineNumber": 127
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 2,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "backend/crawler/orchestrator.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 149,
+      "nonEmptyLines": 124,
+      "functions": [
+        {
+          "name": "_platform_from_url",
+          "startLine": 27,
+          "endLine": 44,
+          "params": [
+            "url",
+            "crawler_source"
+          ]
+        },
+        {
+          "name": "run_for_region",
+          "startLine": 47,
+          "endLine": 149,
+          "params": [
+            "region_id",
+            "center_lat",
+            "center_lng",
+            "city_slug"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "_platform_from_url",
+          "line": 27,
+          "isDefault": false
+        },
+        {
+          "name": "run_for_region",
+          "line": 47,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_platform_from_url",
+          "callee": "url.lower",
+          "lineNumber": 32
+        },
+        {
+          "caller": "_platform_from_url",
+          "callee": "urlparse(url).netloc.lstrip",
+          "lineNumber": 41
+        },
+        {
+          "caller": "_platform_from_url",
+          "callee": "urlparse",
+          "lineNumber": 41
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "ValueError",
+          "lineNumber": 58
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "get_settings",
+          "lineNumber": 60
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "set",
+          "lineNumber": 61
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 63
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 64
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 65
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 68
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "tavily_crawler.fetch_tavily_mentions",
+          "lineNumber": 69
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "list",
+          "lineNumber": 72
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "seen_urls.add",
+          "lineNumber": 74
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 75
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "len",
+          "lineNumber": 75
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 78
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "brave_crawler.fetch_brave_mentions",
+          "lineNumber": 79
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "all_raw.extend",
+          "lineNumber": 82
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "seen_urls.add",
+          "lineNumber": 84
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 85
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "len",
+          "lineNumber": 85
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 88
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "instagram_crawler.fetch_instagram_mentions",
+          "lineNumber": 89
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "all_raw.extend",
+          "lineNumber": 90
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 91
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "len",
+          "lineNumber": 91
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 93
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 94
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "len",
+          "lineNumber": 94
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 95
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "enumerate",
+          "lineNumber": 101
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "_platform_from_url",
+          "lineNumber": 103
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "db_writer.ensure_source_exists",
+          "lineNumber": 105
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "article_extractor.extract_all_mentions",
+          "lineNumber": 110
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.debug",
+          "lineNumber": 116
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "len",
+          "lineNumber": 116
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 119
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "len",
+          "lineNumber": 121
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "len",
+          "lineNumber": 121
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "db_writer.write_raw_mention",
+          "lineNumber": 125
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.debug",
+          "lineNumber": 128
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.warning",
+          "lineNumber": 140
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "len",
+          "lineNumber": 140
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 143
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 144
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 148
+        },
+        {
+          "caller": "run_for_region",
+          "callee": "logger.info",
+          "lineNumber": 149
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "backend/crawler/place_resolver.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 178,
+      "nonEmptyLines": 148,
+      "functions": [
+        {
+          "name": "get_openai_client",
+          "startLine": 31,
+          "endLine": 35,
+          "params": [
+            "api_key"
+          ]
+        },
+        {
+          "name": "_haversine_meters",
+          "startLine": 47,
+          "endLine": 53,
+          "params": [
+            "lat1",
+            "lng1",
+            "lat2",
+            "lng2"
+          ]
+        },
+        {
+          "name": "resolve_place",
+          "startLine": 56,
+          "endLine": 178,
+          "params": [
+            "raw_text",
+            "location_lat",
+            "location_lng",
+            "api_key",
+            "openai_api_key",
+            "similarity_threshold",
+            "distance_threshold_m",
+            "_cache"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ResolvedPlace",
+          "startLine": 39,
+          "endLine": 44,
+          "methods": [],
+          "properties": [
+            "place_id",
+            "name",
+            "lat",
+            "lng",
+            "address"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_openai_client",
+          "line": 31,
+          "isDefault": false
+        },
+        {
+          "name": "ResolvedPlace",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "_haversine_meters",
+          "line": 47,
+          "isDefault": false
+        },
+        {
+          "name": "resolve_place",
+          "line": 56,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "get_openai_client",
+          "callee": "AsyncOpenAI",
+          "lineNumber": 34
+        },
+        {
+          "caller": "_haversine_meters",
+          "callee": "math.radians",
+          "lineNumber": 49
+        },
+        {
+          "caller": "_haversine_meters",
+          "callee": "math.radians",
+          "lineNumber": 49
+        },
+        {
+          "caller": "_haversine_meters",
+          "callee": "math.radians",
+          "lineNumber": 50
+        },
+        {
+          "caller": "_haversine_meters",
+          "callee": "math.radians",
+          "lineNumber": 51
+        },
+        {
+          "caller": "_haversine_meters",
+          "callee": "math.sin",
+          "lineNumber": 52
+        },
+        {
+          "caller": "_haversine_meters",
+          "callee": "math.cos",
+          "lineNumber": 52
+        },
+        {
+          "caller": "_haversine_meters",
+          "callee": "math.cos",
+          "lineNumber": 52
+        },
+        {
+          "caller": "_haversine_meters",
+          "callee": "math.sin",
+          "lineNumber": 52
+        },
+        {
+          "caller": "_haversine_meters",
+          "callee": "math.atan2",
+          "lineNumber": 53
+        },
+        {
+          "caller": "_haversine_meters",
+          "callee": "math.sqrt",
+          "lineNumber": 53
+        },
+        {
+          "caller": "_haversine_meters",
+          "callee": "math.sqrt",
+          "lineNumber": 53
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "raw_text.strip",
+          "lineNumber": 71
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "logger.info",
+          "lineNumber": 75
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "get_openai_client",
+          "lineNumber": 76
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "client.chat.completions.create",
+          "lineNumber": 78
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "json.loads",
+          "lineNumber": 93
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "result.get",
+          "lineNumber": 94
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "logger.warning",
+          "lineNumber": 96
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "logger.info",
+          "lineNumber": 100
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "logger.debug",
+          "lineNumber": 103
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "logger.debug",
+          "lineNumber": 108
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "logger.info",
+          "lineNumber": 112
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "text_search",
+          "lineNumber": 120
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "text_search",
+          "lineNumber": 124
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "max",
+          "lineNumber": 128
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "place_name.lower().split",
+          "lineNumber": 135
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "place_name.lower",
+          "lineNumber": 135
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "place_name.split",
+          "lineNumber": 135
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "place_name.lower",
+          "lineNumber": 135
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "difflib.SequenceMatcher(None, place_name.lower(), candidate[\"name\"].lower()).ratio",
+          "lineNumber": 138
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "difflib.SequenceMatcher",
+          "lineNumber": 138
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "place_name.lower",
+          "lineNumber": 138
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "candidate[\"name\"].lower",
+          "lineNumber": 138
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "candidate[\"name\"].lower().split",
+          "lineNumber": 145
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "candidate[\"name\"].lower",
+          "lineNumber": 145
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "candidate[\"name\"].split",
+          "lineNumber": 145
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "difflib.SequenceMatcher(None, query_first_word, candidate_first_word).ratio",
+          "lineNumber": 146
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "difflib.SequenceMatcher",
+          "lineNumber": 146
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "logger.debug",
+          "lineNumber": 148
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "candidate.get",
+          "lineNumber": 154
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "candidate.get",
+          "lineNumber": 154
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "_haversine_meters",
+          "lineNumber": 157
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "ResolvedPlace",
+          "lineNumber": 162
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "candidate.get",
+          "lineNumber": 167
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "logger.debug",
+          "lineNumber": 171
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "logger.debug",
+          "lineNumber": 173
+        },
+        {
+          "caller": "resolve_place",
+          "callee": "len",
+          "lineNumber": 173
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 3,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "backend/crawler/sources/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 0,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "backend/crawler/sources/brave_crawler.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 84,
+      "nonEmptyLines": 69,
+      "functions": [
+        {
+          "name": "fetch_brave_mentions",
+          "startLine": 39,
+          "endLine": 84,
+          "params": [
+            "city_slug",
+            "api_key",
+            "queries",
+            "seen_urls"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "fetch_brave_mentions",
+          "line": 39,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "QUERIES_BY_SLUG.get",
+          "lineNumber": 49
+        },
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "set",
+          "lineNumber": 50
+        },
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "httpx.AsyncClient",
+          "lineNumber": 58
+        },
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "client.get",
+          "lineNumber": 61
+        },
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "resp.raise_for_status",
+          "lineNumber": 67
+        },
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "resp.json().get(\"web\", {}).get",
+          "lineNumber": 68
+        },
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "resp.json().get",
+          "lineNumber": 68
+        },
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "resp.json",
+          "lineNumber": 68
+        },
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "logger.warning",
+          "lineNumber": 70
+        },
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "result.get",
+          "lineNumber": 74
+        },
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "seen.add",
+          "lineNumber": 77
+        },
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "result.get",
+          "lineNumber": 78
+        },
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "mentions.append",
+          "lineNumber": 79
+        },
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "RawMention",
+          "lineNumber": 79
+        },
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "asyncio.sleep",
+          "lineNumber": 81
+        },
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "logger.info",
+          "lineNumber": 83
+        },
+        {
+          "caller": "fetch_brave_mentions",
+          "callee": "len",
+          "lineNumber": 83
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "backend/crawler/sources/instagram_crawler.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 71,
+      "nonEmptyLines": 62,
+      "functions": [
+        {
+          "name": "fetch_instagram_mentions",
+          "startLine": 21,
+          "endLine": 71,
+          "params": [
+            "accounts"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "fetch_instagram_mentions",
+          "line": 21,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "httpx.AsyncClient",
+          "lineNumber": 31
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "client.get",
+          "lineNumber": 35
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "resp.raise_for_status",
+          "lineNumber": 41
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "resp.json",
+          "lineNumber": 42
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "data.get(\"graphql\", {})\n                    .get(\"user\", {})\n                    .get(\"edge_owner_to_timeline_media\", {})\n                    .get",
+          "lineNumber": 44
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "data.get(\"graphql\", {})\n                    .get(\"user\", {})\n                    .get",
+          "lineNumber": 44
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "data.get(\"graphql\", {})\n                    .get",
+          "lineNumber": 44
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "data.get",
+          "lineNumber": 44
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "edge.get",
+          "lineNumber": 50
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "node.get(\"edge_media_to_caption\", {}).get",
+          "lineNumber": 51
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "node.get",
+          "lineNumber": 51
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "node.get",
+          "lineNumber": 53
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "mentions.append",
+          "lineNumber": 57
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "RawMention",
+          "lineNumber": 58
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "logger.warning",
+          "lineNumber": 67
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "logger.info",
+          "lineNumber": 70
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "len",
+          "lineNumber": 70
+        },
+        {
+          "caller": "fetch_instagram_mentions",
+          "callee": "len",
+          "lineNumber": 70
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "backend/crawler/sources/tavily_crawler.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 124,
+      "nonEmptyLines": 105,
+      "functions": [
+        {
+          "name": "_scrape_url",
+          "startLine": 59,
+          "endLine": 68,
+          "params": [
+            "url",
+            "client"
+          ]
+        },
+        {
+          "name": "fetch_tavily_mentions",
+          "startLine": 71,
+          "endLine": 124,
+          "params": [
+            "city_slug",
+            "api_key",
+            "queries",
+            "seen_urls"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "RawMention",
+          "startLine": 51,
+          "endLine": 56,
+          "methods": [],
+          "properties": [
+            "url",
+            "snippet",
+            "query",
+            "source",
+            "raw_content"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "RawMention",
+          "line": 50,
+          "isDefault": false
+        },
+        {
+          "name": "_scrape_url",
+          "line": 59,
+          "isDefault": false
+        },
+        {
+          "name": "fetch_tavily_mentions",
+          "line": 71,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_scrape_url",
+          "callee": "client.get",
+          "lineNumber": 62
+        },
+        {
+          "caller": "_scrape_url",
+          "callee": "resp.raise_for_status",
+          "lineNumber": 63
+        },
+        {
+          "caller": "_scrape_url",
+          "callee": "logger.debug",
+          "lineNumber": 67
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "QUERIES_BY_SLUG.get",
+          "lineNumber": 81
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "set",
+          "lineNumber": 82
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "httpx.AsyncClient",
+          "lineNumber": 87
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "enumerate",
+          "lineNumber": 88
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "logger.info",
+          "lineNumber": 89
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "len",
+          "lineNumber": 89
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "client.post",
+          "lineNumber": 91
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "resp.raise_for_status",
+          "lineNumber": 103
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "resp.json().get",
+          "lineNumber": 104
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "resp.json",
+          "lineNumber": 104
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "logger.warning",
+          "lineNumber": 106
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "result.get",
+          "lineNumber": 111
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "seen.add",
+          "lineNumber": 114
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "result.get",
+          "lineNumber": 115
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "_scrape_url",
+          "lineNumber": 116
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "mentions.append",
+          "lineNumber": 117
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "RawMention",
+          "lineNumber": 117
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "logger.info",
+          "lineNumber": 120
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "len",
+          "lineNumber": 120
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "len",
+          "lineNumber": 120
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "asyncio.sleep",
+          "lineNumber": 121
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "logger.info",
+          "lineNumber": 123
+        },
+        {
+          "caller": "fetch_tavily_mentions",
+          "callee": "len",
+          "lineNumber": 123
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 2,
+        "classCount": 1
+      }
+    }
+  ]
+}

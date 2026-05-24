@@ -1,0 +1,877 @@
+{
+  "nodes": [
+    {
+      "id": "file:coffee-map/app/layout.tsx",
+      "type": "file",
+      "name": "layout.tsx",
+      "filePath": "coffee-map/app/layout.tsx",
+      "summary": "Next.js root layout component that wraps all pages with global fonts, metadata, and the base HTML shell for the BtwnMeetings app.",
+      "tags": ["entry-point", "component", "next-js"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/app/layout.tsx:RootLayout",
+      "type": "function",
+      "name": "RootLayout",
+      "filePath": "coffee-map/app/layout.tsx",
+      "lineRange": [19, 34],
+      "summary": "Default exported Next.js root layout that renders the HTML document shell with children injected into the body.",
+      "tags": ["entry-point", "component"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/app/manifest.ts",
+      "type": "file",
+      "name": "manifest.ts",
+      "filePath": "coffee-map/app/manifest.ts",
+      "summary": "Next.js web app manifest generator that defines the PWA metadata including name, icons, and display settings for BtwnMeetings.",
+      "tags": ["configuration", "next-js", "pwa"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/app/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "coffee-map/app/page.tsx",
+      "summary": "Next.js root page component that serves as the application entry point, rendering the primary map view.",
+      "tags": ["entry-point", "component", "next-js"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/app/api/places/[place_id]/mentions/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "coffee-map/app/api/places/[place_id]/mentions/route.ts",
+      "summary": "Next.js API route handler that proxies GET requests to the backend to fetch social media mentions for a specific place by ID.",
+      "tags": ["api-handler", "proxy", "next-js"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/app/api/places/[place_id]/mentions/route.ts:GET",
+      "type": "function",
+      "name": "GET",
+      "filePath": "coffee-map/app/api/places/[place_id]/mentions/route.ts",
+      "lineRange": [4, 27],
+      "summary": "API GET handler that fetches mentions for a place from the upstream Python backend, returning early with an empty array if no place_id is provided.",
+      "tags": ["api-handler", "proxy"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/app/api/places/data/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "coffee-map/app/api/places/data/route.ts",
+      "summary": "Next.js API route that proxies GET requests to the backend to retrieve detailed place data by place ID with error handling.",
+      "tags": ["api-handler", "proxy", "next-js"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:coffee-map/app/api/places/data/route.ts:GET",
+      "type": "function",
+      "name": "GET",
+      "filePath": "coffee-map/app/api/places/data/route.ts",
+      "lineRange": [5, 48],
+      "summary": "Proxies GET requests to the Python backend for individual place data, forwarding query parameters and handling HTTP error responses.",
+      "tags": ["api-handler", "proxy"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:coffee-map/app/api/places/enrich/[placeId]/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "coffee-map/app/api/places/enrich/[placeId]/route.ts",
+      "summary": "Next.js API route that proxies POST requests to trigger backend enrichment of a place record by placeId.",
+      "tags": ["api-handler", "proxy", "next-js"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:coffee-map/app/api/places/enrich/[placeId]/route.ts:POST",
+      "type": "function",
+      "name": "POST",
+      "filePath": "coffee-map/app/api/places/enrich/[placeId]/route.ts",
+      "lineRange": [5, 50],
+      "summary": "Proxies POST requests to the Python backend to enrich a place entry, forwarding the request body and handling HTTP error responses.",
+      "tags": ["api-handler", "proxy"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:coffee-map/app/api/places/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "coffee-map/app/api/places/route.ts",
+      "summary": "Next.js API route that accepts POST requests to find nearby coffee shops and cafes, proxying the request to the Python backend.",
+      "tags": ["api-handler", "proxy", "next-js"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/app/api/places/route.ts:POST",
+      "type": "function",
+      "name": "POST",
+      "filePath": "coffee-map/app/api/places/route.ts",
+      "lineRange": [6, 29],
+      "summary": "Receives POST requests with location/bounds parameters and forwards them to the upstream places service, returning the proxied JSON response.",
+      "tags": ["api-handler", "proxy"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/app/api/places/status/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "coffee-map/app/api/places/status/route.ts",
+      "summary": "Next.js API route that proxies GET requests to check the data crawling status for a given map region.",
+      "tags": ["api-handler", "proxy", "next-js"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:coffee-map/app/api/places/status/route.ts:GET",
+      "type": "function",
+      "name": "GET",
+      "filePath": "coffee-map/app/api/places/status/route.ts",
+      "lineRange": [5, 48],
+      "summary": "Proxies GET requests to the backend to retrieve crawling status for a region, forwarding query parameters and handling HTTP errors.",
+      "tags": ["api-handler", "proxy"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:coffee-map/app/api/regions/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "coffee-map/app/api/regions/route.ts",
+      "summary": "Next.js API route that proxies GET requests to retrieve available geographic regions from the backend.",
+      "tags": ["api-handler", "proxy", "next-js"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/app/api/regions/route.ts:GET",
+      "type": "function",
+      "name": "GET",
+      "filePath": "coffee-map/app/api/regions/route.ts",
+      "lineRange": [5, 23],
+      "summary": "Forwards GET requests to the upstream service to fetch available regions, propagating authorization headers from the incoming request.",
+      "tags": ["api-handler", "proxy"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/components/map/AttributePills.tsx",
+      "type": "file",
+      "name": "AttributePills.tsx",
+      "filePath": "coffee-map/components/map/AttributePills.tsx",
+      "summary": "React component that renders a row of pill badges summarizing key place attributes such as Wi-Fi, seating, and noise level.",
+      "tags": ["component", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/components/map/AttributePills.tsx:AttributePills",
+      "type": "function",
+      "name": "AttributePills",
+      "filePath": "coffee-map/components/map/AttributePills.tsx",
+      "lineRange": [13, 38],
+      "summary": "Builds and renders a list of attribute pill badges for a place, conditionally including pills based on available place properties.",
+      "tags": ["component", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/components/map/ColdRegionBanner.tsx",
+      "type": "file",
+      "name": "ColdRegionBanner.tsx",
+      "filePath": "coffee-map/components/map/ColdRegionBanner.tsx",
+      "summary": "React component that displays a dismissible banner notifying users when the currently viewed map region has no cached place data yet.",
+      "tags": ["component", "event-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/components/map/ColdRegionBanner.tsx:ColdRegionBanner",
+      "type": "function",
+      "name": "ColdRegionBanner",
+      "filePath": "coffee-map/components/map/ColdRegionBanner.tsx",
+      "lineRange": [14, 41],
+      "summary": "Banner component that auto-dismisses after a timeout and provides a manual close button; visibility is driven by the `visible` prop.",
+      "tags": ["component", "event-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/components/map/CrawlingIndicator.tsx",
+      "type": "file",
+      "name": "CrawlingIndicator.tsx",
+      "filePath": "coffee-map/components/map/CrawlingIndicator.tsx",
+      "summary": "React component that renders a loading indicator shown while the backend is actively crawling a map region for new places.",
+      "tags": ["component", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/components/map/CrawlingIndicator.tsx:CrawlingIndicator",
+      "type": "function",
+      "name": "CrawlingIndicator",
+      "filePath": "coffee-map/components/map/CrawlingIndicator.tsx",
+      "lineRange": [12, 38],
+      "summary": "Renders an animated indicator badge when the `visible` prop is true, informing the user that data is being fetched for the region.",
+      "tags": ["component", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/components/map/InfoCard.tsx",
+      "type": "file",
+      "name": "InfoCard.tsx",
+      "filePath": "coffee-map/components/map/InfoCard.tsx",
+      "summary": "Rich detail card component that displays a selected coffee shop's photos, attributes, hours, rating, Google Maps link, and social media mentions.",
+      "tags": ["component", "data-model"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:coffee-map/components/map/InfoCard.tsx:InfoCard",
+      "type": "function",
+      "name": "InfoCard",
+      "filePath": "coffee-map/components/map/InfoCard.tsx",
+      "lineRange": [38, 137],
+      "summary": "Main info card component that fetches and displays comprehensive place details including photos, hours, rating, and a scrollable list of social mentions.",
+      "tags": ["component", "data-model"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:coffee-map/components/map/MapContainer.tsx",
+      "type": "file",
+      "name": "MapContainer.tsx",
+      "filePath": "coffee-map/components/map/MapContainer.tsx",
+      "summary": "Top-level map orchestration component that initializes the Google Maps instance, loads nearby places as pins, and manages the selected place info card.",
+      "tags": ["component", "entry-point"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:coffee-map/components/map/MapContainer.tsx:MapContainer",
+      "type": "function",
+      "name": "MapContainer",
+      "filePath": "coffee-map/components/map/MapContainer.tsx",
+      "lineRange": [23, 128],
+      "summary": "Orchestrates Google Maps initialization with geolocation, renders PlacePin markers for all fetched places, and opens an InfoCard on pin click.",
+      "tags": ["component", "event-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:coffee-map/components/map/PlacePin.tsx",
+      "type": "file",
+      "name": "PlacePin.tsx",
+      "filePath": "coffee-map/components/map/PlacePin.tsx",
+      "summary": "React component that renders a single Google Maps AdvancedMarkerElement pin for a coffee shop place and handles click events.",
+      "tags": ["component", "event-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/components/map/PlacePin.tsx:PlacePin",
+      "type": "function",
+      "name": "PlacePin",
+      "filePath": "coffee-map/components/map/PlacePin.tsx",
+      "lineRange": [18, 48],
+      "summary": "Creates and manages a Google Maps AdvancedMarkerElement, attaching a click listener that calls the provided onClick callback with the place ID.",
+      "tags": ["component", "event-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/components/ui/MentionCard.tsx",
+      "type": "file",
+      "name": "MentionCard.tsx",
+      "filePath": "coffee-map/components/ui/MentionCard.tsx",
+      "summary": "UI component that renders a single social media mention with platform pill, source link, and excerpt text for display in the InfoCard.",
+      "tags": ["component", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/components/ui/MentionCard.tsx:MentionCard",
+      "type": "function",
+      "name": "MentionCard",
+      "filePath": "coffee-map/components/ui/MentionCard.tsx",
+      "lineRange": [8, 30],
+      "summary": "Renders a clickable mention card with platform badge, title, and excerpt, linking out to the original source URL.",
+      "tags": ["component", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/components/ui/PlatformPill.tsx",
+      "type": "file",
+      "name": "PlatformPill.tsx",
+      "filePath": "coffee-map/components/ui/PlatformPill.tsx",
+      "summary": "Small UI badge component that displays a social platform name (e.g., Reddit, Instagram) with platform-specific color coding.",
+      "tags": ["component", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/components/ui/PlatformPill.tsx:PlatformPill",
+      "type": "function",
+      "name": "PlatformPill",
+      "filePath": "coffee-map/components/ui/PlatformPill.tsx",
+      "lineRange": [15, 23],
+      "summary": "Renders a styled pill badge for a given social platform string, applying platform-specific background colors.",
+      "tags": ["component", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/components/ui/ScoreBadge.tsx",
+      "type": "file",
+      "name": "ScoreBadge.tsx",
+      "filePath": "coffee-map/components/ui/ScoreBadge.tsx",
+      "summary": "Small UI component that renders a numeric WFH suitability score formatted to one decimal place with a colored badge.",
+      "tags": ["component", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/components/ui/ScoreBadge.tsx:ScoreBadge",
+      "type": "function",
+      "name": "ScoreBadge",
+      "filePath": "coffee-map/components/ui/ScoreBadge.tsx",
+      "lineRange": [5, 18],
+      "summary": "Renders a badge displaying the WFH score to one decimal place, with color varying based on the score range.",
+      "tags": ["component", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/hooks/useMapBounds.ts",
+      "type": "file",
+      "name": "useMapBounds.ts",
+      "filePath": "coffee-map/hooks/useMapBounds.ts",
+      "summary": "Custom React hook that subscribes to Google Maps viewport change events and returns the current map bounds with debouncing.",
+      "tags": ["hook", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:coffee-map/hooks/useMapBounds.ts:useMapBounds",
+      "type": "function",
+      "name": "useMapBounds",
+      "filePath": "coffee-map/hooks/useMapBounds.ts",
+      "lineRange": [12, 42],
+      "summary": "Listens to the Google Maps `bounds_changed` event with a debounce timeout and returns the current bounding box as state.",
+      "tags": ["hook", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:coffee-map/hooks/useMentions.ts",
+      "type": "file",
+      "name": "useMentions.ts",
+      "filePath": "coffee-map/hooks/useMentions.ts",
+      "summary": "Custom React hook that fetches social media mentions for a given place ID, with abort-on-unmount and loading state management.",
+      "tags": ["hook", "data-model"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:coffee-map/hooks/useMentions.ts:useMentions",
+      "type": "function",
+      "name": "useMentions",
+      "filePath": "coffee-map/hooks/useMentions.ts",
+      "lineRange": [11, 44],
+      "summary": "Fetches mentions for a place via the API client, resets state on placeId change, aborts in-flight requests on unmount or re-fetch, and returns mentions with a loading flag.",
+      "tags": ["hook", "data-model"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:coffee-map/hooks/usePlaces.ts",
+      "type": "file",
+      "name": "usePlaces.ts",
+      "filePath": "coffee-map/hooks/usePlaces.ts",
+      "summary": "Custom React hook that fetches nearby coffee shops for the current map bounds, incrementally merging fresh results into the accumulated places list.",
+      "tags": ["hook", "data-model"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:coffee-map/hooks/usePlaces.ts:usePlaces",
+      "type": "function",
+      "name": "usePlaces",
+      "filePath": "coffee-map/hooks/usePlaces.ts",
+      "lineRange": [15, 73],
+      "summary": "Reactively fetches nearby places whenever map bounds change, merges updated fields into the existing list without duplicating entries, and exposes loading and region status state.",
+      "tags": ["hook", "data-model"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:coffee-map/lib/api-client.ts",
+      "type": "file",
+      "name": "api-client.ts",
+      "filePath": "coffee-map/lib/api-client.ts",
+      "summary": "API client module that provides typed fetch wrappers for the places and mentions endpoints, with exponential backoff retry logic for place requests.",
+      "tags": ["utility", "service", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:coffee-map/lib/api-client.ts:fetchNearbyPlaces",
+      "type": "function",
+      "name": "fetchNearbyPlaces",
+      "filePath": "coffee-map/lib/api-client.ts",
+      "lineRange": [13, 49],
+      "summary": "Fetches nearby places from the Next.js API route with automatic exponential-backoff retry on failure, accepting an AbortSignal for cancellation.",
+      "tags": ["utility", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:coffee-map/lib/api-client.ts:fetchMentions",
+      "type": "function",
+      "name": "fetchMentions",
+      "filePath": "coffee-map/lib/api-client.ts",
+      "lineRange": [51, 65],
+      "summary": "Fetches social media mentions for a place from the Next.js API route, supporting request cancellation via AbortSignal.",
+      "tags": ["utility", "service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/lib/map-utils.ts",
+      "type": "file",
+      "name": "map-utils.ts",
+      "filePath": "coffee-map/lib/map-utils.ts",
+      "summary": "Geographic utility functions for computing map bounds center, haversine distance between coordinates, and bounding box overlap detection.",
+      "tags": ["utility", "service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/lib/map-utils.ts:boundsToCenter",
+      "type": "function",
+      "name": "boundsToCenter",
+      "filePath": "coffee-map/lib/map-utils.ts",
+      "lineRange": [3, 8],
+      "summary": "Computes the geographic center point (lat/lng) from a bounding box object.",
+      "tags": ["utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/lib/map-utils.ts:haversineDistanceMeters",
+      "type": "function",
+      "name": "haversineDistanceMeters",
+      "filePath": "coffee-map/lib/map-utils.ts",
+      "lineRange": [10, 25],
+      "summary": "Calculates the great-circle distance in meters between two latitude/longitude coordinate pairs using the Haversine formula.",
+      "tags": ["utility"],
+      "complexity": "simple",
+      "languageNotes": "Implements the Haversine formula using Earth's radius (6371 km) to compute accurate surface distances."
+    },
+    {
+      "id": "function:coffee-map/lib/map-utils.ts:boundsOverlap",
+      "type": "function",
+      "name": "boundsOverlap",
+      "filePath": "coffee-map/lib/map-utils.ts",
+      "lineRange": [27, 29],
+      "summary": "Checks whether two geographic bounding boxes overlap by comparing their lat/lng extents.",
+      "tags": ["utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/types/index.ts",
+      "type": "file",
+      "name": "index.ts",
+      "filePath": "coffee-map/types/index.ts",
+      "summary": "Central TypeScript type definitions for the application, including Place, Mention, RegionStatus, and map bounds interfaces shared across all components and hooks.",
+      "tags": ["type-definition", "barrel"],
+      "complexity": "moderate",
+      "languageNotes": "Pure TypeScript interface/type definitions with no runtime code; acts as the shared type contract for the entire frontend."
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:coffee-map/app/layout.tsx",
+      "target": "file:coffee-map/app/globals.css",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:coffee-map/app/layout.tsx",
+      "target": "function:coffee-map/app/layout.tsx:RootLayout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/layout.tsx",
+      "target": "function:coffee-map/app/layout.tsx:RootLayout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/app/manifest.ts",
+      "target": "function:coffee-map/app/manifest.ts:manifest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/manifest.ts",
+      "target": "function:coffee-map/app/manifest.ts:manifest",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/app/page.tsx",
+      "target": "function:coffee-map/app/page.tsx:Home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/page.tsx",
+      "target": "function:coffee-map/app/page.tsx:Home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/app/api/places/[place_id]/mentions/route.ts",
+      "target": "function:coffee-map/app/api/places/[place_id]/mentions/route.ts:GET",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/api/places/[place_id]/mentions/route.ts",
+      "target": "function:coffee-map/app/api/places/[place_id]/mentions/route.ts:GET",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/app/api/places/data/route.ts",
+      "target": "function:coffee-map/app/api/places/data/route.ts:GET",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/api/places/data/route.ts",
+      "target": "function:coffee-map/app/api/places/data/route.ts:GET",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/app/api/places/enrich/[placeId]/route.ts",
+      "target": "function:coffee-map/app/api/places/enrich/[placeId]/route.ts:POST",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/api/places/enrich/[placeId]/route.ts",
+      "target": "function:coffee-map/app/api/places/enrich/[placeId]/route.ts:POST",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/app/api/places/route.ts",
+      "target": "function:coffee-map/app/api/places/route.ts:POST",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/api/places/route.ts",
+      "target": "function:coffee-map/app/api/places/route.ts:POST",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/app/api/places/status/route.ts",
+      "target": "function:coffee-map/app/api/places/status/route.ts:GET",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/api/places/status/route.ts",
+      "target": "function:coffee-map/app/api/places/status/route.ts:GET",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/app/api/regions/route.ts",
+      "target": "function:coffee-map/app/api/regions/route.ts:GET",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/api/regions/route.ts",
+      "target": "function:coffee-map/app/api/regions/route.ts:GET",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/map/AttributePills.tsx",
+      "target": "function:coffee-map/components/map/AttributePills.tsx:AttributePills",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/map/AttributePills.tsx",
+      "target": "function:coffee-map/components/map/AttributePills.tsx:AttributePills",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/map/ColdRegionBanner.tsx",
+      "target": "function:coffee-map/components/map/ColdRegionBanner.tsx:ColdRegionBanner",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/map/ColdRegionBanner.tsx",
+      "target": "function:coffee-map/components/map/ColdRegionBanner.tsx:ColdRegionBanner",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/map/CrawlingIndicator.tsx",
+      "target": "function:coffee-map/components/map/CrawlingIndicator.tsx:CrawlingIndicator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/map/CrawlingIndicator.tsx",
+      "target": "function:coffee-map/components/map/CrawlingIndicator.tsx:CrawlingIndicator",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/map/InfoCard.tsx",
+      "target": "file:coffee-map/components/map/AttributePills.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:coffee-map/components/map/InfoCard.tsx",
+      "target": "function:coffee-map/components/map/InfoCard.tsx:InfoCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/map/InfoCard.tsx",
+      "target": "function:coffee-map/components/map/InfoCard.tsx:InfoCard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/map/MapContainer.tsx",
+      "target": "file:coffee-map/components/map/ColdRegionBanner.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:coffee-map/components/map/MapContainer.tsx",
+      "target": "file:coffee-map/components/map/CrawlingIndicator.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:coffee-map/components/map/MapContainer.tsx",
+      "target": "file:coffee-map/components/map/InfoCard.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:coffee-map/components/map/MapContainer.tsx",
+      "target": "file:coffee-map/components/map/PlacePin.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:coffee-map/components/map/MapContainer.tsx",
+      "target": "function:coffee-map/components/map/MapContainer.tsx:MapContainer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/map/MapContainer.tsx",
+      "target": "function:coffee-map/components/map/MapContainer.tsx:MapContainer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/map/PlacePin.tsx",
+      "target": "function:coffee-map/components/map/PlacePin.tsx:PlacePin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/map/PlacePin.tsx",
+      "target": "function:coffee-map/components/map/PlacePin.tsx:PlacePin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/ui/MentionCard.tsx",
+      "target": "file:coffee-map/components/ui/PlatformPill.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:coffee-map/components/ui/MentionCard.tsx",
+      "target": "function:coffee-map/components/ui/MentionCard.tsx:MentionCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/ui/MentionCard.tsx",
+      "target": "function:coffee-map/components/ui/MentionCard.tsx:MentionCard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/ui/PlatformPill.tsx",
+      "target": "function:coffee-map/components/ui/PlatformPill.tsx:PlatformPill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/ui/PlatformPill.tsx",
+      "target": "function:coffee-map/components/ui/PlatformPill.tsx:PlatformPill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/ui/ScoreBadge.tsx",
+      "target": "function:coffee-map/components/ui/ScoreBadge.tsx:ScoreBadge",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/ui/ScoreBadge.tsx",
+      "target": "function:coffee-map/components/ui/ScoreBadge.tsx:ScoreBadge",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/hooks/useMapBounds.ts",
+      "target": "function:coffee-map/hooks/useMapBounds.ts:useMapBounds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/hooks/useMapBounds.ts",
+      "target": "function:coffee-map/hooks/useMapBounds.ts:useMapBounds",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/hooks/useMentions.ts",
+      "target": "function:coffee-map/hooks/useMentions.ts:useMentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/hooks/useMentions.ts",
+      "target": "function:coffee-map/hooks/useMentions.ts:useMentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/hooks/usePlaces.ts",
+      "target": "function:coffee-map/hooks/usePlaces.ts:usePlaces",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/hooks/usePlaces.ts",
+      "target": "function:coffee-map/hooks/usePlaces.ts:usePlaces",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/lib/api-client.ts",
+      "target": "function:coffee-map/lib/api-client.ts:fetchNearbyPlaces",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/lib/api-client.ts",
+      "target": "function:coffee-map/lib/api-client.ts:fetchNearbyPlaces",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/lib/api-client.ts",
+      "target": "function:coffee-map/lib/api-client.ts:fetchMentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/lib/api-client.ts",
+      "target": "function:coffee-map/lib/api-client.ts:fetchMentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/lib/map-utils.ts",
+      "target": "function:coffee-map/lib/map-utils.ts:boundsToCenter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/lib/map-utils.ts",
+      "target": "function:coffee-map/lib/map-utils.ts:boundsToCenter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/lib/map-utils.ts",
+      "target": "function:coffee-map/lib/map-utils.ts:haversineDistanceMeters",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/lib/map-utils.ts",
+      "target": "function:coffee-map/lib/map-utils.ts:haversineDistanceMeters",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/lib/map-utils.ts",
+      "target": "function:coffee-map/lib/map-utils.ts:boundsOverlap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/lib/map-utils.ts",
+      "target": "function:coffee-map/lib/map-utils.ts:boundsOverlap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

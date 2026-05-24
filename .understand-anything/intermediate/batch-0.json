@@ -1,0 +1,435 @@
+{
+  "nodes": [
+    {
+      "id": "document:.cursor/plans/coffee_app_frontend_&_backend_integration_acbf5cbd.plan.md",
+      "type": "document",
+      "name": "coffee_app_frontend_&_backend_integration_acbf5cbd.plan.md",
+      "filePath": ".cursor/plans/coffee_app_frontend_&_backend_integration_acbf5cbd.plan.md",
+      "summary": "Cursor AI plan document outlining integration tasks between the Next.js frontend and the FastAPI backend for the BtwnMeetings coffee app.",
+      "tags": ["documentation", "planning", "frontend", "backend"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.cursor/plans/json_to_supabase_migration_cf766576.plan.md",
+      "type": "document",
+      "name": "json_to_supabase_migration_cf766576.plan.md",
+      "filePath": ".cursor/plans/json_to_supabase_migration_cf766576.plan.md",
+      "summary": "Cursor AI plan document describing the migration from a flat JSON data store to Supabase PostgreSQL as the persistent database backend.",
+      "tags": ["documentation", "planning", "database", "migration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.cursor/plans/migrate_to_vercel_+_railway_9ead5567.plan.md",
+      "type": "document",
+      "name": "migrate_to_vercel_+_railway_9ead5567.plan.md",
+      "filePath": ".cursor/plans/migrate_to_vercel_+_railway_9ead5567.plan.md",
+      "summary": "Cursor AI plan document outlining the deployment migration of the frontend to Vercel and the backend to Railway (later changed to Render).",
+      "tags": ["documentation", "planning", "deployment", "infrastructure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.cursor/plans/places_bootstrap_enrichment_system_16b8e353.plan.md",
+      "type": "document",
+      "name": "places_bootstrap_enrichment_system_16b8e353.plan.md",
+      "filePath": ".cursor/plans/places_bootstrap_enrichment_system_16b8e353.plan.md",
+      "summary": "Cursor AI plan document for designing the offline place bootstrap and enrichment system that pre-populates the database with validated WFH-friendly coffee shop data.",
+      "tags": ["documentation", "planning", "crawler", "enrichment"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.cursor/plans/restructure_enrichment_for_latency_and_cost_reduction_4d1a6478.plan.md",
+      "type": "document",
+      "name": "restructure_enrichment_for_latency_and_cost_reduction_4d1a6478.plan.md",
+      "filePath": ".cursor/plans/restructure_enrichment_for_latency_and_cost_reduction_4d1a6478.plan.md",
+      "summary": "Cursor AI plan document for restructuring the enrichment pipeline to move expensive LLM and web search calls out of the hot user-request path into an offline background crawler.",
+      "tags": ["documentation", "planning", "performance", "enrichment"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.env.example",
+      "type": "config",
+      "name": ".env.example",
+      "filePath": ".env.example",
+      "summary": "Template environment variable file documenting all required and optional configuration keys for both the Next.js frontend (NEXT_PUBLIC_* keys, BACKEND_URL) and the FastAPI backend (Supabase, Google Places, OpenAI, Tavily, Brave, CORS, tunable thresholds).",
+      "tags": ["configuration", "environment", "security", "documentation"],
+      "complexity": "simple",
+      "languageNotes": "Includes tunable numeric thresholds (PIN_SCORE_THRESHOLD, PIN_LAPTOP_CONFIDENCE_THRESHOLD, etc.) that control crawler and map-filter behavior at runtime without code changes."
+    },
+    {
+      "id": "config:.env.local",
+      "type": "config",
+      "name": ".env.local",
+      "filePath": ".env.local",
+      "summary": "Local development environment file containing active Google Maps and Places API keys, Supabase connection URL, and database password for running the project outside of CI.",
+      "tags": ["configuration", "environment", "local-development", "security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:DEPLOYMENT.md",
+      "type": "document",
+      "name": "DEPLOYMENT.md",
+      "filePath": "DEPLOYMENT.md",
+      "summary": "Comprehensive step-by-step deployment guide covering how to deploy the FastAPI backend to Render, the Next.js frontend to Vercel, configure environment variables on both platforms, and troubleshoot common integration failures.",
+      "tags": ["documentation", "deployment", "infrastructure", "operations"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "Primary project documentation for BtwnMeetings describing the app's purpose, V2 architecture (offline crawler + read-only map), four-stage request and crawl pipeline, database schema, tech stack, and local development setup.",
+      "tags": ["documentation", "entry-point", "overview", "architecture"],
+      "complexity": "complex"
+    },
+    {
+      "id": "config:backend/.env.local",
+      "type": "config",
+      "name": ".env.local",
+      "filePath": "backend/.env.local",
+      "summary": "Backend-specific local environment file containing all secrets needed for the FastAPI server: Google Places API key, OpenAI key, Tavily and Brave search keys, Supabase service role key and URL, and CORS frontend URL.",
+      "tags": ["configuration", "environment", "security", "local-development"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:backend/requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "backend/requirements.txt",
+      "summary": "Python dependency manifest for the FastAPI backend, listing FastAPI, Uvicorn, Pydantic, Supabase client, HTTPX, OpenAI SDK, python-dotenv, and APScheduler.",
+      "tags": ["documentation", "dependencies", "python", "build-system"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:render.yaml",
+      "type": "config",
+      "name": "render.yaml",
+      "filePath": "render.yaml",
+      "summary": "Render infrastructure-as-code configuration that declares a Python web service named coffee-app-backend, specifying build command, Uvicorn start command, and PYTHONPATH for deploying the FastAPI backend.",
+      "tags": ["configuration", "infrastructure", "deployment", "ci-cd"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:coffee-map/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "coffee-map/README.md",
+      "summary": "Auto-generated Next.js getting-started README for the coffee-map frontend package, covering dev server startup, editing entry points, and Vercel deployment links.",
+      "tags": ["documentation", "frontend", "nextjs", "development"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/v2-architecture-plan.md",
+      "type": "document",
+      "name": "v2-architecture-plan.md",
+      "filePath": "docs/v2-architecture-plan.md",
+      "summary": "Detailed V2 architecture plan document covering the shift from inline enrichment to an offline crawler model, the full directory structure, module responsibilities, and API contract definitions for every backend route.",
+      "tags": ["documentation", "architecture", "planning", "backend"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:docs/v2-sequence-diagram.md",
+      "type": "document",
+      "name": "v2-sequence-diagram.md",
+      "filePath": "docs/v2-sequence-diagram.md",
+      "summary": "Mermaid sequence diagram documenting the full V2 request lifecycle: map pan nearby search, DB filter and pin render, cold-region background crawl trigger, pin-click mention fetch, and offline crawler pipeline phases.",
+      "tags": ["documentation", "architecture", "sequence-diagram", "api-schema"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:coffee-map/package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "coffee-map/package.json",
+      "summary": "NPM package manifest for the coffee-map Next.js frontend, defining scripts (dev, build, start, lint) and dependencies including Next.js 16, React 19, Tailwind CSS v4, and TypeScript 5.",
+      "tags": ["configuration", "build-system", "frontend", "dependencies"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:coffee-map/tsconfig.json",
+      "type": "config",
+      "name": "tsconfig.json",
+      "filePath": "coffee-map/tsconfig.json",
+      "summary": "TypeScript compiler configuration for the Next.js frontend enabling strict mode, bundler module resolution, path alias `@/*`, JSX react-jsx transform, and incremental builds with the Next.js plugin.",
+      "tags": ["configuration", "typescript", "build-system", "frontend"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:backend/supabase/schema.sql",
+      "type": "table",
+      "name": "schema.sql",
+      "filePath": "backend/supabase/schema.sql",
+      "summary": "Complete Supabase PostgreSQL DDL defining all four application tables (regions, sources, places, mentions), custom enum types, the recompute_place_scores trigger function, and performance indexes — the authoritative schema for the BtwnMeetings database.",
+      "tags": ["database", "schema-definition", "migration", "infrastructure"],
+      "complexity": "complex",
+      "languageNotes": "The recompute_place_scores trigger function computes wfh_score using a weighted formula (wifi×2.5 + outlet×2.0 + quiet×2.0 + laptop×3.5 + curated_boost capped at 2.0) after every mention INSERT or UPDATE. The trigger intentionally skips rows with NULL place_id, enabling the unmatched-mention caching pattern."
+    },
+    {
+      "id": "table:backend/supabase/seed.sql",
+      "type": "table",
+      "name": "seed.sql",
+      "filePath": "backend/supabase/seed.sql",
+      "summary": "Minimal seed file for Phase 1 that comments out borough inserts pending Phase 2 expansion; the active NYC Manhattan region seed is handled by the separate nyc_regions.sql migration.",
+      "tags": ["database", "migration", "data-pipeline"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:docs/supabase_schema_docs/migrations/001_create_tables.sql",
+      "type": "table",
+      "name": "001_create_tables.sql",
+      "filePath": "docs/supabase_schema_docs/migrations/001_create_tables.sql",
+      "summary": "Migration 001 creating all four core tables (regions, sources, places, mentions) with enum types, primary keys, foreign keys, and initial unique constraints — the first step in the versioned Supabase migration sequence.",
+      "tags": ["database", "migration", "schema-definition"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:docs/supabase_schema_docs/migrations/002_create_indexes.sql",
+      "type": "table",
+      "name": "002_create_indexes.sql",
+      "filePath": "docs/supabase_schema_docs/migrations/002_create_indexes.sql",
+      "summary": "Migration 002 adding seven performance indexes covering the map-pan bounding box hot path, mention confidence ordering for InfoCard, crawler URL dedup, region viewport detection, source dedup, and region-scoped place lookups.",
+      "tags": ["database", "migration", "performance"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:docs/supabase_schema_docs/migrations/003_create_triggers.sql",
+      "type": "table",
+      "name": "003_create_triggers.sql",
+      "filePath": "docs/supabase_schema_docs/migrations/003_create_triggers.sql",
+      "summary": "Migration 003 defining the recompute_place_scores PL/pgSQL trigger function and attaching it to the mentions table AFTER INSERT, automatically updating wfh_score, mention_count, and source_count on the parent places row.",
+      "tags": ["database", "migration", "triggers"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:docs/supabase_schema_docs/migrations/004_multi_mention.sql",
+      "type": "table",
+      "name": "004_multi_mention.sql",
+      "filePath": "docs/supabase_schema_docs/migrations/004_multi_mention.sql",
+      "summary": "Migration 004 relaxing the UNIQUE(url) constraint on mentions to UNIQUE(url, place_name_raw), enabling multiple rows per URL for the multi-mention extraction use case, and adding the is_multi_processed tracking column.",
+      "tags": ["database", "migration", "schema-definition"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:docs/supabase_schema_docs/seed/nyc_regions.sql",
+      "type": "table",
+      "name": "nyc_regions.sql",
+      "filePath": "docs/supabase_schema_docs/seed/nyc_regions.sql",
+      "summary": "Seed file inserting the NYC Manhattan bounding box into the regions table with status cold, with Phase 2 borough inserts commented out pending future expansion.",
+      "tags": ["database", "migration", "data-pipeline"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/app/globals.css",
+      "type": "file",
+      "name": "globals.css",
+      "filePath": "coffee-map/app/globals.css",
+      "summary": "Global CSS entry point for the Next.js app importing Tailwind CSS v4 and defining CSS custom properties for background, foreground, and Geist font variables with dark mode support via prefers-color-scheme.",
+      "tags": ["css", "design-system", "tailwind", "theme"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/eslint.config.mjs",
+      "type": "file",
+      "name": "eslint.config.mjs",
+      "filePath": "coffee-map/eslint.config.mjs",
+      "summary": "ESLint flat configuration for the Next.js frontend, composing the Next.js core-web-vitals and TypeScript rule presets using the new ESLint v9 defineConfig API.",
+      "tags": ["configuration", "linting", "build-system", "typescript"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/postcss.config.mjs",
+      "type": "file",
+      "name": "postcss.config.mjs",
+      "filePath": "coffee-map/postcss.config.mjs",
+      "summary": "PostCSS configuration activating the @tailwindcss/postcss plugin to process Tailwind CSS v4 directives during the Next.js build.",
+      "tags": ["configuration", "build-system", "css", "tailwind"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/next.config.ts",
+      "type": "file",
+      "name": "next.config.ts",
+      "filePath": "coffee-map/next.config.ts",
+      "summary": "Minimal Next.js configuration file with an empty config object, documenting in comments that only NEXT_PUBLIC_GOOGLE_MAPS_* keys are browser-exposed while BACKEND_URL is server-only.",
+      "tags": ["configuration", "nextjs", "build-system", "entry-point"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:README.md",
+      "target": "document:DEPLOYMENT.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "table:backend/supabase/schema.sql",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "config:coffee-map/package.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:DEPLOYMENT.md",
+      "target": "config:render.yaml",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:DEPLOYMENT.md",
+      "target": "config:backend/.env.local",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:DEPLOYMENT.md",
+      "target": "config:.env.example",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/v2-architecture-plan.md",
+      "target": "table:backend/supabase/schema.sql",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/v2-architecture-plan.md",
+      "target": "document:docs/v2-sequence-diagram.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/v2-sequence-diagram.md",
+      "target": "table:backend/supabase/schema.sql",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:.env.example",
+      "target": "config:backend/.env.local",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:.env.example",
+      "target": "config:.env.local",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:render.yaml",
+      "target": "document:backend/requirements.txt",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:coffee-map/tsconfig.json",
+      "target": "file:coffee-map/next.config.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:coffee-map/package.json",
+      "target": "file:coffee-map/next.config.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:coffee-map/package.json",
+      "target": "file:coffee-map/eslint.config.mjs",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:coffee-map/package.json",
+      "target": "file:coffee-map/postcss.config.mjs",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:coffee-map/postcss.config.mjs",
+      "target": "file:coffee-map/app/globals.css",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "table:docs/supabase_schema_docs/migrations/001_create_tables.sql",
+      "target": "table:docs/supabase_schema_docs/migrations/002_create_indexes.sql",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:docs/supabase_schema_docs/migrations/002_create_indexes.sql",
+      "target": "table:docs/supabase_schema_docs/migrations/003_create_triggers.sql",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:docs/supabase_schema_docs/migrations/003_create_triggers.sql",
+      "target": "table:docs/supabase_schema_docs/migrations/004_multi_mention.sql",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:docs/supabase_schema_docs/seed/nyc_regions.sql",
+      "target": "table:docs/supabase_schema_docs/migrations/001_create_tables.sql",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "table:backend/supabase/schema.sql",
+      "target": "table:docs/supabase_schema_docs/migrations/001_create_tables.sql",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:backend/supabase/schema.sql",
+      "target": "table:docs/supabase_schema_docs/migrations/002_create_indexes.sql",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:backend/supabase/schema.sql",
+      "target": "table:docs/supabase_schema_docs/migrations/003_create_triggers.sql",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:backend/supabase/seed.sql",
+      "target": "table:backend/supabase/schema.sql",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

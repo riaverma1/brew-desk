@@ -1,0 +1,41 @@
+{
+  "projectRoot": "/Users/riaverma/github_repos/coffee_app",
+  "batchFiles": [
+    {"path": "backend/background/__init__.py", "language": "python", "sizeLines": 0, "fileCategory": "code"},
+    {"path": "backend/background/enrich_job.py", "language": "python", "sizeLines": 71, "fileCategory": "code"},
+    {"path": "backend/background/resolver_job.py", "language": "python", "sizeLines": 196, "fileCategory": "code"},
+    {"path": "backend/background/retroactive_matcher.py", "language": "python", "sizeLines": 258, "fileCategory": "code"},
+    {"path": "backend/background/scheduler.py", "language": "python", "sizeLines": 51, "fileCategory": "code"},
+    {"path": "backend/background/seed_job.py", "language": "python", "sizeLines": 105, "fileCategory": "code"},
+    {"path": "backend/crawler/__init__.py", "language": "python", "sizeLines": 0, "fileCategory": "code"},
+    {"path": "backend/crawler/article_extractor.py", "language": "python", "sizeLines": 157, "fileCategory": "code"},
+    {"path": "backend/crawler/db_writer.py", "language": "python", "sizeLines": 197, "fileCategory": "code"},
+    {"path": "backend/crawler/llm_extractor.py", "language": "python", "sizeLines": 95, "fileCategory": "code"},
+    {"path": "backend/crawler/multi_mention_extractor.py", "language": "python", "sizeLines": 128, "fileCategory": "code"},
+    {"path": "backend/crawler/orchestrator.py", "language": "python", "sizeLines": 149, "fileCategory": "code"},
+    {"path": "backend/crawler/place_resolver.py", "language": "python", "sizeLines": 178, "fileCategory": "code"},
+    {"path": "backend/crawler/sources/__init__.py", "language": "python", "sizeLines": 0, "fileCategory": "code"},
+    {"path": "backend/crawler/sources/brave_crawler.py", "language": "python", "sizeLines": 84, "fileCategory": "code"},
+    {"path": "backend/crawler/sources/instagram_crawler.py", "language": "python", "sizeLines": 71, "fileCategory": "code"},
+    {"path": "backend/crawler/sources/tavily_crawler.py", "language": "python", "sizeLines": 124, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "backend/background/__init__.py": [],
+    "backend/background/enrich_job.py": [],
+    "backend/background/resolver_job.py": [],
+    "backend/background/retroactive_matcher.py": [],
+    "backend/background/scheduler.py": [],
+    "backend/background/seed_job.py": [],
+    "backend/crawler/__init__.py": [],
+    "backend/crawler/article_extractor.py": [],
+    "backend/crawler/db_writer.py": [],
+    "backend/crawler/llm_extractor.py": [],
+    "backend/crawler/multi_mention_extractor.py": [],
+    "backend/crawler/orchestrator.py": [],
+    "backend/crawler/place_resolver.py": [],
+    "backend/crawler/sources/__init__.py": [],
+    "backend/crawler/sources/brave_crawler.py": [],
+    "backend/crawler/sources/instagram_crawler.py": [],
+    "backend/crawler/sources/tavily_crawler.py": []
+  }
+}

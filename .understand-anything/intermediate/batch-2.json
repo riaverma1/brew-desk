@@ -1,0 +1,540 @@
+{
+  "nodes": [
+    {
+      "id": "file:backend/config.py",
+      "type": "file",
+      "name": "config.py",
+      "filePath": "backend/config.py",
+      "summary": "Centralized environment variable configuration using pydantic-settings, declaring all required API keys and tunable thresholds with a cached singleton accessor for FastAPI dependency injection.",
+      "tags": ["configuration", "singleton", "validation", "service"],
+      "complexity": "simple",
+      "languageNotes": "Uses pydantic-settings BaseSettings with lru_cache for a lazily initialized singleton; intended to be injected via FastAPI Depends(get_settings) rather than imported at module level."
+    },
+    {
+      "id": "file:backend/main.py",
+      "type": "file",
+      "name": "main.py",
+      "filePath": "backend/main.py",
+      "summary": "FastAPI application entry point that wires CORS middleware, registers all routers (places, mentions, regions), and exposes health-check and root endpoints for the WFH coffee shop finder API.",
+      "tags": ["entry-point", "middleware", "api-handler", "service"],
+      "complexity": "simple",
+      "languageNotes": "Uses asynccontextmanager lifespan for startup/shutdown hooks; APScheduler integration is stubbed for a future weekly re-crawl phase."
+    },
+    {
+      "id": "function:backend/main.py:create_app",
+      "type": "function",
+      "name": "create_app",
+      "filePath": "backend/main.py",
+      "lineRange": [36, 66],
+      "summary": "Factory function that constructs and returns the fully configured FastAPI application instance with CORS, routers, health check, and root endpoints.",
+      "tags": ["factory", "entry-point", "middleware"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/models/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "backend/models/__init__.py",
+      "summary": "Empty package initializer that marks the models directory as a Python package.",
+      "tags": ["barrel", "entry-point"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/models/mention.py",
+      "type": "file",
+      "name": "mention.py",
+      "filePath": "backend/models/mention.py",
+      "summary": "Pydantic response models for social/web mentions of a place, including per-mention card data and a paginated list wrapper keyed by place ID.",
+      "tags": ["data-model", "type-definition", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/models/place.py",
+      "type": "file",
+      "name": "place.py",
+      "filePath": "backend/models/place.py",
+      "summary": "Pydantic models for the core place domain: map viewport bounds, nearby-search request, individual place map pin response, and the aggregated nearby-search response with region status.",
+      "tags": ["data-model", "type-definition", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/models/region.py",
+      "type": "file",
+      "name": "region.py",
+      "filePath": "backend/models/region.py",
+      "summary": "Pydantic model representing a geographic crawl region row with status (cold/crawling/seeded) and bounding box coordinates.",
+      "tags": ["data-model", "type-definition", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/routers/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "backend/routers/__init__.py",
+      "summary": "Empty package initializer that marks the routers directory as a Python package.",
+      "tags": ["barrel", "entry-point"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/routers/mentions.py",
+      "type": "file",
+      "name": "mentions.py",
+      "filePath": "backend/routers/mentions.py",
+      "summary": "FastAPI router exposing GET /places/{place_id}/mentions, returning up to 20 social/web mentions for a place ordered by laptop confidence score.",
+      "tags": ["api-handler", "service", "endpoint"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/routers/mentions.py:get_mentions",
+      "type": "function",
+      "name": "get_mentions",
+      "filePath": "backend/routers/mentions.py",
+      "lineRange": [21, 40],
+      "summary": "Async route handler that fetches and shapes mention rows from Supabase into MentionsResponse, joining source platform and handle for each mention card.",
+      "tags": ["api-handler", "service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/routers/places.py",
+      "type": "file",
+      "name": "places.py",
+      "filePath": "backend/routers/places.py",
+      "summary": "Hot-path FastAPI router for POST /places/nearby-search that concurrently queries Google Places, the Supabase place database, and region status, then merges results and queues background enrichment tasks.",
+      "tags": ["api-handler", "service", "middleware"],
+      "complexity": "complex",
+      "languageNotes": "Uses asyncio.gather for concurrent IO across Google Places API, region detection, and Supabase; background enrichment tasks use FastAPI BackgroundTasks to avoid blocking the response."
+    },
+    {
+      "id": "function:backend/routers/places.py:nearby_search",
+      "type": "function",
+      "name": "nearby_search",
+      "filePath": "backend/routers/places.py",
+      "lineRange": [38, 146],
+      "summary": "POST /places/nearby-search handler that orchestrates parallel Google Nearby Search, region detection, and DB bounds query, then merges live Google data with cached DB rows and queues background enrichment for matched places.",
+      "tags": ["api-handler", "service", "event-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/routers/regions.py",
+      "type": "file",
+      "name": "regions.py",
+      "filePath": "backend/routers/regions.py",
+      "summary": "Admin-only FastAPI router (protected by X-Admin-Key header) exposing region inspection, manual seed triggering, batch enrichment, and resolver re-run endpoints for operational control of the crawl pipeline.",
+      "tags": ["api-handler", "service", "middleware"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/routers/regions.py:list_regions",
+      "type": "function",
+      "name": "list_regions",
+      "filePath": "backend/routers/regions.py",
+      "lineRange": [27, 29],
+      "summary": "Admin-protected GET /regions/ handler that returns all crawl region rows from Supabase as typed RegionRow models.",
+      "tags": ["api-handler", "service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/routers/regions.py:enrich_region_places",
+      "type": "function",
+      "name": "enrich_region_places",
+      "filePath": "backend/routers/regions.py",
+      "lineRange": [47, 61],
+      "summary": "Admin-protected POST /regions/{region_id}/enrich handler that kicks off a background task to batch-enrich all unenriched places in a region via the Google Place Details API.",
+      "tags": ["api-handler", "service"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/services/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "backend/services/__init__.py",
+      "summary": "Empty package initializer that marks the services directory as a Python package.",
+      "tags": ["barrel", "entry-point"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/services/google_places.py",
+      "type": "file",
+      "name": "google_places.py",
+      "filePath": "backend/services/google_places.py",
+      "summary": "Async HTTP client wrapper around the Google Places API (v1) covering Nearby Search, Text Search, and Place Details endpoints, with photo URL construction and billing-tier-aware field masks.",
+      "tags": ["service", "api-handler", "utility"],
+      "complexity": "complex",
+      "languageNotes": "Uses httpx.AsyncClient for all requests; carefully controls field masks to stay within Basic/Atmosphere/Advanced billing tiers and avoid Enterprise SKU charges."
+    },
+    {
+      "id": "function:backend/services/google_places.py:nearby_search_parallel",
+      "type": "function",
+      "name": "nearby_search_parallel",
+      "filePath": "backend/services/google_places.py",
+      "lineRange": [53, 100],
+      "summary": "Fires a single unfiltered Google Nearby Search request for a lat/lng/radius and returns normalized place dicts with photo URLs, ratings, and hours; returns empty list on failure.",
+      "tags": ["service", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/services/google_places.py:text_search",
+      "type": "function",
+      "name": "text_search",
+      "filePath": "backend/services/google_places.py",
+      "lineRange": [103, 140],
+      "summary": "Calls Google Text Search to find candidate places by query string with an optional location bias, returning basic fields for the place resolver pipeline.",
+      "tags": ["service", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/services/google_places.py:get_place_details",
+      "type": "function",
+      "name": "get_place_details",
+      "filePath": "backend/services/google_places.py",
+      "lineRange": [143, 169],
+      "summary": "Fetches photos, rating, and hours for a single known place_id via the Place Details API; returns a dict ready for supabase_client.save_google_place_data or None on failure.",
+      "tags": ["service", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/services/place_filter.py",
+      "type": "file",
+      "name": "place_filter.py",
+      "filePath": "backend/services/place_filter.py",
+      "summary": "Pure filtering service that takes a list of Google place IDs and returns only Supabase-matched places meeting configurable WFH score and laptop confidence thresholds.",
+      "tags": ["service", "utility", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/services/place_filter.py:filter_eligible_places",
+      "type": "function",
+      "name": "filter_eligible_places",
+      "filePath": "backend/services/place_filter.py",
+      "lineRange": [11, 45],
+      "summary": "Async function that queries Supabase for place IDs matching score and confidence thresholds and returns shaped PlacePinResponse objects for each eligible place.",
+      "tags": ["service", "utility", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/services/region_detector.py",
+      "type": "file",
+      "name": "region_detector.py",
+      "filePath": "backend/services/region_detector.py",
+      "summary": "Determines the crawl region and its status (seeded/crawling/cold) for a given map viewport by finding overlapping region bounding boxes in Supabase and applying a priority ordering.",
+      "tags": ["service", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/services/region_detector.py:detect_region_for_viewport",
+      "type": "function",
+      "name": "detect_region_for_viewport",
+      "filePath": "backend/services/region_detector.py",
+      "lineRange": [33, 61],
+      "summary": "Async function that queries overlapping regions from Supabase and returns the highest-priority (region_id, status) tuple based on seeded > crawling > cold ordering with overlap-area tiebreaking for cold regions.",
+      "tags": ["service", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/services/supabase_client.py",
+      "type": "file",
+      "name": "supabase_client.py",
+      "filePath": "backend/services/supabase_client.py",
+      "summary": "Singleton Supabase client wrapper providing typed async query helpers for places, mentions, regions, and enrichment operations, bridging the synchronous supabase-py v2 library with FastAPI's async event loop via asyncio.to_thread.",
+      "tags": ["service", "singleton", "data-model"],
+      "complexity": "complex",
+      "languageNotes": "All synchronous supabase-py calls are wrapped in asyncio.to_thread to prevent event loop blocking; get_supabase() uses lru_cache(maxsize=1) for a true singleton."
+    },
+    {
+      "id": "function:backend/services/supabase_client.py:get_places_by_ids",
+      "type": "function",
+      "name": "get_places_by_ids",
+      "filePath": "backend/services/supabase_client.py",
+      "lineRange": [27, 62],
+      "summary": "Async query helper that returns enriched place rows filtered by place IDs, WFH score threshold, and laptop confidence threshold via a two-step Supabase query.",
+      "tags": ["service", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/services/supabase_client.py:get_places_in_bounds",
+      "type": "function",
+      "name": "get_places_in_bounds",
+      "filePath": "backend/services/supabase_client.py",
+      "lineRange": [65, 83],
+      "summary": "Returns all place rows within a given lat/lng viewport bounding box with no additional filters, used for admin diagnostics and map display.",
+      "tags": ["service", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/services/supabase_client.py:get_mentions_for_place",
+      "type": "function",
+      "name": "get_mentions_for_place",
+      "filePath": "backend/services/supabase_client.py",
+      "lineRange": [98, 115],
+      "summary": "Returns up to 20 mention rows joined with their source platform and handle, ordered by laptop confidence descending for a given place ID.",
+      "tags": ["service", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/services/supabase_client.py:get_overlapping_regions",
+      "type": "function",
+      "name": "get_overlapping_regions",
+      "filePath": "backend/services/supabase_client.py",
+      "lineRange": [118, 133],
+      "summary": "Returns all region rows whose bounding boxes overlap the given viewport bounds using Supabase range comparisons.",
+      "tags": ["service", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/services/supabase_client.py:claim_region_for_crawl",
+      "type": "function",
+      "name": "claim_region_for_crawl",
+      "filePath": "backend/services/supabase_client.py",
+      "lineRange": [144, 160],
+      "summary": "Atomically transitions a region from cold to crawling status using a conditional UPDATE to prevent TOCTOU race conditions in distributed crawl workers.",
+      "tags": ["service", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/services/supabase_client.py:upsert_place",
+      "type": "function",
+      "name": "upsert_place",
+      "filePath": "backend/services/supabase_client.py",
+      "lineRange": [163, 169],
+      "summary": "Upserts a place row by place_id conflict key; intentionally skips wfh_score to preserve database-trigger-owned scoring.",
+      "tags": ["service", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/services/supabase_client.py:insert_mention_if_new",
+      "type": "function",
+      "name": "insert_mention_if_new",
+      "filePath": "backend/services/supabase_client.py",
+      "lineRange": [172, 186],
+      "summary": "Inserts a mention row with ON CONFLICT (url) DO NOTHING semantics and returns True if the row was newly inserted.",
+      "tags": ["service", "utility"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:backend/main.py",
+      "target": "function:backend/main.py:create_app",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/main.py",
+      "target": "function:backend/main.py:create_app",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/routers/mentions.py",
+      "target": "function:backend/routers/mentions.py:get_mentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/routers/mentions.py",
+      "target": "function:backend/routers/mentions.py:get_mentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/routers/places.py",
+      "target": "function:backend/routers/places.py:nearby_search",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/routers/places.py",
+      "target": "function:backend/routers/places.py:nearby_search",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/routers/regions.py",
+      "target": "function:backend/routers/regions.py:list_regions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/routers/regions.py",
+      "target": "function:backend/routers/regions.py:enrich_region_places",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/google_places.py",
+      "target": "function:backend/services/google_places.py:nearby_search_parallel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/google_places.py",
+      "target": "function:backend/services/google_places.py:nearby_search_parallel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/google_places.py",
+      "target": "function:backend/services/google_places.py:text_search",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/google_places.py",
+      "target": "function:backend/services/google_places.py:text_search",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/google_places.py",
+      "target": "function:backend/services/google_places.py:get_place_details",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/google_places.py",
+      "target": "function:backend/services/google_places.py:get_place_details",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/place_filter.py",
+      "target": "function:backend/services/place_filter.py:filter_eligible_places",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/place_filter.py",
+      "target": "function:backend/services/place_filter.py:filter_eligible_places",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/region_detector.py",
+      "target": "function:backend/services/region_detector.py:detect_region_for_viewport",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/region_detector.py",
+      "target": "function:backend/services/region_detector.py:detect_region_for_viewport",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:get_places_by_ids",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:get_places_in_bounds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:get_mentions_for_place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:get_overlapping_regions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:claim_region_for_crawl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:upsert_place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:insert_mention_if_new",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:get_places_by_ids",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:get_places_in_bounds",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:get_mentions_for_place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:get_overlapping_regions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:claim_region_for_crawl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:upsert_place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:insert_mention_if_new",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

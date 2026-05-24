@@ -1,0 +1,3532 @@
+{
+  "nodes": [
+    {
+      "id": "document:.cursor/plans/coffee_app_frontend_&_backend_integration_acbf5cbd.plan.md",
+      "type": "document",
+      "name": "coffee_app_frontend_&_backend_integration_acbf5cbd.plan.md",
+      "filePath": ".cursor/plans/coffee_app_frontend_&_backend_integration_acbf5cbd.plan.md",
+      "summary": "Cursor AI plan document outlining integration tasks between the Next.js frontend and the FastAPI backend for the BtwnMeetings coffee app.",
+      "tags": [
+        "documentation",
+        "planning",
+        "frontend",
+        "backend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.cursor/plans/json_to_supabase_migration_cf766576.plan.md",
+      "type": "document",
+      "name": "json_to_supabase_migration_cf766576.plan.md",
+      "filePath": ".cursor/plans/json_to_supabase_migration_cf766576.plan.md",
+      "summary": "Cursor AI plan document describing the migration from a flat JSON data store to Supabase PostgreSQL as the persistent database backend.",
+      "tags": [
+        "documentation",
+        "planning",
+        "database",
+        "migration"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.cursor/plans/migrate_to_vercel_+_railway_9ead5567.plan.md",
+      "type": "document",
+      "name": "migrate_to_vercel_+_railway_9ead5567.plan.md",
+      "filePath": ".cursor/plans/migrate_to_vercel_+_railway_9ead5567.plan.md",
+      "summary": "Cursor AI plan document outlining the deployment migration of the frontend to Vercel and the backend to Railway (later changed to Render).",
+      "tags": [
+        "documentation",
+        "planning",
+        "deployment",
+        "infrastructure"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.cursor/plans/places_bootstrap_enrichment_system_16b8e353.plan.md",
+      "type": "document",
+      "name": "places_bootstrap_enrichment_system_16b8e353.plan.md",
+      "filePath": ".cursor/plans/places_bootstrap_enrichment_system_16b8e353.plan.md",
+      "summary": "Cursor AI plan document for designing the offline place bootstrap and enrichment system that pre-populates the database with validated WFH-friendly coffee shop data.",
+      "tags": [
+        "documentation",
+        "planning",
+        "crawler",
+        "enrichment"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.cursor/plans/restructure_enrichment_for_latency_and_cost_reduction_4d1a6478.plan.md",
+      "type": "document",
+      "name": "restructure_enrichment_for_latency_and_cost_reduction_4d1a6478.plan.md",
+      "filePath": ".cursor/plans/restructure_enrichment_for_latency_and_cost_reduction_4d1a6478.plan.md",
+      "summary": "Cursor AI plan document for restructuring the enrichment pipeline to move expensive LLM and web search calls out of the hot user-request path into an offline background crawler.",
+      "tags": [
+        "documentation",
+        "planning",
+        "performance",
+        "enrichment"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.env.example",
+      "type": "config",
+      "name": ".env.example",
+      "filePath": ".env.example",
+      "summary": "Template environment variable file documenting all required and optional configuration keys for both the Next.js frontend (NEXT_PUBLIC_* keys, BACKEND_URL) and the FastAPI backend (Supabase, Google Places, OpenAI, Tavily, Brave, CORS, tunable thresholds).",
+      "tags": [
+        "configuration",
+        "environment",
+        "security",
+        "documentation"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Includes tunable numeric thresholds (PIN_SCORE_THRESHOLD, PIN_LAPTOP_CONFIDENCE_THRESHOLD, etc.) that control crawler and map-filter behavior at runtime without code changes."
+    },
+    {
+      "id": "config:.env.local",
+      "type": "config",
+      "name": ".env.local",
+      "filePath": ".env.local",
+      "summary": "Local development environment file containing active Google Maps and Places API keys, Supabase connection URL, and database password for running the project outside of CI.",
+      "tags": [
+        "configuration",
+        "environment",
+        "local-development",
+        "security"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:DEPLOYMENT.md",
+      "type": "document",
+      "name": "DEPLOYMENT.md",
+      "filePath": "DEPLOYMENT.md",
+      "summary": "Comprehensive step-by-step deployment guide covering how to deploy the FastAPI backend to Render, the Next.js frontend to Vercel, configure environment variables on both platforms, and troubleshoot common integration failures.",
+      "tags": [
+        "documentation",
+        "deployment",
+        "infrastructure",
+        "operations"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "Primary project documentation for BtwnMeetings describing the app's purpose, V2 architecture (offline crawler + read-only map), four-stage request and crawl pipeline, database schema, tech stack, and local development setup.",
+      "tags": [
+        "documentation",
+        "entry-point",
+        "overview",
+        "architecture"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "config:backend/.env.local",
+      "type": "config",
+      "name": ".env.local",
+      "filePath": "backend/.env.local",
+      "summary": "Backend-specific local environment file containing all secrets needed for the FastAPI server: Google Places API key, OpenAI key, Tavily and Brave search keys, Supabase service role key and URL, and CORS frontend URL.",
+      "tags": [
+        "configuration",
+        "environment",
+        "security",
+        "local-development"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:backend/requirements.txt",
+      "type": "document",
+      "name": "requirements.txt",
+      "filePath": "backend/requirements.txt",
+      "summary": "Python dependency manifest for the FastAPI backend, listing FastAPI, Uvicorn, Pydantic, Supabase client, HTTPX, OpenAI SDK, python-dotenv, and APScheduler.",
+      "tags": [
+        "documentation",
+        "dependencies",
+        "python",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:render.yaml",
+      "type": "config",
+      "name": "render.yaml",
+      "filePath": "render.yaml",
+      "summary": "Render infrastructure-as-code configuration that declares a Python web service named coffee-app-backend, specifying build command, Uvicorn start command, and PYTHONPATH for deploying the FastAPI backend.",
+      "tags": [
+        "configuration",
+        "infrastructure",
+        "deployment",
+        "ci-cd"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:coffee-map/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "coffee-map/README.md",
+      "summary": "Auto-generated Next.js getting-started README for the coffee-map frontend package, covering dev server startup, editing entry points, and Vercel deployment links.",
+      "tags": [
+        "documentation",
+        "frontend",
+        "nextjs",
+        "development"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:docs/v2-architecture-plan.md",
+      "type": "document",
+      "name": "v2-architecture-plan.md",
+      "filePath": "docs/v2-architecture-plan.md",
+      "summary": "Detailed V2 architecture plan document covering the shift from inline enrichment to an offline crawler model, the full directory structure, module responsibilities, and API contract definitions for every backend route.",
+      "tags": [
+        "documentation",
+        "architecture",
+        "planning",
+        "backend"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:docs/v2-sequence-diagram.md",
+      "type": "document",
+      "name": "v2-sequence-diagram.md",
+      "filePath": "docs/v2-sequence-diagram.md",
+      "summary": "Mermaid sequence diagram documenting the full V2 request lifecycle: map pan nearby search, DB filter and pin render, cold-region background crawl trigger, pin-click mention fetch, and offline crawler pipeline phases.",
+      "tags": [
+        "documentation",
+        "architecture",
+        "sequence-diagram",
+        "api-schema"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:coffee-map/package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "coffee-map/package.json",
+      "summary": "NPM package manifest for the coffee-map Next.js frontend, defining scripts (dev, build, start, lint) and dependencies including Next.js 16, React 19, Tailwind CSS v4, and TypeScript 5.",
+      "tags": [
+        "configuration",
+        "build-system",
+        "frontend",
+        "dependencies"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:coffee-map/tsconfig.json",
+      "type": "config",
+      "name": "tsconfig.json",
+      "filePath": "coffee-map/tsconfig.json",
+      "summary": "TypeScript compiler configuration for the Next.js frontend enabling strict mode, bundler module resolution, path alias `@/*`, JSX react-jsx transform, and incremental builds with the Next.js plugin.",
+      "tags": [
+        "configuration",
+        "typescript",
+        "build-system",
+        "frontend"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:backend/supabase/schema.sql",
+      "type": "table",
+      "name": "schema.sql",
+      "filePath": "backend/supabase/schema.sql",
+      "summary": "Complete Supabase PostgreSQL DDL defining all four application tables (regions, sources, places, mentions), custom enum types, the recompute_place_scores trigger function, and performance indexes — the authoritative schema for the BtwnMeetings database.",
+      "tags": [
+        "database",
+        "schema-definition",
+        "migration",
+        "infrastructure"
+      ],
+      "complexity": "complex",
+      "languageNotes": "The recompute_place_scores trigger function computes wfh_score using a weighted formula (wifi×2.5 + outlet×2.0 + quiet×2.0 + laptop×3.5 + curated_boost capped at 2.0) after every mention INSERT or UPDATE. The trigger intentionally skips rows with NULL place_id, enabling the unmatched-mention caching pattern."
+    },
+    {
+      "id": "table:backend/supabase/seed.sql",
+      "type": "table",
+      "name": "seed.sql",
+      "filePath": "backend/supabase/seed.sql",
+      "summary": "Minimal seed file for Phase 1 that comments out borough inserts pending Phase 2 expansion; the active NYC Manhattan region seed is handled by the separate nyc_regions.sql migration.",
+      "tags": [
+        "database",
+        "migration",
+        "data-pipeline"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:docs/supabase_schema_docs/migrations/001_create_tables.sql",
+      "type": "table",
+      "name": "001_create_tables.sql",
+      "filePath": "docs/supabase_schema_docs/migrations/001_create_tables.sql",
+      "summary": "Migration 001 creating all four core tables (regions, sources, places, mentions) with enum types, primary keys, foreign keys, and initial unique constraints — the first step in the versioned Supabase migration sequence.",
+      "tags": [
+        "database",
+        "migration",
+        "schema-definition"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:docs/supabase_schema_docs/migrations/002_create_indexes.sql",
+      "type": "table",
+      "name": "002_create_indexes.sql",
+      "filePath": "docs/supabase_schema_docs/migrations/002_create_indexes.sql",
+      "summary": "Migration 002 adding seven performance indexes covering the map-pan bounding box hot path, mention confidence ordering for InfoCard, crawler URL dedup, region viewport detection, source dedup, and region-scoped place lookups.",
+      "tags": [
+        "database",
+        "migration",
+        "performance"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:docs/supabase_schema_docs/migrations/003_create_triggers.sql",
+      "type": "table",
+      "name": "003_create_triggers.sql",
+      "filePath": "docs/supabase_schema_docs/migrations/003_create_triggers.sql",
+      "summary": "Migration 003 defining the recompute_place_scores PL/pgSQL trigger function and attaching it to the mentions table AFTER INSERT, automatically updating wfh_score, mention_count, and source_count on the parent places row.",
+      "tags": [
+        "database",
+        "migration",
+        "triggers"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:docs/supabase_schema_docs/migrations/004_multi_mention.sql",
+      "type": "table",
+      "name": "004_multi_mention.sql",
+      "filePath": "docs/supabase_schema_docs/migrations/004_multi_mention.sql",
+      "summary": "Migration 004 relaxing the UNIQUE(url) constraint on mentions to UNIQUE(url, place_name_raw), enabling multiple rows per URL for the multi-mention extraction use case, and adding the is_multi_processed tracking column.",
+      "tags": [
+        "database",
+        "migration",
+        "schema-definition"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "table:docs/supabase_schema_docs/seed/nyc_regions.sql",
+      "type": "table",
+      "name": "nyc_regions.sql",
+      "filePath": "docs/supabase_schema_docs/seed/nyc_regions.sql",
+      "summary": "Seed file inserting the NYC Manhattan bounding box into the regions table with status cold, with Phase 2 borough inserts commented out pending future expansion.",
+      "tags": [
+        "database",
+        "migration",
+        "data-pipeline"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/app/globals.css",
+      "type": "file",
+      "name": "globals.css",
+      "filePath": "coffee-map/app/globals.css",
+      "summary": "Global CSS entry point for the Next.js app importing Tailwind CSS v4 and defining CSS custom properties for background, foreground, and Geist font variables with dark mode support via prefers-color-scheme.",
+      "tags": [
+        "css",
+        "design-system",
+        "tailwind",
+        "theme"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/eslint.config.mjs",
+      "type": "file",
+      "name": "eslint.config.mjs",
+      "filePath": "coffee-map/eslint.config.mjs",
+      "summary": "ESLint flat configuration for the Next.js frontend, composing the Next.js core-web-vitals and TypeScript rule presets using the new ESLint v9 defineConfig API.",
+      "tags": [
+        "configuration",
+        "linting",
+        "build-system",
+        "typescript"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/postcss.config.mjs",
+      "type": "file",
+      "name": "postcss.config.mjs",
+      "filePath": "coffee-map/postcss.config.mjs",
+      "summary": "PostCSS configuration activating the @tailwindcss/postcss plugin to process Tailwind CSS v4 directives during the Next.js build.",
+      "tags": [
+        "configuration",
+        "build-system",
+        "css",
+        "tailwind"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/next.config.ts",
+      "type": "file",
+      "name": "next.config.ts",
+      "filePath": "coffee-map/next.config.ts",
+      "summary": "Minimal Next.js configuration file with an empty config object, documenting in comments that only NEXT_PUBLIC_GOOGLE_MAPS_* keys are browser-exposed while BACKEND_URL is server-only.",
+      "tags": [
+        "configuration",
+        "nextjs",
+        "build-system",
+        "entry-point"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/app/layout.tsx",
+      "type": "file",
+      "name": "layout.tsx",
+      "filePath": "coffee-map/app/layout.tsx",
+      "summary": "Next.js root layout component that wraps all pages with global fonts, metadata, and the base HTML shell for the BtwnMeetings app.",
+      "tags": [
+        "entry-point",
+        "component",
+        "next-js"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/app/layout.tsx:RootLayout",
+      "type": "function",
+      "name": "RootLayout",
+      "filePath": "coffee-map/app/layout.tsx",
+      "lineRange": [
+        19,
+        34
+      ],
+      "summary": "Default exported Next.js root layout that renders the HTML document shell with children injected into the body.",
+      "tags": [
+        "entry-point",
+        "component"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/app/manifest.ts",
+      "type": "file",
+      "name": "manifest.ts",
+      "filePath": "coffee-map/app/manifest.ts",
+      "summary": "Next.js web app manifest generator that defines the PWA metadata including name, icons, and display settings for BtwnMeetings.",
+      "tags": [
+        "configuration",
+        "next-js",
+        "pwa"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/app/manifest.ts:manifest",
+      "type": "function",
+      "name": "manifest",
+      "filePath": "coffee-map/app/manifest.ts",
+      "lineRange": [3, 32],
+      "summary": "Default exported Next.js manifest function that returns the PWA metadata object for BtwnMeetings including name, icons, display mode, and theme color.",
+      "tags": [
+        "configuration",
+        "next-js",
+        "pwa"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/app/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "coffee-map/app/page.tsx",
+      "summary": "Next.js root page component that serves as the application entry point, rendering the primary map view.",
+      "tags": [
+        "entry-point",
+        "component",
+        "next-js"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/app/page.tsx:Home",
+      "type": "function",
+      "name": "Home",
+      "filePath": "coffee-map/app/page.tsx",
+      "lineRange": [3, 9],
+      "summary": "Default exported Next.js page component that renders the full-screen MapContainer as the app's root view.",
+      "tags": [
+        "entry-point",
+        "component"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/app/api/places/[place_id]/mentions/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "coffee-map/app/api/places/[place_id]/mentions/route.ts",
+      "summary": "Next.js API route handler that proxies GET requests to the backend to fetch social media mentions for a specific place by ID.",
+      "tags": [
+        "api-handler",
+        "proxy",
+        "next-js"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/app/api/places/[place_id]/mentions/route.ts:GET",
+      "type": "function",
+      "name": "GET",
+      "filePath": "coffee-map/app/api/places/[place_id]/mentions/route.ts",
+      "lineRange": [
+        4,
+        27
+      ],
+      "summary": "API GET handler that fetches mentions for a place from the upstream Python backend, returning early with an empty array if no place_id is provided.",
+      "tags": [
+        "api-handler",
+        "proxy"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/app/api/places/data/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "coffee-map/app/api/places/data/route.ts",
+      "summary": "Next.js API route that proxies GET requests to the backend to retrieve detailed place data by place ID with error handling.",
+      "tags": [
+        "api-handler",
+        "proxy",
+        "next-js"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:coffee-map/app/api/places/data/route.ts:GET",
+      "type": "function",
+      "name": "GET",
+      "filePath": "coffee-map/app/api/places/data/route.ts",
+      "lineRange": [
+        5,
+        48
+      ],
+      "summary": "Proxies GET requests to the Python backend for individual place data, forwarding query parameters and handling HTTP error responses.",
+      "tags": [
+        "api-handler",
+        "proxy"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:coffee-map/app/api/places/enrich/[placeId]/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "coffee-map/app/api/places/enrich/[placeId]/route.ts",
+      "summary": "Next.js API route that proxies POST requests to trigger backend enrichment of a place record by placeId.",
+      "tags": [
+        "api-handler",
+        "proxy",
+        "next-js"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:coffee-map/app/api/places/enrich/[placeId]/route.ts:POST",
+      "type": "function",
+      "name": "POST",
+      "filePath": "coffee-map/app/api/places/enrich/[placeId]/route.ts",
+      "lineRange": [
+        5,
+        50
+      ],
+      "summary": "Proxies POST requests to the Python backend to enrich a place entry, forwarding the request body and handling HTTP error responses.",
+      "tags": [
+        "api-handler",
+        "proxy"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:coffee-map/app/api/places/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "coffee-map/app/api/places/route.ts",
+      "summary": "Next.js API route that accepts POST requests to find nearby coffee shops and cafes, proxying the request to the Python backend.",
+      "tags": [
+        "api-handler",
+        "proxy",
+        "next-js"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/app/api/places/route.ts:POST",
+      "type": "function",
+      "name": "POST",
+      "filePath": "coffee-map/app/api/places/route.ts",
+      "lineRange": [
+        6,
+        29
+      ],
+      "summary": "Receives POST requests with location/bounds parameters and forwards them to the upstream places service, returning the proxied JSON response.",
+      "tags": [
+        "api-handler",
+        "proxy"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/app/api/places/status/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "coffee-map/app/api/places/status/route.ts",
+      "summary": "Next.js API route that proxies GET requests to check the data crawling status for a given map region.",
+      "tags": [
+        "api-handler",
+        "proxy",
+        "next-js"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:coffee-map/app/api/places/status/route.ts:GET",
+      "type": "function",
+      "name": "GET",
+      "filePath": "coffee-map/app/api/places/status/route.ts",
+      "lineRange": [
+        5,
+        48
+      ],
+      "summary": "Proxies GET requests to the backend to retrieve crawling status for a region, forwarding query parameters and handling HTTP errors.",
+      "tags": [
+        "api-handler",
+        "proxy"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:coffee-map/app/api/regions/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "coffee-map/app/api/regions/route.ts",
+      "summary": "Next.js API route that proxies GET requests to retrieve available geographic regions from the backend.",
+      "tags": [
+        "api-handler",
+        "proxy",
+        "next-js"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/app/api/regions/route.ts:GET",
+      "type": "function",
+      "name": "GET",
+      "filePath": "coffee-map/app/api/regions/route.ts",
+      "lineRange": [
+        5,
+        23
+      ],
+      "summary": "Forwards GET requests to the upstream service to fetch available regions, propagating authorization headers from the incoming request.",
+      "tags": [
+        "api-handler",
+        "proxy"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/components/map/AttributePills.tsx",
+      "type": "file",
+      "name": "AttributePills.tsx",
+      "filePath": "coffee-map/components/map/AttributePills.tsx",
+      "summary": "React component that renders a row of pill badges summarizing key place attributes such as Wi-Fi, seating, and noise level.",
+      "tags": [
+        "component",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/components/map/AttributePills.tsx:AttributePills",
+      "type": "function",
+      "name": "AttributePills",
+      "filePath": "coffee-map/components/map/AttributePills.tsx",
+      "lineRange": [
+        13,
+        38
+      ],
+      "summary": "Builds and renders a list of attribute pill badges for a place, conditionally including pills based on available place properties.",
+      "tags": [
+        "component",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/components/map/ColdRegionBanner.tsx",
+      "type": "file",
+      "name": "ColdRegionBanner.tsx",
+      "filePath": "coffee-map/components/map/ColdRegionBanner.tsx",
+      "summary": "React component that displays a dismissible banner notifying users when the currently viewed map region has no cached place data yet.",
+      "tags": [
+        "component",
+        "event-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/components/map/ColdRegionBanner.tsx:ColdRegionBanner",
+      "type": "function",
+      "name": "ColdRegionBanner",
+      "filePath": "coffee-map/components/map/ColdRegionBanner.tsx",
+      "lineRange": [
+        14,
+        41
+      ],
+      "summary": "Banner component that auto-dismisses after a timeout and provides a manual close button; visibility is driven by the `visible` prop.",
+      "tags": [
+        "component",
+        "event-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/components/map/CrawlingIndicator.tsx",
+      "type": "file",
+      "name": "CrawlingIndicator.tsx",
+      "filePath": "coffee-map/components/map/CrawlingIndicator.tsx",
+      "summary": "React component that renders a loading indicator shown while the backend is actively crawling a map region for new places.",
+      "tags": [
+        "component",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/components/map/CrawlingIndicator.tsx:CrawlingIndicator",
+      "type": "function",
+      "name": "CrawlingIndicator",
+      "filePath": "coffee-map/components/map/CrawlingIndicator.tsx",
+      "lineRange": [
+        12,
+        38
+      ],
+      "summary": "Renders an animated indicator badge when the `visible` prop is true, informing the user that data is being fetched for the region.",
+      "tags": [
+        "component",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/components/map/InfoCard.tsx",
+      "type": "file",
+      "name": "InfoCard.tsx",
+      "filePath": "coffee-map/components/map/InfoCard.tsx",
+      "summary": "Rich detail card component that displays a selected coffee shop's photos, attributes, hours, rating, Google Maps link, and social media mentions.",
+      "tags": [
+        "component",
+        "data-model"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:coffee-map/components/map/InfoCard.tsx:InfoCard",
+      "type": "function",
+      "name": "InfoCard",
+      "filePath": "coffee-map/components/map/InfoCard.tsx",
+      "lineRange": [
+        38,
+        137
+      ],
+      "summary": "Main info card component that fetches and displays comprehensive place details including photos, hours, rating, and a scrollable list of social mentions.",
+      "tags": [
+        "component",
+        "data-model"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:coffee-map/components/map/MapContainer.tsx",
+      "type": "file",
+      "name": "MapContainer.tsx",
+      "filePath": "coffee-map/components/map/MapContainer.tsx",
+      "summary": "Top-level map orchestration component that initializes the Google Maps instance, loads nearby places as pins, and manages the selected place info card.",
+      "tags": [
+        "component",
+        "entry-point"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:coffee-map/components/map/MapContainer.tsx:MapContainer",
+      "type": "function",
+      "name": "MapContainer",
+      "filePath": "coffee-map/components/map/MapContainer.tsx",
+      "lineRange": [
+        23,
+        128
+      ],
+      "summary": "Orchestrates Google Maps initialization with geolocation, renders PlacePin markers for all fetched places, and opens an InfoCard on pin click.",
+      "tags": [
+        "component",
+        "event-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:coffee-map/components/map/PlacePin.tsx",
+      "type": "file",
+      "name": "PlacePin.tsx",
+      "filePath": "coffee-map/components/map/PlacePin.tsx",
+      "summary": "React component that renders a single Google Maps AdvancedMarkerElement pin for a coffee shop place and handles click events.",
+      "tags": [
+        "component",
+        "event-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/components/map/PlacePin.tsx:PlacePin",
+      "type": "function",
+      "name": "PlacePin",
+      "filePath": "coffee-map/components/map/PlacePin.tsx",
+      "lineRange": [
+        18,
+        48
+      ],
+      "summary": "Creates and manages a Google Maps AdvancedMarkerElement, attaching a click listener that calls the provided onClick callback with the place ID.",
+      "tags": [
+        "component",
+        "event-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/components/ui/MentionCard.tsx",
+      "type": "file",
+      "name": "MentionCard.tsx",
+      "filePath": "coffee-map/components/ui/MentionCard.tsx",
+      "summary": "UI component that renders a single social media mention with platform pill, source link, and excerpt text for display in the InfoCard.",
+      "tags": [
+        "component",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/components/ui/MentionCard.tsx:MentionCard",
+      "type": "function",
+      "name": "MentionCard",
+      "filePath": "coffee-map/components/ui/MentionCard.tsx",
+      "lineRange": [
+        8,
+        30
+      ],
+      "summary": "Renders a clickable mention card with platform badge, title, and excerpt, linking out to the original source URL.",
+      "tags": [
+        "component",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/components/ui/PlatformPill.tsx",
+      "type": "file",
+      "name": "PlatformPill.tsx",
+      "filePath": "coffee-map/components/ui/PlatformPill.tsx",
+      "summary": "Small UI badge component that displays a social platform name (e.g., Reddit, Instagram) with platform-specific color coding.",
+      "tags": [
+        "component",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/components/ui/PlatformPill.tsx:PlatformPill",
+      "type": "function",
+      "name": "PlatformPill",
+      "filePath": "coffee-map/components/ui/PlatformPill.tsx",
+      "lineRange": [
+        15,
+        23
+      ],
+      "summary": "Renders a styled pill badge for a given social platform string, applying platform-specific background colors.",
+      "tags": [
+        "component",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/components/ui/ScoreBadge.tsx",
+      "type": "file",
+      "name": "ScoreBadge.tsx",
+      "filePath": "coffee-map/components/ui/ScoreBadge.tsx",
+      "summary": "Small UI component that renders a numeric WFH suitability score formatted to one decimal place with a colored badge.",
+      "tags": [
+        "component",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/components/ui/ScoreBadge.tsx:ScoreBadge",
+      "type": "function",
+      "name": "ScoreBadge",
+      "filePath": "coffee-map/components/ui/ScoreBadge.tsx",
+      "lineRange": [
+        5,
+        18
+      ],
+      "summary": "Renders a badge displaying the WFH score to one decimal place, with color varying based on the score range.",
+      "tags": [
+        "component",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/hooks/useMapBounds.ts",
+      "type": "file",
+      "name": "useMapBounds.ts",
+      "filePath": "coffee-map/hooks/useMapBounds.ts",
+      "summary": "Custom React hook that subscribes to Google Maps viewport change events and returns the current map bounds with debouncing.",
+      "tags": [
+        "hook",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:coffee-map/hooks/useMapBounds.ts:useMapBounds",
+      "type": "function",
+      "name": "useMapBounds",
+      "filePath": "coffee-map/hooks/useMapBounds.ts",
+      "lineRange": [
+        12,
+        42
+      ],
+      "summary": "Listens to the Google Maps `bounds_changed` event with a debounce timeout and returns the current bounding box as state.",
+      "tags": [
+        "hook",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:coffee-map/hooks/useMentions.ts",
+      "type": "file",
+      "name": "useMentions.ts",
+      "filePath": "coffee-map/hooks/useMentions.ts",
+      "summary": "Custom React hook that fetches social media mentions for a given place ID, with abort-on-unmount and loading state management.",
+      "tags": [
+        "hook",
+        "data-model"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:coffee-map/hooks/useMentions.ts:useMentions",
+      "type": "function",
+      "name": "useMentions",
+      "filePath": "coffee-map/hooks/useMentions.ts",
+      "lineRange": [
+        11,
+        44
+      ],
+      "summary": "Fetches mentions for a place via the API client, resets state on placeId change, aborts in-flight requests on unmount or re-fetch, and returns mentions with a loading flag.",
+      "tags": [
+        "hook",
+        "data-model"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:coffee-map/hooks/usePlaces.ts",
+      "type": "file",
+      "name": "usePlaces.ts",
+      "filePath": "coffee-map/hooks/usePlaces.ts",
+      "summary": "Custom React hook that fetches nearby coffee shops for the current map bounds, incrementally merging fresh results into the accumulated places list.",
+      "tags": [
+        "hook",
+        "data-model"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:coffee-map/hooks/usePlaces.ts:usePlaces",
+      "type": "function",
+      "name": "usePlaces",
+      "filePath": "coffee-map/hooks/usePlaces.ts",
+      "lineRange": [
+        15,
+        73
+      ],
+      "summary": "Reactively fetches nearby places whenever map bounds change, merges updated fields into the existing list without duplicating entries, and exposes loading and region status state.",
+      "tags": [
+        "hook",
+        "data-model"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:coffee-map/lib/api-client.ts",
+      "type": "file",
+      "name": "api-client.ts",
+      "filePath": "coffee-map/lib/api-client.ts",
+      "summary": "API client module that provides typed fetch wrappers for the places and mentions endpoints, with exponential backoff retry logic for place requests.",
+      "tags": [
+        "utility",
+        "service",
+        "api-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:coffee-map/lib/api-client.ts:fetchNearbyPlaces",
+      "type": "function",
+      "name": "fetchNearbyPlaces",
+      "filePath": "coffee-map/lib/api-client.ts",
+      "lineRange": [
+        13,
+        49
+      ],
+      "summary": "Fetches nearby places from the Next.js API route with automatic exponential-backoff retry on failure, accepting an AbortSignal for cancellation.",
+      "tags": [
+        "utility",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:coffee-map/lib/api-client.ts:fetchMentions",
+      "type": "function",
+      "name": "fetchMentions",
+      "filePath": "coffee-map/lib/api-client.ts",
+      "lineRange": [
+        51,
+        65
+      ],
+      "summary": "Fetches social media mentions for a place from the Next.js API route, supporting request cancellation via AbortSignal.",
+      "tags": [
+        "utility",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/lib/map-utils.ts",
+      "type": "file",
+      "name": "map-utils.ts",
+      "filePath": "coffee-map/lib/map-utils.ts",
+      "summary": "Geographic utility functions for computing map bounds center, haversine distance between coordinates, and bounding box overlap detection.",
+      "tags": [
+        "utility",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/lib/map-utils.ts:boundsToCenter",
+      "type": "function",
+      "name": "boundsToCenter",
+      "filePath": "coffee-map/lib/map-utils.ts",
+      "lineRange": [
+        3,
+        8
+      ],
+      "summary": "Computes the geographic center point (lat/lng) from a bounding box object.",
+      "tags": [
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:coffee-map/lib/map-utils.ts:haversineDistanceMeters",
+      "type": "function",
+      "name": "haversineDistanceMeters",
+      "filePath": "coffee-map/lib/map-utils.ts",
+      "lineRange": [
+        10,
+        25
+      ],
+      "summary": "Calculates the great-circle distance in meters between two latitude/longitude coordinate pairs using the Haversine formula.",
+      "tags": [
+        "utility"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Implements the Haversine formula using Earth's radius (6371 km) to compute accurate surface distances."
+    },
+    {
+      "id": "function:coffee-map/lib/map-utils.ts:boundsOverlap",
+      "type": "function",
+      "name": "boundsOverlap",
+      "filePath": "coffee-map/lib/map-utils.ts",
+      "lineRange": [
+        27,
+        29
+      ],
+      "summary": "Checks whether two geographic bounding boxes overlap by comparing their lat/lng extents.",
+      "tags": [
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:coffee-map/types/index.ts",
+      "type": "file",
+      "name": "index.ts",
+      "filePath": "coffee-map/types/index.ts",
+      "summary": "Central TypeScript type definitions for the application, including Place, Mention, RegionStatus, and map bounds interfaces shared across all components and hooks.",
+      "tags": [
+        "type-definition",
+        "barrel"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Pure TypeScript interface/type definitions with no runtime code; acts as the shared type contract for the entire frontend."
+    },
+    {
+      "id": "file:backend/config.py",
+      "type": "file",
+      "name": "config.py",
+      "filePath": "backend/config.py",
+      "summary": "Centralized environment variable configuration using pydantic-settings, declaring all required API keys and tunable thresholds with a cached singleton accessor for FastAPI dependency injection.",
+      "tags": [
+        "configuration",
+        "singleton",
+        "validation",
+        "service"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Uses pydantic-settings BaseSettings with lru_cache for a lazily initialized singleton; intended to be injected via FastAPI Depends(get_settings) rather than imported at module level."
+    },
+    {
+      "id": "file:backend/main.py",
+      "type": "file",
+      "name": "main.py",
+      "filePath": "backend/main.py",
+      "summary": "FastAPI application entry point that wires CORS middleware, registers all routers (places, mentions, regions), and exposes health-check and root endpoints for the WFH coffee shop finder API.",
+      "tags": [
+        "entry-point",
+        "middleware",
+        "api-handler",
+        "service"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Uses asynccontextmanager lifespan for startup/shutdown hooks; APScheduler integration is stubbed for a future weekly re-crawl phase."
+    },
+    {
+      "id": "function:backend/main.py:create_app",
+      "type": "function",
+      "name": "create_app",
+      "filePath": "backend/main.py",
+      "lineRange": [
+        36,
+        66
+      ],
+      "summary": "Factory function that constructs and returns the fully configured FastAPI application instance with CORS, routers, health check, and root endpoints.",
+      "tags": [
+        "factory",
+        "entry-point",
+        "middleware"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/models/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "backend/models/__init__.py",
+      "summary": "Empty package initializer that marks the models directory as a Python package.",
+      "tags": [
+        "barrel",
+        "entry-point"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/models/mention.py",
+      "type": "file",
+      "name": "mention.py",
+      "filePath": "backend/models/mention.py",
+      "summary": "Pydantic response models for social/web mentions of a place, including per-mention card data and a paginated list wrapper keyed by place ID.",
+      "tags": [
+        "data-model",
+        "type-definition",
+        "serialization"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/models/place.py",
+      "type": "file",
+      "name": "place.py",
+      "filePath": "backend/models/place.py",
+      "summary": "Pydantic models for the core place domain: map viewport bounds, nearby-search request, individual place map pin response, and the aggregated nearby-search response with region status.",
+      "tags": [
+        "data-model",
+        "type-definition",
+        "serialization"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/models/region.py",
+      "type": "file",
+      "name": "region.py",
+      "filePath": "backend/models/region.py",
+      "summary": "Pydantic model representing a geographic crawl region row with status (cold/crawling/seeded) and bounding box coordinates.",
+      "tags": [
+        "data-model",
+        "type-definition",
+        "serialization"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/routers/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "backend/routers/__init__.py",
+      "summary": "Empty package initializer that marks the routers directory as a Python package.",
+      "tags": [
+        "barrel",
+        "entry-point"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/routers/mentions.py",
+      "type": "file",
+      "name": "mentions.py",
+      "filePath": "backend/routers/mentions.py",
+      "summary": "FastAPI router exposing GET /places/{place_id}/mentions, returning up to 20 social/web mentions for a place ordered by laptop confidence score.",
+      "tags": [
+        "api-handler",
+        "service",
+        "endpoint"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/routers/mentions.py:get_mentions",
+      "type": "function",
+      "name": "get_mentions",
+      "filePath": "backend/routers/mentions.py",
+      "lineRange": [
+        21,
+        40
+      ],
+      "summary": "Async route handler that fetches and shapes mention rows from Supabase into MentionsResponse, joining source platform and handle for each mention card.",
+      "tags": [
+        "api-handler",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/routers/places.py",
+      "type": "file",
+      "name": "places.py",
+      "filePath": "backend/routers/places.py",
+      "summary": "Hot-path FastAPI router for POST /places/nearby-search that concurrently queries Google Places, the Supabase place database, and region status, then merges results and queues background enrichment tasks.",
+      "tags": [
+        "api-handler",
+        "service",
+        "middleware"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Uses asyncio.gather for concurrent IO across Google Places API, region detection, and Supabase; background enrichment tasks use FastAPI BackgroundTasks to avoid blocking the response."
+    },
+    {
+      "id": "function:backend/routers/places.py:nearby_search",
+      "type": "function",
+      "name": "nearby_search",
+      "filePath": "backend/routers/places.py",
+      "lineRange": [
+        38,
+        146
+      ],
+      "summary": "POST /places/nearby-search handler that orchestrates parallel Google Nearby Search, region detection, and DB bounds query, then merges live Google data with cached DB rows and queues background enrichment for matched places.",
+      "tags": [
+        "api-handler",
+        "service",
+        "event-handler"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/routers/regions.py",
+      "type": "file",
+      "name": "regions.py",
+      "filePath": "backend/routers/regions.py",
+      "summary": "Admin-only FastAPI router (protected by X-Admin-Key header) exposing region inspection, manual seed triggering, batch enrichment, and resolver re-run endpoints for operational control of the crawl pipeline.",
+      "tags": [
+        "api-handler",
+        "service",
+        "middleware"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/routers/regions.py:list_regions",
+      "type": "function",
+      "name": "list_regions",
+      "filePath": "backend/routers/regions.py",
+      "lineRange": [
+        27,
+        29
+      ],
+      "summary": "Admin-protected GET /regions/ handler that returns all crawl region rows from Supabase as typed RegionRow models.",
+      "tags": [
+        "api-handler",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/routers/regions.py:enrich_region_places",
+      "type": "function",
+      "name": "enrich_region_places",
+      "filePath": "backend/routers/regions.py",
+      "lineRange": [
+        47,
+        61
+      ],
+      "summary": "Admin-protected POST /regions/{region_id}/enrich handler that kicks off a background task to batch-enrich all unenriched places in a region via the Google Place Details API.",
+      "tags": [
+        "api-handler",
+        "service"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/services/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "backend/services/__init__.py",
+      "summary": "Empty package initializer that marks the services directory as a Python package.",
+      "tags": [
+        "barrel",
+        "entry-point"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/services/google_places.py",
+      "type": "file",
+      "name": "google_places.py",
+      "filePath": "backend/services/google_places.py",
+      "summary": "Async HTTP client wrapper around the Google Places API (v1) covering Nearby Search, Text Search, and Place Details endpoints, with photo URL construction and billing-tier-aware field masks.",
+      "tags": [
+        "service",
+        "api-handler",
+        "utility"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Uses httpx.AsyncClient for all requests; carefully controls field masks to stay within Basic/Atmosphere/Advanced billing tiers and avoid Enterprise SKU charges."
+    },
+    {
+      "id": "function:backend/services/google_places.py:nearby_search_parallel",
+      "type": "function",
+      "name": "nearby_search_parallel",
+      "filePath": "backend/services/google_places.py",
+      "lineRange": [
+        53,
+        100
+      ],
+      "summary": "Fires a single unfiltered Google Nearby Search request for a lat/lng/radius and returns normalized place dicts with photo URLs, ratings, and hours; returns empty list on failure.",
+      "tags": [
+        "service",
+        "api-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/services/google_places.py:text_search",
+      "type": "function",
+      "name": "text_search",
+      "filePath": "backend/services/google_places.py",
+      "lineRange": [
+        103,
+        140
+      ],
+      "summary": "Calls Google Text Search to find candidate places by query string with an optional location bias, returning basic fields for the place resolver pipeline.",
+      "tags": [
+        "service",
+        "api-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/services/google_places.py:get_place_details",
+      "type": "function",
+      "name": "get_place_details",
+      "filePath": "backend/services/google_places.py",
+      "lineRange": [
+        143,
+        169
+      ],
+      "summary": "Fetches photos, rating, and hours for a single known place_id via the Place Details API; returns a dict ready for supabase_client.save_google_place_data or None on failure.",
+      "tags": [
+        "service",
+        "api-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/services/place_filter.py",
+      "type": "file",
+      "name": "place_filter.py",
+      "filePath": "backend/services/place_filter.py",
+      "summary": "Pure filtering service that takes a list of Google place IDs and returns only Supabase-matched places meeting configurable WFH score and laptop confidence thresholds.",
+      "tags": [
+        "service",
+        "utility",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/services/place_filter.py:filter_eligible_places",
+      "type": "function",
+      "name": "filter_eligible_places",
+      "filePath": "backend/services/place_filter.py",
+      "lineRange": [
+        11,
+        45
+      ],
+      "summary": "Async function that queries Supabase for place IDs matching score and confidence thresholds and returns shaped PlacePinResponse objects for each eligible place.",
+      "tags": [
+        "service",
+        "utility",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/services/region_detector.py",
+      "type": "file",
+      "name": "region_detector.py",
+      "filePath": "backend/services/region_detector.py",
+      "summary": "Determines the crawl region and its status (seeded/crawling/cold) for a given map viewport by finding overlapping region bounding boxes in Supabase and applying a priority ordering.",
+      "tags": [
+        "service",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/services/region_detector.py:detect_region_for_viewport",
+      "type": "function",
+      "name": "detect_region_for_viewport",
+      "filePath": "backend/services/region_detector.py",
+      "lineRange": [
+        33,
+        61
+      ],
+      "summary": "Async function that queries overlapping regions from Supabase and returns the highest-priority (region_id, status) tuple based on seeded > crawling > cold ordering with overlap-area tiebreaking for cold regions.",
+      "tags": [
+        "service",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/services/supabase_client.py",
+      "type": "file",
+      "name": "supabase_client.py",
+      "filePath": "backend/services/supabase_client.py",
+      "summary": "Singleton Supabase client wrapper providing typed async query helpers for places, mentions, regions, and enrichment operations, bridging the synchronous supabase-py v2 library with FastAPI's async event loop via asyncio.to_thread.",
+      "tags": [
+        "service",
+        "singleton",
+        "data-model"
+      ],
+      "complexity": "complex",
+      "languageNotes": "All synchronous supabase-py calls are wrapped in asyncio.to_thread to prevent event loop blocking; get_supabase() uses lru_cache(maxsize=1) for a true singleton."
+    },
+    {
+      "id": "function:backend/services/supabase_client.py:get_places_by_ids",
+      "type": "function",
+      "name": "get_places_by_ids",
+      "filePath": "backend/services/supabase_client.py",
+      "lineRange": [
+        27,
+        62
+      ],
+      "summary": "Async query helper that returns enriched place rows filtered by place IDs, WFH score threshold, and laptop confidence threshold via a two-step Supabase query.",
+      "tags": [
+        "service",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/services/supabase_client.py:get_places_in_bounds",
+      "type": "function",
+      "name": "get_places_in_bounds",
+      "filePath": "backend/services/supabase_client.py",
+      "lineRange": [
+        65,
+        83
+      ],
+      "summary": "Returns all place rows within a given lat/lng viewport bounding box with no additional filters, used for admin diagnostics and map display.",
+      "tags": [
+        "service",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/services/supabase_client.py:get_mentions_for_place",
+      "type": "function",
+      "name": "get_mentions_for_place",
+      "filePath": "backend/services/supabase_client.py",
+      "lineRange": [
+        98,
+        115
+      ],
+      "summary": "Returns up to 20 mention rows joined with their source platform and handle, ordered by laptop confidence descending for a given place ID.",
+      "tags": [
+        "service",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/services/supabase_client.py:get_overlapping_regions",
+      "type": "function",
+      "name": "get_overlapping_regions",
+      "filePath": "backend/services/supabase_client.py",
+      "lineRange": [
+        118,
+        133
+      ],
+      "summary": "Returns all region rows whose bounding boxes overlap the given viewport bounds using Supabase range comparisons.",
+      "tags": [
+        "service",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/services/supabase_client.py:claim_region_for_crawl",
+      "type": "function",
+      "name": "claim_region_for_crawl",
+      "filePath": "backend/services/supabase_client.py",
+      "lineRange": [
+        144,
+        160
+      ],
+      "summary": "Atomically transitions a region from cold to crawling status using a conditional UPDATE to prevent TOCTOU race conditions in distributed crawl workers.",
+      "tags": [
+        "service",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/services/supabase_client.py:upsert_place",
+      "type": "function",
+      "name": "upsert_place",
+      "filePath": "backend/services/supabase_client.py",
+      "lineRange": [
+        163,
+        169
+      ],
+      "summary": "Upserts a place row by place_id conflict key; intentionally skips wfh_score to preserve database-trigger-owned scoring.",
+      "tags": [
+        "service",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/services/supabase_client.py:insert_mention_if_new",
+      "type": "function",
+      "name": "insert_mention_if_new",
+      "filePath": "backend/services/supabase_client.py",
+      "lineRange": [
+        172,
+        186
+      ],
+      "summary": "Inserts a mention row with ON CONFLICT (url) DO NOTHING semantics and returns True if the row was newly inserted.",
+      "tags": [
+        "service",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/background/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "backend/background/__init__.py",
+      "summary": "Empty package initializer that marks the background directory as a Python package.",
+      "tags": [
+        "entry-point",
+        "barrel",
+        "package-init"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/background/enrich_job.py",
+      "type": "file",
+      "name": "enrich_job.py",
+      "filePath": "backend/background/enrich_job.py",
+      "summary": "Background job that fetches unenriched coffee shop places from Supabase and enriches them with Google Places details, including hours, website, phone, and rating.",
+      "tags": [
+        "service",
+        "background-job",
+        "api-handler",
+        "data-enrichment"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/background/enrich_job.py:enrich_unenriched_places",
+      "type": "function",
+      "name": "enrich_unenriched_places",
+      "filePath": "backend/background/enrich_job.py",
+      "lineRange": [
+        24,
+        71
+      ],
+      "summary": "Async job that queries for places lacking Google Places metadata, calls the Google Places API for each, then persists the enriched details back to Supabase with rate-limiting delays.",
+      "tags": [
+        "background-job",
+        "api-handler",
+        "data-enrichment"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/background/resolver_job.py",
+      "type": "file",
+      "name": "resolver_job.py",
+      "filePath": "backend/background/resolver_job.py",
+      "summary": "Background resolution pipeline that fetches unresolved mention rows from Supabase and maps raw place name strings to canonical place records, supporting both streaming (interleaved with crawl) and batch resolution modes.",
+      "tags": [
+        "service",
+        "background-job",
+        "data-model",
+        "pipeline"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/background/resolver_job.py:_fetch_unresolved_mentions",
+      "type": "function",
+      "name": "_fetch_unresolved_mentions",
+      "filePath": "backend/background/resolver_job.py",
+      "lineRange": [
+        37,
+        48
+      ],
+      "summary": "Queries Supabase for mention rows where place_id is null, returning them for downstream resolution.",
+      "tags": [
+        "utility",
+        "database",
+        "background-job"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/background/resolver_job.py:_resolve_batch",
+      "type": "function",
+      "name": "_resolve_batch",
+      "filePath": "backend/background/resolver_job.py",
+      "lineRange": [
+        51,
+        108
+      ],
+      "summary": "Resolves a batch of unresolved mention names to canonical place records using a shared cache to avoid redundant lookups, then writes assigned place IDs back via db_writer.",
+      "tags": [
+        "service",
+        "background-job",
+        "caching"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/background/resolver_job.py:resolve_streaming",
+      "type": "function",
+      "name": "resolve_streaming",
+      "filePath": "backend/background/resolver_job.py",
+      "lineRange": [
+        111,
+        174
+      ],
+      "summary": "Runs concurrent resolution while a crawl is in progress, polling for new unresolved mentions; performs a final drain pass once the crawl signals completion, then recomputes boolean attributes for the region.",
+      "tags": [
+        "service",
+        "background-job",
+        "async",
+        "pipeline"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/background/resolver_job.py:resolve_for_region",
+      "type": "function",
+      "name": "resolve_for_region",
+      "filePath": "backend/background/resolver_job.py",
+      "lineRange": [
+        177,
+        196
+      ],
+      "summary": "One-shot resolver for a region that runs a single resolution batch and recomputes boolean WFH attributes upon completion.",
+      "tags": [
+        "service",
+        "background-job"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/background/retroactive_matcher.py",
+      "type": "file",
+      "name": "retroactive_matcher.py",
+      "filePath": "backend/background/retroactive_matcher.py",
+      "summary": "Retroactively processes crawled mentions that lack a place name by re-fetching the source article or Reddit thread, re-running multi-mention LLM extraction, resolving each detected place, and writing new mention rows to Supabase.",
+      "tags": [
+        "service",
+        "background-job",
+        "data-model",
+        "pipeline"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/background/retroactive_matcher.py:run_retroactive_match",
+      "type": "function",
+      "name": "run_retroactive_match",
+      "filePath": "backend/background/retroactive_matcher.py",
+      "lineRange": [
+        108,
+        258
+      ],
+      "summary": "Main orchestration function that retrieves empty-name mentions, refetches their source content (handling Reddit and generic URLs separately), runs LLM-based multi-mention extraction, resolves each place, and persists the results.",
+      "tags": [
+        "service",
+        "background-job",
+        "pipeline",
+        "async"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/background/retroactive_matcher.py:_fetch_reddit_text",
+      "type": "function",
+      "name": "_fetch_reddit_text",
+      "filePath": "backend/background/retroactive_matcher.py",
+      "lineRange": [
+        38,
+        74
+      ],
+      "summary": "Fetches the full text of a Reddit post and its comments by calling the Reddit JSON API, extracting post body and recursively collecting comment bodies.",
+      "tags": [
+        "utility",
+        "api-handler",
+        "async"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/background/scheduler.py",
+      "type": "file",
+      "name": "scheduler.py",
+      "filePath": "backend/background/scheduler.py",
+      "summary": "APScheduler-based cron scheduler that periodically re-crawls stale regions by checking their last_crawled_at timestamp and triggering seed jobs for regions past their freshness threshold.",
+      "tags": [
+        "service",
+        "background-job",
+        "scheduler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/background/scheduler.py:start_scheduler",
+      "type": "function",
+      "name": "start_scheduler",
+      "filePath": "backend/background/scheduler.py",
+      "lineRange": [
+        13,
+        35
+      ],
+      "summary": "Initializes the APScheduler AsyncIOScheduler, registers the stale-region recrawl job on a cron trigger, and starts the scheduler.",
+      "tags": [
+        "service",
+        "scheduler",
+        "background-job"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/background/scheduler.py:_recrawl_stale_regions",
+      "type": "function",
+      "name": "_recrawl_stale_regions",
+      "filePath": "backend/background/scheduler.py",
+      "lineRange": [
+        38,
+        51
+      ],
+      "summary": "Scheduled callback that lists all regions, identifies those past their crawl freshness window, sets their status to pending, and triggers a seed job for each.",
+      "tags": [
+        "background-job",
+        "scheduler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/background/seed_job.py",
+      "type": "file",
+      "name": "seed_job.py",
+      "filePath": "backend/background/seed_job.py",
+      "summary": "Entry point for seeding a region with new coffee shop data by concurrently running the crawler and the streaming resolver as asyncio tasks, then updating the region status in Supabase upon completion.",
+      "tags": [
+        "service",
+        "entry-point",
+        "background-job",
+        "pipeline"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/background/seed_job.py:trigger_seed",
+      "type": "function",
+      "name": "trigger_seed",
+      "filePath": "backend/background/seed_job.py",
+      "lineRange": [
+        27,
+        105
+      ],
+      "summary": "Claims a region for crawling, launches concurrent crawler and resolver tasks via asyncio, waits for both to finish, then marks the region as seeded or failed in Supabase.",
+      "tags": [
+        "entry-point",
+        "background-job",
+        "async",
+        "pipeline"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/crawler/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "backend/crawler/__init__.py",
+      "summary": "Empty package initializer that marks the crawler directory as a Python package.",
+      "tags": [
+        "entry-point",
+        "barrel",
+        "package-init"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/crawler/article_extractor.py",
+      "type": "file",
+      "name": "article_extractor.py",
+      "filePath": "backend/crawler/article_extractor.py",
+      "summary": "Uses the OpenAI API to extract coffee shop mentions from raw article text, returning structured MentionExtraction objects that include WFH attribute confidence scores for wifi, outlets, quiet environment, and laptop friendliness.",
+      "tags": [
+        "service",
+        "api-handler",
+        "data-model",
+        "llm-integration"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:backend/crawler/article_extractor.py:MentionExtraction",
+      "type": "class",
+      "name": "MentionExtraction",
+      "filePath": "backend/crawler/article_extractor.py",
+      "lineRange": [
+        84,
+        90
+      ],
+      "summary": "Dataclass representing a single place mention extracted from article text, carrying the raw place name, an evidence snippet, and float confidence scores for WFH attributes.",
+      "tags": [
+        "data-model",
+        "type-definition"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/crawler/article_extractor.py:extract_all_mentions",
+      "type": "function",
+      "name": "extract_all_mentions",
+      "filePath": "backend/crawler/article_extractor.py",
+      "lineRange": [
+        93,
+        157
+      ],
+      "summary": "Sends raw article text to the OpenAI chat completion API with a structured prompt, parses the JSON response, and returns a list of MentionExtraction objects for each identified coffee shop.",
+      "tags": [
+        "api-handler",
+        "llm-integration",
+        "service"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/crawler/db_writer.py",
+      "type": "file",
+      "name": "db_writer.py",
+      "filePath": "backend/crawler/db_writer.py",
+      "summary": "Handles all Supabase write operations for the crawler, including upserting sources and mentions, assigning resolved place IDs to mentions, and recomputing aggregated boolean WFH attributes per region.",
+      "tags": [
+        "service",
+        "database",
+        "data-model"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/crawler/db_writer.py:ensure_source_exists",
+      "type": "function",
+      "name": "ensure_source_exists",
+      "filePath": "backend/crawler/db_writer.py",
+      "lineRange": [
+        27,
+        57
+      ],
+      "summary": "Upserts a source record (platform + handle/domain) into Supabase and returns the source row ID, using asyncio.to_thread to run the synchronous Supabase client off the event loop.",
+      "tags": [
+        "database",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/crawler/db_writer.py:write_raw_mention",
+      "type": "function",
+      "name": "write_raw_mention",
+      "filePath": "backend/crawler/db_writer.py",
+      "lineRange": [
+        60,
+        91
+      ],
+      "summary": "Upserts a raw mention row into Supabase with URL, source_id, place name, evidence snippet, and WFH confidence scores, ignoring duplicates on the url+place_name_raw composite key.",
+      "tags": [
+        "database",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/crawler/db_writer.py:assign_place_to_mention",
+      "type": "function",
+      "name": "assign_place_to_mention",
+      "filePath": "backend/crawler/db_writer.py",
+      "lineRange": [
+        94,
+        128
+      ],
+      "summary": "Upserts the resolved place record and updates the mention row to link it to the canonical place_id, atomically linking a raw mention to its resolved location.",
+      "tags": [
+        "database",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/crawler/db_writer.py:recompute_boolean_attrs_for_region",
+      "type": "function",
+      "name": "recompute_boolean_attrs_for_region",
+      "filePath": "backend/crawler/db_writer.py",
+      "lineRange": [
+        131,
+        197
+      ],
+      "summary": "Aggregates WFH attribute confidence scores across all mentions for each place in a region, computing majority-vote booleans for wifi, outlets, laptop-friendliness, and noise level, then persists the results to the places table.",
+      "tags": [
+        "database",
+        "service",
+        "aggregation"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/crawler/llm_extractor.py",
+      "type": "file",
+      "name": "llm_extractor.py",
+      "filePath": "backend/crawler/llm_extractor.py",
+      "summary": "Uses the OpenAI API to extract WFH attributes for a specific known place from text, returning a structured ExtractionResult with boolean attributes and confidence scores.",
+      "tags": [
+        "service",
+        "api-handler",
+        "llm-integration",
+        "data-model"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:backend/crawler/llm_extractor.py:ExtractionResult",
+      "type": "class",
+      "name": "ExtractionResult",
+      "filePath": "backend/crawler/llm_extractor.py",
+      "lineRange": [
+        49,
+        59
+      ],
+      "summary": "Dataclass holding LLM-extracted WFH attribute values for a place: boolean flags for wifi/outlets/laptop-friendliness, noise level, seating comfort, and float confidence scores.",
+      "tags": [
+        "data-model",
+        "type-definition"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/crawler/llm_extractor.py:extract_wfh_attributes",
+      "type": "function",
+      "name": "extract_wfh_attributes",
+      "filePath": "backend/crawler/llm_extractor.py",
+      "lineRange": [
+        65,
+        95
+      ],
+      "summary": "Submits raw text and a known place name to OpenAI and extracts WFH suitability attributes, returning an ExtractionResult or None if the model cannot confidently assess the location.",
+      "tags": [
+        "api-handler",
+        "llm-integration",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/crawler/multi_mention_extractor.py",
+      "type": "file",
+      "name": "multi_mention_extractor.py",
+      "filePath": "backend/crawler/multi_mention_extractor.py",
+      "summary": "Uses the OpenAI API to simultaneously identify multiple coffee shop mentions within a single piece of text, extracting per-mention WFH attributes and returning a list of MultiMentionResult objects.",
+      "tags": [
+        "service",
+        "api-handler",
+        "llm-integration",
+        "data-model"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:backend/crawler/multi_mention_extractor.py:MultiMentionResult",
+      "type": "class",
+      "name": "MultiMentionResult",
+      "filePath": "backend/crawler/multi_mention_extractor.py",
+      "lineRange": [
+        58,
+        68
+      ],
+      "summary": "Dataclass representing a single place extracted from a multi-mention LLM pass, carrying the place name, evidence snippet, boolean WFH flags, and confidence scores.",
+      "tags": [
+        "data-model",
+        "type-definition"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/crawler/multi_mention_extractor.py:extract_all_mentions",
+      "type": "function",
+      "name": "extract_all_mentions",
+      "filePath": "backend/crawler/multi_mention_extractor.py",
+      "lineRange": [
+        71,
+        128
+      ],
+      "summary": "Sends raw text to OpenAI with a prompt designed to identify all mentioned coffee shops at once, parses the JSON array response, and constructs MultiMentionResult objects for each detected place.",
+      "tags": [
+        "api-handler",
+        "llm-integration",
+        "service"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/crawler/orchestrator.py",
+      "type": "file",
+      "name": "orchestrator.py",
+      "filePath": "backend/crawler/orchestrator.py",
+      "summary": "Top-level crawler orchestrator that coordinates Tavily, Brave, and Instagram source crawlers for a region, deduplicates results by URL, runs LLM-based mention extraction on each article, and writes raw mentions to Supabase.",
+      "tags": [
+        "service",
+        "entry-point",
+        "pipeline",
+        "orchestration"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/crawler/orchestrator.py:run_for_region",
+      "type": "function",
+      "name": "run_for_region",
+      "filePath": "backend/crawler/orchestrator.py",
+      "lineRange": [
+        47,
+        149
+      ],
+      "summary": "Fetches raw mentions from all configured crawlers for a region, deduplicates by URL, calls the article extractor on each, and persists extracted mentions via db_writer.",
+      "tags": [
+        "service",
+        "pipeline",
+        "entry-point"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/crawler/place_resolver.py",
+      "type": "file",
+      "name": "place_resolver.py",
+      "filePath": "backend/crawler/place_resolver.py",
+      "summary": "Resolves raw place name strings to canonical place records by first using OpenAI to normalize the name, then querying the Google Places text-search API and ranking candidates by fuzzy string similarity and geographic proximity.",
+      "tags": [
+        "service",
+        "api-handler",
+        "utility",
+        "llm-integration"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:backend/crawler/place_resolver.py:ResolvedPlace",
+      "type": "class",
+      "name": "ResolvedPlace",
+      "filePath": "backend/crawler/place_resolver.py",
+      "lineRange": [
+        39,
+        44
+      ],
+      "summary": "Dataclass representing a successfully resolved place with its Google Places ID, canonical name, latitude/longitude coordinates, and formatted address.",
+      "tags": [
+        "data-model",
+        "type-definition"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/crawler/place_resolver.py:resolve_place",
+      "type": "function",
+      "name": "resolve_place",
+      "filePath": "backend/crawler/place_resolver.py",
+      "lineRange": [
+        56,
+        178
+      ],
+      "summary": "Resolves a raw place name to a ResolvedPlace by normalizing via LLM, querying Google Places text search, scoring candidates by name similarity and haversine distance, and returning the best match above threshold.",
+      "tags": [
+        "service",
+        "api-handler",
+        "utility"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/crawler/sources/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "backend/crawler/sources/__init__.py",
+      "summary": "Empty package initializer that marks the crawler/sources directory as a Python package.",
+      "tags": [
+        "entry-point",
+        "barrel",
+        "package-init"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/crawler/sources/brave_crawler.py",
+      "type": "file",
+      "name": "brave_crawler.py",
+      "filePath": "backend/crawler/sources/brave_crawler.py",
+      "summary": "Fetches coffee shop article URLs from the Brave Search API using preconfigured city-specific queries, deduplicates results against a shared URL set, and returns a list of RawMention objects.",
+      "tags": [
+        "service",
+        "api-handler",
+        "crawler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/crawler/sources/brave_crawler.py:fetch_brave_mentions",
+      "type": "function",
+      "name": "fetch_brave_mentions",
+      "filePath": "backend/crawler/sources/brave_crawler.py",
+      "lineRange": [
+        39,
+        84
+      ],
+      "summary": "Iterates city-specific search queries, calls the Brave Search API for each, deduplicates URLs, and appends RawMention entries for unique results with rate-limiting between requests.",
+      "tags": [
+        "api-handler",
+        "crawler",
+        "async"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/crawler/sources/instagram_crawler.py",
+      "type": "file",
+      "name": "instagram_crawler.py",
+      "filePath": "backend/crawler/sources/instagram_crawler.py",
+      "summary": "Scrapes recent Instagram posts from curated coffee-shop accounts using the unofficial Instagram GraphQL API, extracting post URLs and captions as RawMention objects.",
+      "tags": [
+        "service",
+        "api-handler",
+        "crawler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/crawler/sources/instagram_crawler.py:fetch_instagram_mentions",
+      "type": "function",
+      "name": "fetch_instagram_mentions",
+      "filePath": "backend/crawler/sources/instagram_crawler.py",
+      "lineRange": [
+        21,
+        71
+      ],
+      "summary": "Iterates a list of Instagram accounts, fetches recent timeline media via the unofficial GraphQL endpoint, and constructs RawMention objects from post shortcodes and captions.",
+      "tags": [
+        "api-handler",
+        "crawler",
+        "async"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/crawler/sources/tavily_crawler.py",
+      "type": "file",
+      "name": "tavily_crawler.py",
+      "filePath": "backend/crawler/sources/tavily_crawler.py",
+      "summary": "Fetches coffee shop article content from the Tavily Search API using city-specific queries, optionally scraping full page content for each result, and returns RawMention objects with full text when available.",
+      "tags": [
+        "service",
+        "api-handler",
+        "crawler",
+        "data-model"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:backend/crawler/sources/tavily_crawler.py:RawMention",
+      "type": "class",
+      "name": "RawMention",
+      "filePath": "backend/crawler/sources/tavily_crawler.py",
+      "lineRange": [
+        51,
+        56
+      ],
+      "summary": "Dataclass representing a raw article mention retrieved from a search crawler, carrying the source URL, snippet, originating query, crawler source label, and optional full page content.",
+      "tags": [
+        "data-model",
+        "type-definition"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/crawler/sources/tavily_crawler.py:fetch_tavily_mentions",
+      "type": "function",
+      "name": "fetch_tavily_mentions",
+      "filePath": "backend/crawler/sources/tavily_crawler.py",
+      "lineRange": [
+        71,
+        124
+      ],
+      "summary": "Queries the Tavily Search API for each city-specific search query, optionally scrapes full article content for each result URL, deduplicates by URL, and returns a list of RawMention objects.",
+      "tags": [
+        "api-handler",
+        "crawler",
+        "async"
+      ],
+      "complexity": "complex"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:README.md",
+      "target": "document:DEPLOYMENT.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "table:backend/supabase/schema.sql",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "config:coffee-map/package.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:DEPLOYMENT.md",
+      "target": "config:render.yaml",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:DEPLOYMENT.md",
+      "target": "config:backend/.env.local",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:DEPLOYMENT.md",
+      "target": "config:.env.example",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/v2-architecture-plan.md",
+      "target": "table:backend/supabase/schema.sql",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/v2-architecture-plan.md",
+      "target": "document:docs/v2-sequence-diagram.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/v2-sequence-diagram.md",
+      "target": "table:backend/supabase/schema.sql",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:.env.example",
+      "target": "config:backend/.env.local",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:.env.example",
+      "target": "config:.env.local",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:render.yaml",
+      "target": "document:backend/requirements.txt",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:coffee-map/tsconfig.json",
+      "target": "file:coffee-map/next.config.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:coffee-map/package.json",
+      "target": "file:coffee-map/next.config.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:coffee-map/package.json",
+      "target": "file:coffee-map/eslint.config.mjs",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:coffee-map/package.json",
+      "target": "file:coffee-map/postcss.config.mjs",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:coffee-map/postcss.config.mjs",
+      "target": "file:coffee-map/app/globals.css",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "table:docs/supabase_schema_docs/migrations/001_create_tables.sql",
+      "target": "table:docs/supabase_schema_docs/migrations/002_create_indexes.sql",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:docs/supabase_schema_docs/migrations/002_create_indexes.sql",
+      "target": "table:docs/supabase_schema_docs/migrations/003_create_triggers.sql",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:docs/supabase_schema_docs/migrations/003_create_triggers.sql",
+      "target": "table:docs/supabase_schema_docs/migrations/004_multi_mention.sql",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:docs/supabase_schema_docs/seed/nyc_regions.sql",
+      "target": "table:docs/supabase_schema_docs/migrations/001_create_tables.sql",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "table:backend/supabase/schema.sql",
+      "target": "table:docs/supabase_schema_docs/migrations/001_create_tables.sql",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:backend/supabase/schema.sql",
+      "target": "table:docs/supabase_schema_docs/migrations/002_create_indexes.sql",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:backend/supabase/schema.sql",
+      "target": "table:docs/supabase_schema_docs/migrations/003_create_triggers.sql",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "table:backend/supabase/seed.sql",
+      "target": "table:backend/supabase/schema.sql",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:coffee-map/app/layout.tsx",
+      "target": "file:coffee-map/app/globals.css",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:coffee-map/app/manifest.ts",
+      "target": "function:coffee-map/app/manifest.ts:manifest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/manifest.ts",
+      "target": "function:coffee-map/app/manifest.ts:manifest",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/app/page.tsx",
+      "target": "function:coffee-map/app/page.tsx:Home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/page.tsx",
+      "target": "function:coffee-map/app/page.tsx:Home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/app/layout.tsx",
+      "target": "function:coffee-map/app/layout.tsx:RootLayout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/layout.tsx",
+      "target": "function:coffee-map/app/layout.tsx:RootLayout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/app/api/places/[place_id]/mentions/route.ts",
+      "target": "function:coffee-map/app/api/places/[place_id]/mentions/route.ts:GET",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/api/places/[place_id]/mentions/route.ts",
+      "target": "function:coffee-map/app/api/places/[place_id]/mentions/route.ts:GET",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/app/api/places/data/route.ts",
+      "target": "function:coffee-map/app/api/places/data/route.ts:GET",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/api/places/data/route.ts",
+      "target": "function:coffee-map/app/api/places/data/route.ts:GET",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/app/api/places/enrich/[placeId]/route.ts",
+      "target": "function:coffee-map/app/api/places/enrich/[placeId]/route.ts:POST",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/api/places/enrich/[placeId]/route.ts",
+      "target": "function:coffee-map/app/api/places/enrich/[placeId]/route.ts:POST",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/app/api/places/route.ts",
+      "target": "function:coffee-map/app/api/places/route.ts:POST",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/api/places/route.ts",
+      "target": "function:coffee-map/app/api/places/route.ts:POST",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/app/api/places/status/route.ts",
+      "target": "function:coffee-map/app/api/places/status/route.ts:GET",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/api/places/status/route.ts",
+      "target": "function:coffee-map/app/api/places/status/route.ts:GET",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/app/api/regions/route.ts",
+      "target": "function:coffee-map/app/api/regions/route.ts:GET",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/app/api/regions/route.ts",
+      "target": "function:coffee-map/app/api/regions/route.ts:GET",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/map/AttributePills.tsx",
+      "target": "function:coffee-map/components/map/AttributePills.tsx:AttributePills",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/map/AttributePills.tsx",
+      "target": "function:coffee-map/components/map/AttributePills.tsx:AttributePills",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/map/ColdRegionBanner.tsx",
+      "target": "function:coffee-map/components/map/ColdRegionBanner.tsx:ColdRegionBanner",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/map/ColdRegionBanner.tsx",
+      "target": "function:coffee-map/components/map/ColdRegionBanner.tsx:ColdRegionBanner",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/map/CrawlingIndicator.tsx",
+      "target": "function:coffee-map/components/map/CrawlingIndicator.tsx:CrawlingIndicator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/map/CrawlingIndicator.tsx",
+      "target": "function:coffee-map/components/map/CrawlingIndicator.tsx:CrawlingIndicator",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/map/InfoCard.tsx",
+      "target": "file:coffee-map/components/map/AttributePills.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:coffee-map/components/map/InfoCard.tsx",
+      "target": "function:coffee-map/components/map/InfoCard.tsx:InfoCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/map/InfoCard.tsx",
+      "target": "function:coffee-map/components/map/InfoCard.tsx:InfoCard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/map/MapContainer.tsx",
+      "target": "file:coffee-map/components/map/ColdRegionBanner.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:coffee-map/components/map/MapContainer.tsx",
+      "target": "file:coffee-map/components/map/CrawlingIndicator.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:coffee-map/components/map/MapContainer.tsx",
+      "target": "file:coffee-map/components/map/InfoCard.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:coffee-map/components/map/MapContainer.tsx",
+      "target": "file:coffee-map/components/map/PlacePin.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:coffee-map/components/map/MapContainer.tsx",
+      "target": "function:coffee-map/components/map/MapContainer.tsx:MapContainer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/map/MapContainer.tsx",
+      "target": "function:coffee-map/components/map/MapContainer.tsx:MapContainer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/map/PlacePin.tsx",
+      "target": "function:coffee-map/components/map/PlacePin.tsx:PlacePin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/map/PlacePin.tsx",
+      "target": "function:coffee-map/components/map/PlacePin.tsx:PlacePin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/ui/MentionCard.tsx",
+      "target": "file:coffee-map/components/ui/PlatformPill.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:coffee-map/components/ui/MentionCard.tsx",
+      "target": "function:coffee-map/components/ui/MentionCard.tsx:MentionCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/ui/MentionCard.tsx",
+      "target": "function:coffee-map/components/ui/MentionCard.tsx:MentionCard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/ui/PlatformPill.tsx",
+      "target": "function:coffee-map/components/ui/PlatformPill.tsx:PlatformPill",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/ui/PlatformPill.tsx",
+      "target": "function:coffee-map/components/ui/PlatformPill.tsx:PlatformPill",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/components/ui/ScoreBadge.tsx",
+      "target": "function:coffee-map/components/ui/ScoreBadge.tsx:ScoreBadge",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/components/ui/ScoreBadge.tsx",
+      "target": "function:coffee-map/components/ui/ScoreBadge.tsx:ScoreBadge",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/hooks/useMapBounds.ts",
+      "target": "function:coffee-map/hooks/useMapBounds.ts:useMapBounds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/hooks/useMapBounds.ts",
+      "target": "function:coffee-map/hooks/useMapBounds.ts:useMapBounds",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/hooks/useMentions.ts",
+      "target": "function:coffee-map/hooks/useMentions.ts:useMentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/hooks/useMentions.ts",
+      "target": "function:coffee-map/hooks/useMentions.ts:useMentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/hooks/usePlaces.ts",
+      "target": "function:coffee-map/hooks/usePlaces.ts:usePlaces",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/hooks/usePlaces.ts",
+      "target": "function:coffee-map/hooks/usePlaces.ts:usePlaces",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/lib/api-client.ts",
+      "target": "function:coffee-map/lib/api-client.ts:fetchNearbyPlaces",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/lib/api-client.ts",
+      "target": "function:coffee-map/lib/api-client.ts:fetchNearbyPlaces",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/lib/api-client.ts",
+      "target": "function:coffee-map/lib/api-client.ts:fetchMentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/lib/api-client.ts",
+      "target": "function:coffee-map/lib/api-client.ts:fetchMentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/lib/map-utils.ts",
+      "target": "function:coffee-map/lib/map-utils.ts:boundsToCenter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/lib/map-utils.ts",
+      "target": "function:coffee-map/lib/map-utils.ts:boundsToCenter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/lib/map-utils.ts",
+      "target": "function:coffee-map/lib/map-utils.ts:haversineDistanceMeters",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/lib/map-utils.ts",
+      "target": "function:coffee-map/lib/map-utils.ts:haversineDistanceMeters",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:coffee-map/lib/map-utils.ts",
+      "target": "function:coffee-map/lib/map-utils.ts:boundsOverlap",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:coffee-map/lib/map-utils.ts",
+      "target": "function:coffee-map/lib/map-utils.ts:boundsOverlap",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/main.py",
+      "target": "function:backend/main.py:create_app",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/main.py",
+      "target": "function:backend/main.py:create_app",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/routers/mentions.py",
+      "target": "function:backend/routers/mentions.py:get_mentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/routers/mentions.py",
+      "target": "function:backend/routers/mentions.py:get_mentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/routers/places.py",
+      "target": "function:backend/routers/places.py:nearby_search",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/routers/places.py",
+      "target": "function:backend/routers/places.py:nearby_search",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/routers/regions.py",
+      "target": "function:backend/routers/regions.py:list_regions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/routers/regions.py",
+      "target": "function:backend/routers/regions.py:enrich_region_places",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/google_places.py",
+      "target": "function:backend/services/google_places.py:nearby_search_parallel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/google_places.py",
+      "target": "function:backend/services/google_places.py:nearby_search_parallel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/google_places.py",
+      "target": "function:backend/services/google_places.py:text_search",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/google_places.py",
+      "target": "function:backend/services/google_places.py:text_search",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/google_places.py",
+      "target": "function:backend/services/google_places.py:get_place_details",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/google_places.py",
+      "target": "function:backend/services/google_places.py:get_place_details",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/place_filter.py",
+      "target": "function:backend/services/place_filter.py:filter_eligible_places",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/place_filter.py",
+      "target": "function:backend/services/place_filter.py:filter_eligible_places",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/region_detector.py",
+      "target": "function:backend/services/region_detector.py:detect_region_for_viewport",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/region_detector.py",
+      "target": "function:backend/services/region_detector.py:detect_region_for_viewport",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:get_places_by_ids",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:get_places_in_bounds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:get_mentions_for_place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:get_overlapping_regions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:claim_region_for_crawl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:upsert_place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:insert_mention_if_new",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:get_places_by_ids",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:get_places_in_bounds",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:get_mentions_for_place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:get_overlapping_regions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:claim_region_for_crawl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:upsert_place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/services/supabase_client.py",
+      "target": "function:backend/services/supabase_client.py:insert_mention_if_new",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/enrich_job.py",
+      "target": "function:backend/background/enrich_job.py:enrich_unenriched_places",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/enrich_job.py",
+      "target": "function:backend/background/enrich_job.py:enrich_unenriched_places",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "function:backend/background/resolver_job.py:_fetch_unresolved_mentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "function:backend/background/resolver_job.py:_resolve_batch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "function:backend/background/resolver_job.py:resolve_streaming",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "function:backend/background/resolver_job.py:resolve_for_region",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "function:backend/background/resolver_job.py:_fetch_unresolved_mentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "function:backend/background/resolver_job.py:_resolve_batch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "function:backend/background/resolver_job.py:resolve_streaming",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "function:backend/background/resolver_job.py:resolve_for_region",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/retroactive_matcher.py",
+      "target": "function:backend/background/retroactive_matcher.py:run_retroactive_match",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/retroactive_matcher.py",
+      "target": "function:backend/background/retroactive_matcher.py:_fetch_reddit_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/retroactive_matcher.py",
+      "target": "function:backend/background/retroactive_matcher.py:run_retroactive_match",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/scheduler.py",
+      "target": "function:backend/background/scheduler.py:start_scheduler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/scheduler.py",
+      "target": "function:backend/background/scheduler.py:_recrawl_stale_regions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/scheduler.py",
+      "target": "function:backend/background/scheduler.py:start_scheduler",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/scheduler.py",
+      "target": "file:backend/background/seed_job.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/background/seed_job.py",
+      "target": "function:backend/background/seed_job.py:trigger_seed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/seed_job.py",
+      "target": "function:backend/background/seed_job.py:trigger_seed",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/seed_job.py",
+      "target": "file:backend/crawler/orchestrator.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/background/seed_job.py",
+      "target": "file:backend/background/resolver_job.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/crawler/article_extractor.py",
+      "target": "class:backend/crawler/article_extractor.py:MentionExtraction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/article_extractor.py",
+      "target": "function:backend/crawler/article_extractor.py:extract_all_mentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/article_extractor.py",
+      "target": "class:backend/crawler/article_extractor.py:MentionExtraction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/article_extractor.py",
+      "target": "function:backend/crawler/article_extractor.py:extract_all_mentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/db_writer.py",
+      "target": "function:backend/crawler/db_writer.py:ensure_source_exists",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/db_writer.py",
+      "target": "function:backend/crawler/db_writer.py:write_raw_mention",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/db_writer.py",
+      "target": "function:backend/crawler/db_writer.py:assign_place_to_mention",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/db_writer.py",
+      "target": "function:backend/crawler/db_writer.py:recompute_boolean_attrs_for_region",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/db_writer.py",
+      "target": "function:backend/crawler/db_writer.py:ensure_source_exists",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/db_writer.py",
+      "target": "function:backend/crawler/db_writer.py:write_raw_mention",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/db_writer.py",
+      "target": "function:backend/crawler/db_writer.py:assign_place_to_mention",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/db_writer.py",
+      "target": "function:backend/crawler/db_writer.py:recompute_boolean_attrs_for_region",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/llm_extractor.py",
+      "target": "class:backend/crawler/llm_extractor.py:ExtractionResult",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/llm_extractor.py",
+      "target": "function:backend/crawler/llm_extractor.py:extract_wfh_attributes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/llm_extractor.py",
+      "target": "class:backend/crawler/llm_extractor.py:ExtractionResult",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/llm_extractor.py",
+      "target": "function:backend/crawler/llm_extractor.py:extract_wfh_attributes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/multi_mention_extractor.py",
+      "target": "class:backend/crawler/multi_mention_extractor.py:MultiMentionResult",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/multi_mention_extractor.py",
+      "target": "function:backend/crawler/multi_mention_extractor.py:extract_all_mentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/multi_mention_extractor.py",
+      "target": "class:backend/crawler/multi_mention_extractor.py:MultiMentionResult",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/multi_mention_extractor.py",
+      "target": "function:backend/crawler/multi_mention_extractor.py:extract_all_mentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/orchestrator.py",
+      "target": "function:backend/crawler/orchestrator.py:run_for_region",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/orchestrator.py",
+      "target": "function:backend/crawler/orchestrator.py:run_for_region",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/orchestrator.py",
+      "target": "file:backend/crawler/sources/tavily_crawler.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/crawler/orchestrator.py",
+      "target": "file:backend/crawler/sources/brave_crawler.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/crawler/orchestrator.py",
+      "target": "file:backend/crawler/sources/instagram_crawler.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/crawler/orchestrator.py",
+      "target": "file:backend/crawler/article_extractor.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/crawler/orchestrator.py",
+      "target": "file:backend/crawler/db_writer.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/crawler/place_resolver.py",
+      "target": "class:backend/crawler/place_resolver.py:ResolvedPlace",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/place_resolver.py",
+      "target": "function:backend/crawler/place_resolver.py:resolve_place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/place_resolver.py",
+      "target": "class:backend/crawler/place_resolver.py:ResolvedPlace",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/place_resolver.py",
+      "target": "function:backend/crawler/place_resolver.py:resolve_place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/sources/brave_crawler.py",
+      "target": "function:backend/crawler/sources/brave_crawler.py:fetch_brave_mentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/sources/brave_crawler.py",
+      "target": "function:backend/crawler/sources/brave_crawler.py:fetch_brave_mentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/sources/instagram_crawler.py",
+      "target": "function:backend/crawler/sources/instagram_crawler.py:fetch_instagram_mentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/sources/instagram_crawler.py",
+      "target": "function:backend/crawler/sources/instagram_crawler.py:fetch_instagram_mentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/sources/tavily_crawler.py",
+      "target": "class:backend/crawler/sources/tavily_crawler.py:RawMention",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/sources/tavily_crawler.py",
+      "target": "function:backend/crawler/sources/tavily_crawler.py:fetch_tavily_mentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/sources/tavily_crawler.py",
+      "target": "class:backend/crawler/sources/tavily_crawler.py:RawMention",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/sources/tavily_crawler.py",
+      "target": "function:backend/crawler/sources/tavily_crawler.py:fetch_tavily_mentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "file:backend/crawler/db_writer.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "file:backend/crawler/place_resolver.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/background/retroactive_matcher.py",
+      "target": "file:backend/crawler/db_writer.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/background/retroactive_matcher.py",
+      "target": "file:backend/crawler/multi_mention_extractor.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/background/retroactive_matcher.py",
+      "target": "file:backend/crawler/place_resolver.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/background/retroactive_matcher.py",
+      "target": "file:backend/crawler/llm_extractor.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

@@ -1,0 +1,891 @@
+{
+  "nodes": [
+    {
+      "id": "file:backend/background/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "backend/background/__init__.py",
+      "summary": "Empty package initializer that marks the background directory as a Python package.",
+      "tags": ["entry-point", "barrel", "package-init"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/background/enrich_job.py",
+      "type": "file",
+      "name": "enrich_job.py",
+      "filePath": "backend/background/enrich_job.py",
+      "summary": "Background job that fetches unenriched coffee shop places from Supabase and enriches them with Google Places details, including hours, website, phone, and rating.",
+      "tags": ["service", "background-job", "api-handler", "data-enrichment"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/background/enrich_job.py:enrich_unenriched_places",
+      "type": "function",
+      "name": "enrich_unenriched_places",
+      "filePath": "backend/background/enrich_job.py",
+      "lineRange": [24, 71],
+      "summary": "Async job that queries for places lacking Google Places metadata, calls the Google Places API for each, then persists the enriched details back to Supabase with rate-limiting delays.",
+      "tags": ["background-job", "api-handler", "data-enrichment"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/background/resolver_job.py",
+      "type": "file",
+      "name": "resolver_job.py",
+      "filePath": "backend/background/resolver_job.py",
+      "summary": "Background resolution pipeline that fetches unresolved mention rows from Supabase and maps raw place name strings to canonical place records, supporting both streaming (interleaved with crawl) and batch resolution modes.",
+      "tags": ["service", "background-job", "data-model", "pipeline"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/background/resolver_job.py:_fetch_unresolved_mentions",
+      "type": "function",
+      "name": "_fetch_unresolved_mentions",
+      "filePath": "backend/background/resolver_job.py",
+      "lineRange": [37, 48],
+      "summary": "Queries Supabase for mention rows where place_id is null, returning them for downstream resolution.",
+      "tags": ["utility", "database", "background-job"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/background/resolver_job.py:_resolve_batch",
+      "type": "function",
+      "name": "_resolve_batch",
+      "filePath": "backend/background/resolver_job.py",
+      "lineRange": [51, 108],
+      "summary": "Resolves a batch of unresolved mention names to canonical place records using a shared cache to avoid redundant lookups, then writes assigned place IDs back via db_writer.",
+      "tags": ["service", "background-job", "caching"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/background/resolver_job.py:resolve_streaming",
+      "type": "function",
+      "name": "resolve_streaming",
+      "filePath": "backend/background/resolver_job.py",
+      "lineRange": [111, 174],
+      "summary": "Runs concurrent resolution while a crawl is in progress, polling for new unresolved mentions; performs a final drain pass once the crawl signals completion, then recomputes boolean attributes for the region.",
+      "tags": ["service", "background-job", "async", "pipeline"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/background/resolver_job.py:resolve_for_region",
+      "type": "function",
+      "name": "resolve_for_region",
+      "filePath": "backend/background/resolver_job.py",
+      "lineRange": [177, 196],
+      "summary": "One-shot resolver for a region that runs a single resolution batch and recomputes boolean WFH attributes upon completion.",
+      "tags": ["service", "background-job"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/background/retroactive_matcher.py",
+      "type": "file",
+      "name": "retroactive_matcher.py",
+      "filePath": "backend/background/retroactive_matcher.py",
+      "summary": "Retroactively processes crawled mentions that lack a place name by re-fetching the source article or Reddit thread, re-running multi-mention LLM extraction, resolving each detected place, and writing new mention rows to Supabase.",
+      "tags": ["service", "background-job", "data-model", "pipeline"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/background/retroactive_matcher.py:run_retroactive_match",
+      "type": "function",
+      "name": "run_retroactive_match",
+      "filePath": "backend/background/retroactive_matcher.py",
+      "lineRange": [108, 258],
+      "summary": "Main orchestration function that retrieves empty-name mentions, refetches their source content (handling Reddit and generic URLs separately), runs LLM-based multi-mention extraction, resolves each place, and persists the results.",
+      "tags": ["service", "background-job", "pipeline", "async"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/background/retroactive_matcher.py:_fetch_reddit_text",
+      "type": "function",
+      "name": "_fetch_reddit_text",
+      "filePath": "backend/background/retroactive_matcher.py",
+      "lineRange": [38, 74],
+      "summary": "Fetches the full text of a Reddit post and its comments by calling the Reddit JSON API, extracting post body and recursively collecting comment bodies.",
+      "tags": ["utility", "api-handler", "async"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/background/scheduler.py",
+      "type": "file",
+      "name": "scheduler.py",
+      "filePath": "backend/background/scheduler.py",
+      "summary": "APScheduler-based cron scheduler that periodically re-crawls stale regions by checking their last_crawled_at timestamp and triggering seed jobs for regions past their freshness threshold.",
+      "tags": ["service", "background-job", "scheduler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/background/scheduler.py:start_scheduler",
+      "type": "function",
+      "name": "start_scheduler",
+      "filePath": "backend/background/scheduler.py",
+      "lineRange": [13, 35],
+      "summary": "Initializes the APScheduler AsyncIOScheduler, registers the stale-region recrawl job on a cron trigger, and starts the scheduler.",
+      "tags": ["service", "scheduler", "background-job"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/background/scheduler.py:_recrawl_stale_regions",
+      "type": "function",
+      "name": "_recrawl_stale_regions",
+      "filePath": "backend/background/scheduler.py",
+      "lineRange": [38, 51],
+      "summary": "Scheduled callback that lists all regions, identifies those past their crawl freshness window, sets their status to pending, and triggers a seed job for each.",
+      "tags": ["background-job", "scheduler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/background/seed_job.py",
+      "type": "file",
+      "name": "seed_job.py",
+      "filePath": "backend/background/seed_job.py",
+      "summary": "Entry point for seeding a region with new coffee shop data by concurrently running the crawler and the streaming resolver as asyncio tasks, then updating the region status in Supabase upon completion.",
+      "tags": ["service", "entry-point", "background-job", "pipeline"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/background/seed_job.py:trigger_seed",
+      "type": "function",
+      "name": "trigger_seed",
+      "filePath": "backend/background/seed_job.py",
+      "lineRange": [27, 105],
+      "summary": "Claims a region for crawling, launches concurrent crawler and resolver tasks via asyncio, waits for both to finish, then marks the region as seeded or failed in Supabase.",
+      "tags": ["entry-point", "background-job", "async", "pipeline"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/crawler/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "backend/crawler/__init__.py",
+      "summary": "Empty package initializer that marks the crawler directory as a Python package.",
+      "tags": ["entry-point", "barrel", "package-init"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/crawler/article_extractor.py",
+      "type": "file",
+      "name": "article_extractor.py",
+      "filePath": "backend/crawler/article_extractor.py",
+      "summary": "Uses the OpenAI API to extract coffee shop mentions from raw article text, returning structured MentionExtraction objects that include WFH attribute confidence scores for wifi, outlets, quiet environment, and laptop friendliness.",
+      "tags": ["service", "api-handler", "data-model", "llm-integration"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:backend/crawler/article_extractor.py:MentionExtraction",
+      "type": "class",
+      "name": "MentionExtraction",
+      "filePath": "backend/crawler/article_extractor.py",
+      "lineRange": [84, 90],
+      "summary": "Dataclass representing a single place mention extracted from article text, carrying the raw place name, an evidence snippet, and float confidence scores for WFH attributes.",
+      "tags": ["data-model", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/crawler/article_extractor.py:extract_all_mentions",
+      "type": "function",
+      "name": "extract_all_mentions",
+      "filePath": "backend/crawler/article_extractor.py",
+      "lineRange": [93, 157],
+      "summary": "Sends raw article text to the OpenAI chat completion API with a structured prompt, parses the JSON response, and returns a list of MentionExtraction objects for each identified coffee shop.",
+      "tags": ["api-handler", "llm-integration", "service"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/crawler/db_writer.py",
+      "type": "file",
+      "name": "db_writer.py",
+      "filePath": "backend/crawler/db_writer.py",
+      "summary": "Handles all Supabase write operations for the crawler, including upserting sources and mentions, assigning resolved place IDs to mentions, and recomputing aggregated boolean WFH attributes per region.",
+      "tags": ["service", "database", "data-model"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/crawler/db_writer.py:ensure_source_exists",
+      "type": "function",
+      "name": "ensure_source_exists",
+      "filePath": "backend/crawler/db_writer.py",
+      "lineRange": [27, 57],
+      "summary": "Upserts a source record (platform + handle/domain) into Supabase and returns the source row ID, using asyncio.to_thread to run the synchronous Supabase client off the event loop.",
+      "tags": ["database", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/crawler/db_writer.py:write_raw_mention",
+      "type": "function",
+      "name": "write_raw_mention",
+      "filePath": "backend/crawler/db_writer.py",
+      "lineRange": [60, 91],
+      "summary": "Upserts a raw mention row into Supabase with URL, source_id, place name, evidence snippet, and WFH confidence scores, ignoring duplicates on the url+place_name_raw composite key.",
+      "tags": ["database", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/crawler/db_writer.py:assign_place_to_mention",
+      "type": "function",
+      "name": "assign_place_to_mention",
+      "filePath": "backend/crawler/db_writer.py",
+      "lineRange": [94, 128],
+      "summary": "Upserts the resolved place record and updates the mention row to link it to the canonical place_id, atomically linking a raw mention to its resolved location.",
+      "tags": ["database", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/crawler/db_writer.py:recompute_boolean_attrs_for_region",
+      "type": "function",
+      "name": "recompute_boolean_attrs_for_region",
+      "filePath": "backend/crawler/db_writer.py",
+      "lineRange": [131, 197],
+      "summary": "Aggregates WFH attribute confidence scores across all mentions for each place in a region, computing majority-vote booleans for wifi, outlets, laptop-friendliness, and noise level, then persists the results to the places table.",
+      "tags": ["database", "service", "aggregation"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/crawler/llm_extractor.py",
+      "type": "file",
+      "name": "llm_extractor.py",
+      "filePath": "backend/crawler/llm_extractor.py",
+      "summary": "Uses the OpenAI API to extract WFH attributes for a specific known place from text, returning a structured ExtractionResult with boolean attributes and confidence scores.",
+      "tags": ["service", "api-handler", "llm-integration", "data-model"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:backend/crawler/llm_extractor.py:ExtractionResult",
+      "type": "class",
+      "name": "ExtractionResult",
+      "filePath": "backend/crawler/llm_extractor.py",
+      "lineRange": [49, 59],
+      "summary": "Dataclass holding LLM-extracted WFH attribute values for a place: boolean flags for wifi/outlets/laptop-friendliness, noise level, seating comfort, and float confidence scores.",
+      "tags": ["data-model", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/crawler/llm_extractor.py:extract_wfh_attributes",
+      "type": "function",
+      "name": "extract_wfh_attributes",
+      "filePath": "backend/crawler/llm_extractor.py",
+      "lineRange": [65, 95],
+      "summary": "Submits raw text and a known place name to OpenAI and extracts WFH suitability attributes, returning an ExtractionResult or None if the model cannot confidently assess the location.",
+      "tags": ["api-handler", "llm-integration", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/crawler/multi_mention_extractor.py",
+      "type": "file",
+      "name": "multi_mention_extractor.py",
+      "filePath": "backend/crawler/multi_mention_extractor.py",
+      "summary": "Uses the OpenAI API to simultaneously identify multiple coffee shop mentions within a single piece of text, extracting per-mention WFH attributes and returning a list of MultiMentionResult objects.",
+      "tags": ["service", "api-handler", "llm-integration", "data-model"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:backend/crawler/multi_mention_extractor.py:MultiMentionResult",
+      "type": "class",
+      "name": "MultiMentionResult",
+      "filePath": "backend/crawler/multi_mention_extractor.py",
+      "lineRange": [58, 68],
+      "summary": "Dataclass representing a single place extracted from a multi-mention LLM pass, carrying the place name, evidence snippet, boolean WFH flags, and confidence scores.",
+      "tags": ["data-model", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/crawler/multi_mention_extractor.py:extract_all_mentions",
+      "type": "function",
+      "name": "extract_all_mentions",
+      "filePath": "backend/crawler/multi_mention_extractor.py",
+      "lineRange": [71, 128],
+      "summary": "Sends raw text to OpenAI with a prompt designed to identify all mentioned coffee shops at once, parses the JSON array response, and constructs MultiMentionResult objects for each detected place.",
+      "tags": ["api-handler", "llm-integration", "service"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/crawler/orchestrator.py",
+      "type": "file",
+      "name": "orchestrator.py",
+      "filePath": "backend/crawler/orchestrator.py",
+      "summary": "Top-level crawler orchestrator that coordinates Tavily, Brave, and Instagram source crawlers for a region, deduplicates results by URL, runs LLM-based mention extraction on each article, and writes raw mentions to Supabase.",
+      "tags": ["service", "entry-point", "pipeline", "orchestration"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:backend/crawler/orchestrator.py:run_for_region",
+      "type": "function",
+      "name": "run_for_region",
+      "filePath": "backend/crawler/orchestrator.py",
+      "lineRange": [47, 149],
+      "summary": "Fetches raw mentions from all configured crawlers for a region, deduplicates by URL, calls the article extractor on each, and persists extracted mentions via db_writer.",
+      "tags": ["service", "pipeline", "entry-point"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/crawler/place_resolver.py",
+      "type": "file",
+      "name": "place_resolver.py",
+      "filePath": "backend/crawler/place_resolver.py",
+      "summary": "Resolves raw place name strings to canonical place records by first using OpenAI to normalize the name, then querying the Google Places text-search API and ranking candidates by fuzzy string similarity and geographic proximity.",
+      "tags": ["service", "api-handler", "utility", "llm-integration"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:backend/crawler/place_resolver.py:ResolvedPlace",
+      "type": "class",
+      "name": "ResolvedPlace",
+      "filePath": "backend/crawler/place_resolver.py",
+      "lineRange": [39, 44],
+      "summary": "Dataclass representing a successfully resolved place with its Google Places ID, canonical name, latitude/longitude coordinates, and formatted address.",
+      "tags": ["data-model", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/crawler/place_resolver.py:resolve_place",
+      "type": "function",
+      "name": "resolve_place",
+      "filePath": "backend/crawler/place_resolver.py",
+      "lineRange": [56, 178],
+      "summary": "Resolves a raw place name to a ResolvedPlace by normalizing via LLM, querying Google Places text search, scoring candidates by name similarity and haversine distance, and returning the best match above threshold.",
+      "tags": ["service", "api-handler", "utility"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:backend/crawler/sources/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "backend/crawler/sources/__init__.py",
+      "summary": "Empty package initializer that marks the crawler/sources directory as a Python package.",
+      "tags": ["entry-point", "barrel", "package-init"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:backend/crawler/sources/brave_crawler.py",
+      "type": "file",
+      "name": "brave_crawler.py",
+      "filePath": "backend/crawler/sources/brave_crawler.py",
+      "summary": "Fetches coffee shop article URLs from the Brave Search API using preconfigured city-specific queries, deduplicates results against a shared URL set, and returns a list of RawMention objects.",
+      "tags": ["service", "api-handler", "crawler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/crawler/sources/brave_crawler.py:fetch_brave_mentions",
+      "type": "function",
+      "name": "fetch_brave_mentions",
+      "filePath": "backend/crawler/sources/brave_crawler.py",
+      "lineRange": [39, 84],
+      "summary": "Iterates city-specific search queries, calls the Brave Search API for each, deduplicates URLs, and appends RawMention entries for unique results with rate-limiting between requests.",
+      "tags": ["api-handler", "crawler", "async"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/crawler/sources/instagram_crawler.py",
+      "type": "file",
+      "name": "instagram_crawler.py",
+      "filePath": "backend/crawler/sources/instagram_crawler.py",
+      "summary": "Scrapes recent Instagram posts from curated coffee-shop accounts using the unofficial Instagram GraphQL API, extracting post URLs and captions as RawMention objects.",
+      "tags": ["service", "api-handler", "crawler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:backend/crawler/sources/instagram_crawler.py:fetch_instagram_mentions",
+      "type": "function",
+      "name": "fetch_instagram_mentions",
+      "filePath": "backend/crawler/sources/instagram_crawler.py",
+      "lineRange": [21, 71],
+      "summary": "Iterates a list of Instagram accounts, fetches recent timeline media via the unofficial GraphQL endpoint, and constructs RawMention objects from post shortcodes and captions.",
+      "tags": ["api-handler", "crawler", "async"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:backend/crawler/sources/tavily_crawler.py",
+      "type": "file",
+      "name": "tavily_crawler.py",
+      "filePath": "backend/crawler/sources/tavily_crawler.py",
+      "summary": "Fetches coffee shop article content from the Tavily Search API using city-specific queries, optionally scraping full page content for each result, and returns RawMention objects with full text when available.",
+      "tags": ["service", "api-handler", "crawler", "data-model"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:backend/crawler/sources/tavily_crawler.py:RawMention",
+      "type": "class",
+      "name": "RawMention",
+      "filePath": "backend/crawler/sources/tavily_crawler.py",
+      "lineRange": [51, 56],
+      "summary": "Dataclass representing a raw article mention retrieved from a search crawler, carrying the source URL, snippet, originating query, crawler source label, and optional full page content.",
+      "tags": ["data-model", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:backend/crawler/sources/tavily_crawler.py:fetch_tavily_mentions",
+      "type": "function",
+      "name": "fetch_tavily_mentions",
+      "filePath": "backend/crawler/sources/tavily_crawler.py",
+      "lineRange": [71, 124],
+      "summary": "Queries the Tavily Search API for each city-specific search query, optionally scrapes full article content for each result URL, deduplicates by URL, and returns a list of RawMention objects.",
+      "tags": ["api-handler", "crawler", "async"],
+      "complexity": "complex"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:backend/background/enrich_job.py",
+      "target": "function:backend/background/enrich_job.py:enrich_unenriched_places",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/enrich_job.py",
+      "target": "function:backend/background/enrich_job.py:enrich_unenriched_places",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "function:backend/background/resolver_job.py:_fetch_unresolved_mentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "function:backend/background/resolver_job.py:_resolve_batch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "function:backend/background/resolver_job.py:resolve_streaming",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "function:backend/background/resolver_job.py:resolve_for_region",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "function:backend/background/resolver_job.py:_fetch_unresolved_mentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "function:backend/background/resolver_job.py:_resolve_batch",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "function:backend/background/resolver_job.py:resolve_streaming",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "function:backend/background/resolver_job.py:resolve_for_region",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/retroactive_matcher.py",
+      "target": "function:backend/background/retroactive_matcher.py:run_retroactive_match",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/retroactive_matcher.py",
+      "target": "function:backend/background/retroactive_matcher.py:_fetch_reddit_text",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/retroactive_matcher.py",
+      "target": "function:backend/background/retroactive_matcher.py:run_retroactive_match",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/scheduler.py",
+      "target": "function:backend/background/scheduler.py:start_scheduler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/scheduler.py",
+      "target": "function:backend/background/scheduler.py:_recrawl_stale_regions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/scheduler.py",
+      "target": "function:backend/background/scheduler.py:start_scheduler",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/scheduler.py",
+      "target": "file:backend/background/seed_job.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/background/seed_job.py",
+      "target": "function:backend/background/seed_job.py:trigger_seed",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/background/seed_job.py",
+      "target": "function:backend/background/seed_job.py:trigger_seed",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/seed_job.py",
+      "target": "file:backend/crawler/orchestrator.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/background/seed_job.py",
+      "target": "file:backend/background/resolver_job.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/crawler/article_extractor.py",
+      "target": "class:backend/crawler/article_extractor.py:MentionExtraction",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/article_extractor.py",
+      "target": "function:backend/crawler/article_extractor.py:extract_all_mentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/article_extractor.py",
+      "target": "class:backend/crawler/article_extractor.py:MentionExtraction",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/article_extractor.py",
+      "target": "function:backend/crawler/article_extractor.py:extract_all_mentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/db_writer.py",
+      "target": "function:backend/crawler/db_writer.py:ensure_source_exists",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/db_writer.py",
+      "target": "function:backend/crawler/db_writer.py:write_raw_mention",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/db_writer.py",
+      "target": "function:backend/crawler/db_writer.py:assign_place_to_mention",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/db_writer.py",
+      "target": "function:backend/crawler/db_writer.py:recompute_boolean_attrs_for_region",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/db_writer.py",
+      "target": "function:backend/crawler/db_writer.py:ensure_source_exists",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/db_writer.py",
+      "target": "function:backend/crawler/db_writer.py:write_raw_mention",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/db_writer.py",
+      "target": "function:backend/crawler/db_writer.py:assign_place_to_mention",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/db_writer.py",
+      "target": "function:backend/crawler/db_writer.py:recompute_boolean_attrs_for_region",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/llm_extractor.py",
+      "target": "class:backend/crawler/llm_extractor.py:ExtractionResult",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/llm_extractor.py",
+      "target": "function:backend/crawler/llm_extractor.py:extract_wfh_attributes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/llm_extractor.py",
+      "target": "class:backend/crawler/llm_extractor.py:ExtractionResult",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/llm_extractor.py",
+      "target": "function:backend/crawler/llm_extractor.py:extract_wfh_attributes",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/multi_mention_extractor.py",
+      "target": "class:backend/crawler/multi_mention_extractor.py:MultiMentionResult",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/multi_mention_extractor.py",
+      "target": "function:backend/crawler/multi_mention_extractor.py:extract_all_mentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/multi_mention_extractor.py",
+      "target": "class:backend/crawler/multi_mention_extractor.py:MultiMentionResult",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/multi_mention_extractor.py",
+      "target": "function:backend/crawler/multi_mention_extractor.py:extract_all_mentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/orchestrator.py",
+      "target": "function:backend/crawler/orchestrator.py:run_for_region",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/orchestrator.py",
+      "target": "function:backend/crawler/orchestrator.py:run_for_region",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/orchestrator.py",
+      "target": "file:backend/crawler/sources/tavily_crawler.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/crawler/orchestrator.py",
+      "target": "file:backend/crawler/sources/brave_crawler.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/crawler/orchestrator.py",
+      "target": "file:backend/crawler/sources/instagram_crawler.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/crawler/orchestrator.py",
+      "target": "file:backend/crawler/article_extractor.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/crawler/orchestrator.py",
+      "target": "file:backend/crawler/db_writer.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/crawler/place_resolver.py",
+      "target": "class:backend/crawler/place_resolver.py:ResolvedPlace",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/place_resolver.py",
+      "target": "function:backend/crawler/place_resolver.py:resolve_place",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/place_resolver.py",
+      "target": "class:backend/crawler/place_resolver.py:ResolvedPlace",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/place_resolver.py",
+      "target": "function:backend/crawler/place_resolver.py:resolve_place",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/sources/brave_crawler.py",
+      "target": "function:backend/crawler/sources/brave_crawler.py:fetch_brave_mentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/sources/brave_crawler.py",
+      "target": "function:backend/crawler/sources/brave_crawler.py:fetch_brave_mentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/sources/instagram_crawler.py",
+      "target": "function:backend/crawler/sources/instagram_crawler.py:fetch_instagram_mentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/sources/instagram_crawler.py",
+      "target": "function:backend/crawler/sources/instagram_crawler.py:fetch_instagram_mentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/sources/tavily_crawler.py",
+      "target": "class:backend/crawler/sources/tavily_crawler.py:RawMention",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/sources/tavily_crawler.py",
+      "target": "function:backend/crawler/sources/tavily_crawler.py:fetch_tavily_mentions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:backend/crawler/sources/tavily_crawler.py",
+      "target": "class:backend/crawler/sources/tavily_crawler.py:RawMention",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/crawler/sources/tavily_crawler.py",
+      "target": "function:backend/crawler/sources/tavily_crawler.py:fetch_tavily_mentions",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "file:backend/crawler/db_writer.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/background/resolver_job.py",
+      "target": "file:backend/crawler/place_resolver.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/background/retroactive_matcher.py",
+      "target": "file:backend/crawler/db_writer.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/background/retroactive_matcher.py",
+      "target": "file:backend/crawler/multi_mention_extractor.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/background/retroactive_matcher.py",
+      "target": "file:backend/crawler/place_resolver.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:backend/background/retroactive_matcher.py",
+      "target": "file:backend/crawler/llm_extractor.py",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

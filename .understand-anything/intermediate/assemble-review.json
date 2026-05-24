@@ -1,0 +1,16 @@
+{
+  "fixedSectionOk": true,
+  "nodesRecovered": 2,
+  "edgesRestored": 4,
+  "crossBatchEdgesAdded": 0,
+  "typesRemapped": 0,
+  "complexityRemapped": 0,
+  "notes": [
+    "Fixed section had no patterns to review — the merge script report listed zero mechanical fix counts, only 4 'could not fix' items.",
+    "The 4 dropped edges all referenced two missing function nodes: function:coffee-map/app/manifest.ts:manifest and function:coffee-map/app/page.tsx:Home. Both batch-1 edges pointed at these functions but the corresponding function-level nodes were never emitted by the LLM for those files — only file-level nodes were produced.",
+    "Recovered function:coffee-map/app/manifest.ts:manifest from manifest.ts (lines 3-32) and function:coffee-map/app/page.tsx:Home from page.tsx (lines 3-9) by reading the actual source files.",
+    "All 7 import-map edges were already present in the assembled graph before review. No cross-batch edges needed to be added.",
+    "No unknown node types or unknown complexity values were found in the graph. All nodes use valid type prefixes and complexity values (simple/moderate/complex).",
+    "Data quality is good overall. The only upstream issue was two files (manifest.ts, page.tsx) for which the LLM produced file nodes but omitted the corresponding function nodes, leaving their contains/exports edges dangling."
+  ]
+}

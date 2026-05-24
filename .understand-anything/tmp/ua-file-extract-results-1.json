@@ -1,0 +1,1676 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 24,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "coffee-map/app/layout.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 34,
+      "nonEmptyLines": 31,
+      "functions": [
+        {
+          "name": "RootLayout",
+          "startLine": 19,
+          "endLine": 34,
+          "params": [
+            "{ children }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "metadata",
+          "line": 5,
+          "isDefault": false
+        },
+        {
+          "name": "RootLayout",
+          "line": 19,
+          "isDefault": true
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/app/manifest.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 31,
+      "functions": [
+        {
+          "name": "manifest",
+          "startLine": 3,
+          "endLine": 32,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "manifest",
+          "line": 3,
+          "isDefault": true
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/app/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 9,
+      "nonEmptyLines": 8,
+      "functions": [
+        {
+          "name": "Home",
+          "startLine": 3,
+          "endLine": 9,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Home",
+          "line": 3,
+          "isDefault": true
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/app/api/places/[place_id]/mentions/route.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 27,
+      "nonEmptyLines": 26,
+      "functions": [
+        {
+          "name": "GET",
+          "startLine": 4,
+          "endLine": 27,
+          "params": [
+            "_request",
+            "{ params }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "GET",
+          "line": 4,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "GET",
+          "callee": "Response.json",
+          "lineNumber": 11
+        },
+        {
+          "caller": "GET",
+          "callee": "fetch",
+          "lineNumber": 15
+        },
+        {
+          "caller": "GET",
+          "callee": "upstream.json",
+          "lineNumber": 19
+        },
+        {
+          "caller": "GET",
+          "callee": "Response.json",
+          "lineNumber": 20
+        },
+        {
+          "caller": "GET",
+          "callee": "Response.json",
+          "lineNumber": 22
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/app/api/places/data/route.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 48,
+      "nonEmptyLines": 42,
+      "functions": [
+        {
+          "name": "GET",
+          "startLine": 5,
+          "endLine": 48,
+          "params": [
+            "req"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "GET",
+          "line": 5,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "GET",
+          "callee": "searchParams.get",
+          "lineNumber": 7
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 10
+        },
+        {
+          "caller": "GET",
+          "callee": "fetch",
+          "lineNumber": 17
+        },
+        {
+          "caller": "GET",
+          "callee": "response.text",
+          "lineNumber": 28
+        },
+        {
+          "caller": "GET",
+          "callee": "console.error",
+          "lineNumber": 29
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 30
+        },
+        {
+          "caller": "GET",
+          "callee": "response.json",
+          "lineNumber": 36
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 37
+        },
+        {
+          "caller": "GET",
+          "callee": "console.error",
+          "lineNumber": 39
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 40
+        },
+        {
+          "caller": "GET",
+          "callee": "String",
+          "lineNumber": 43
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/app/api/places/enrich/[placeId]/route.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 50,
+      "nonEmptyLines": 44,
+      "functions": [
+        {
+          "name": "POST",
+          "startLine": 5,
+          "endLine": 50,
+          "params": [
+            "req",
+            "{ params }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "POST",
+          "line": 5,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "POST",
+          "callee": "NextResponse.json",
+          "lineNumber": 12
+        },
+        {
+          "caller": "POST",
+          "callee": "fetch",
+          "lineNumber": 19
+        },
+        {
+          "caller": "POST",
+          "callee": "response.text",
+          "lineNumber": 30
+        },
+        {
+          "caller": "POST",
+          "callee": "console.error",
+          "lineNumber": 31
+        },
+        {
+          "caller": "POST",
+          "callee": "NextResponse.json",
+          "lineNumber": 32
+        },
+        {
+          "caller": "POST",
+          "callee": "response.json",
+          "lineNumber": 38
+        },
+        {
+          "caller": "POST",
+          "callee": "NextResponse.json",
+          "lineNumber": 39
+        },
+        {
+          "caller": "POST",
+          "callee": "console.error",
+          "lineNumber": 41
+        },
+        {
+          "caller": "POST",
+          "callee": "NextResponse.json",
+          "lineNumber": 42
+        },
+        {
+          "caller": "POST",
+          "callee": "String",
+          "lineNumber": 45
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/app/api/places/route.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 29,
+      "nonEmptyLines": 27,
+      "functions": [
+        {
+          "name": "POST",
+          "startLine": 6,
+          "endLine": 29,
+          "params": [
+            "request"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "POST",
+          "line": 6,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "POST",
+          "callee": "Response.json",
+          "lineNumber": 9
+        },
+        {
+          "caller": "POST",
+          "callee": "request.json",
+          "lineNumber": 13
+        },
+        {
+          "caller": "POST",
+          "callee": "fetch",
+          "lineNumber": 14
+        },
+        {
+          "caller": "POST",
+          "callee": "JSON.stringify",
+          "lineNumber": 17
+        },
+        {
+          "caller": "POST",
+          "callee": "upstream.json",
+          "lineNumber": 21
+        },
+        {
+          "caller": "POST",
+          "callee": "Response.json",
+          "lineNumber": 22
+        },
+        {
+          "caller": "POST",
+          "callee": "Response.json",
+          "lineNumber": 24
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/app/api/places/status/route.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 48,
+      "nonEmptyLines": 42,
+      "functions": [
+        {
+          "name": "GET",
+          "startLine": 5,
+          "endLine": 48,
+          "params": [
+            "req"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "GET",
+          "line": 5,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "GET",
+          "callee": "searchParams.get",
+          "lineNumber": 7
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 10
+        },
+        {
+          "caller": "GET",
+          "callee": "fetch",
+          "lineNumber": 17
+        },
+        {
+          "caller": "GET",
+          "callee": "response.text",
+          "lineNumber": 28
+        },
+        {
+          "caller": "GET",
+          "callee": "console.error",
+          "lineNumber": 29
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 30
+        },
+        {
+          "caller": "GET",
+          "callee": "response.json",
+          "lineNumber": 36
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 37
+        },
+        {
+          "caller": "GET",
+          "callee": "console.error",
+          "lineNumber": 39
+        },
+        {
+          "caller": "GET",
+          "callee": "NextResponse.json",
+          "lineNumber": 40
+        },
+        {
+          "caller": "GET",
+          "callee": "String",
+          "lineNumber": 43
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/app/api/regions/route.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 23,
+      "nonEmptyLines": 21,
+      "functions": [
+        {
+          "name": "GET",
+          "startLine": 5,
+          "endLine": 23,
+          "params": [
+            "request"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "GET",
+          "line": 5,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "GET",
+          "callee": "Response.json",
+          "lineNumber": 8
+        },
+        {
+          "caller": "GET",
+          "callee": "request.headers.get",
+          "lineNumber": 11
+        },
+        {
+          "caller": "GET",
+          "callee": "fetch",
+          "lineNumber": 14
+        },
+        {
+          "caller": "GET",
+          "callee": "upstream.json",
+          "lineNumber": 18
+        },
+        {
+          "caller": "GET",
+          "callee": "Response.json",
+          "lineNumber": 19
+        },
+        {
+          "caller": "GET",
+          "callee": "Response.json",
+          "lineNumber": 21
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/components/map/AttributePills.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 38,
+      "nonEmptyLines": 32,
+      "functions": [
+        {
+          "name": "AttributePills",
+          "startLine": 13,
+          "endLine": 38,
+          "params": [
+            "{ place }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AttributePills",
+          "line": 13,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AttributePills",
+          "callee": "pills.push",
+          "lineNumber": 17
+        },
+        {
+          "caller": "AttributePills",
+          "callee": "pills.push",
+          "lineNumber": 18
+        },
+        {
+          "caller": "AttributePills",
+          "callee": "pills.push",
+          "lineNumber": 19
+        },
+        {
+          "caller": "AttributePills",
+          "callee": "pills.push",
+          "lineNumber": 21
+        },
+        {
+          "caller": "AttributePills",
+          "callee": "pills.map",
+          "lineNumber": 28
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/components/map/ColdRegionBanner.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 41,
+      "nonEmptyLines": 35,
+      "functions": [
+        {
+          "name": "ColdRegionBanner",
+          "startLine": 14,
+          "endLine": 41,
+          "params": [
+            "{ visible }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ColdRegionBanner",
+          "line": 14,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ColdRegionBanner",
+          "callee": "useState",
+          "lineNumber": 15
+        },
+        {
+          "caller": "ColdRegionBanner",
+          "callee": "useEffect",
+          "lineNumber": 17
+        },
+        {
+          "caller": "ColdRegionBanner",
+          "callee": "setDismissed",
+          "lineNumber": 19
+        },
+        {
+          "caller": "ColdRegionBanner",
+          "callee": "setTimeout",
+          "lineNumber": 22
+        },
+        {
+          "caller": "ColdRegionBanner",
+          "callee": "setDismissed",
+          "lineNumber": 22
+        },
+        {
+          "caller": "ColdRegionBanner",
+          "callee": "clearTimeout",
+          "lineNumber": 23
+        },
+        {
+          "caller": "ColdRegionBanner",
+          "callee": "setDismissed",
+          "lineNumber": 33
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/components/map/CrawlingIndicator.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 38,
+      "nonEmptyLines": 35,
+      "functions": [
+        {
+          "name": "CrawlingIndicator",
+          "startLine": 12,
+          "endLine": 38,
+          "params": [
+            "{ visible }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "CrawlingIndicator",
+          "line": 12,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/components/map/InfoCard.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 137,
+      "nonEmptyLines": 125,
+      "functions": [
+        {
+          "name": "formatPrimaryType",
+          "startLine": 15,
+          "endLine": 17,
+          "params": [
+            "type"
+          ]
+        },
+        {
+          "name": "todaysHours",
+          "startLine": 19,
+          "endLine": 26,
+          "params": [
+            "place"
+          ]
+        },
+        {
+          "name": "googleMapsUrl",
+          "startLine": 28,
+          "endLine": 31,
+          "params": [
+            "place"
+          ]
+        },
+        {
+          "name": "InfoCard",
+          "startLine": 38,
+          "endLine": 137,
+          "params": [
+            "{ placeId, place, onClose }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "InfoCard",
+          "line": 38,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "formatPrimaryType",
+          "callee": "type.replace(/_/g, ' ').replace",
+          "lineNumber": 16
+        },
+        {
+          "caller": "formatPrimaryType",
+          "callee": "type.replace",
+          "lineNumber": 16
+        },
+        {
+          "caller": "formatPrimaryType",
+          "callee": "c.toUpperCase",
+          "lineNumber": 16
+        },
+        {
+          "caller": "todaysHours",
+          "callee": "new Date().getDay",
+          "lineNumber": 24
+        },
+        {
+          "caller": "googleMapsUrl",
+          "callee": "encodeURIComponent",
+          "lineNumber": 29
+        },
+        {
+          "caller": "InfoCard",
+          "callee": "useMentions",
+          "lineNumber": 39
+        },
+        {
+          "caller": "InfoCard",
+          "callee": "todaysHours",
+          "lineNumber": 40
+        },
+        {
+          "caller": "InfoCard",
+          "callee": "place.photos.map",
+          "lineNumber": 71
+        },
+        {
+          "caller": "InfoCard",
+          "callee": "formatPrimaryType",
+          "lineNumber": 86
+        },
+        {
+          "caller": "InfoCard",
+          "callee": "place.rating.toFixed",
+          "lineNumber": 92
+        },
+        {
+          "caller": "InfoCard",
+          "callee": "place.user_rating_count.toLocaleString",
+          "lineNumber": 94
+        },
+        {
+          "caller": "InfoCard",
+          "callee": "googleMapsUrl",
+          "lineNumber": 99
+        },
+        {
+          "caller": "InfoCard",
+          "callee": "mentions.map",
+          "lineNumber": 129
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/components/map/MapContainer.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 128,
+      "nonEmptyLines": 110,
+      "functions": [
+        {
+          "name": "MapContainer",
+          "startLine": 23,
+          "endLine": 128,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "MapContainer",
+          "line": 23,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "MapContainer",
+          "callee": "useRef",
+          "lineNumber": 24
+        },
+        {
+          "caller": "MapContainer",
+          "callee": "useRef",
+          "lineNumber": 25
+        },
+        {
+          "caller": "MapContainer",
+          "callee": "useRef",
+          "lineNumber": 26
+        },
+        {
+          "caller": "MapContainer",
+          "callee": "useState",
+          "lineNumber": 27
+        },
+        {
+          "caller": "MapContainer",
+          "callee": "useState",
+          "lineNumber": 28
+        },
+        {
+          "caller": "MapContainer",
+          "callee": "useMapBounds",
+          "lineNumber": 30
+        },
+        {
+          "caller": "MapContainer",
+          "callee": "usePlaces",
+          "lineNumber": 31
+        },
+        {
+          "caller": "MapContainer",
+          "callee": "useEffect",
+          "lineNumber": 34
+        },
+        {
+          "caller": "initMap",
+          "callee": "console.warn",
+          "lineNumber": 43
+        },
+        {
+          "caller": "initMap",
+          "callee": "navigator.geolocation.getCurrentPosition",
+          "lineNumber": 57
+        },
+        {
+          "caller": "initMap",
+          "callee": "map.panTo",
+          "lineNumber": 60
+        },
+        {
+          "caller": "initMap",
+          "callee": "map.setZoom",
+          "lineNumber": 61
+        },
+        {
+          "caller": "initMap",
+          "callee": "google.maps.importLibrary",
+          "lineNumber": 64
+        },
+        {
+          "caller": "initMap",
+          "callee": "document.createElement",
+          "lineNumber": 65
+        },
+        {
+          "caller": "initMap",
+          "callee": "setMapReady",
+          "lineNumber": 80
+        },
+        {
+          "caller": "MapContainer",
+          "callee": "initMap",
+          "lineNumber": 84
+        },
+        {
+          "caller": "MapContainer",
+          "callee": "document.querySelector",
+          "lineNumber": 86
+        },
+        {
+          "caller": "MapContainer",
+          "callee": "script?.addEventListener",
+          "lineNumber": 87
+        },
+        {
+          "caller": "MapContainer",
+          "callee": "script?.removeEventListener",
+          "lineNumber": 88
+        },
+        {
+          "caller": "handlePinClick",
+          "callee": "places.find",
+          "lineNumber": 93
+        },
+        {
+          "caller": "handlePinClick",
+          "callee": "setSelectedPlace",
+          "lineNumber": 94
+        },
+        {
+          "caller": "handleCloseCard",
+          "callee": "setSelectedPlace",
+          "lineNumber": 97
+        },
+        {
+          "caller": "MapContainer",
+          "callee": "places.map",
+          "lineNumber": 105
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/components/map/PlacePin.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 48,
+      "nonEmptyLines": 40,
+      "functions": [
+        {
+          "name": "PlacePin",
+          "startLine": 18,
+          "endLine": 48,
+          "params": [
+            "{ map, place, onClick }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "PlacePin",
+          "line": 18,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "PlacePin",
+          "callee": "useRef",
+          "lineNumber": 19
+        },
+        {
+          "caller": "PlacePin",
+          "callee": "useEffect",
+          "lineNumber": 21
+        },
+        {
+          "caller": "PlacePin",
+          "callee": "marker.addListener",
+          "lineNumber": 36
+        },
+        {
+          "caller": "PlacePin",
+          "callee": "onClick",
+          "lineNumber": 36
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/components/ui/MentionCard.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 30,
+      "nonEmptyLines": 27,
+      "functions": [
+        {
+          "name": "MentionCard",
+          "startLine": 8,
+          "endLine": 30,
+          "params": [
+            "{ mention }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "MentionCard",
+          "line": 8,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/components/ui/PlatformPill.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 23,
+      "nonEmptyLines": 20,
+      "functions": [
+        {
+          "name": "PlatformPill",
+          "startLine": 15,
+          "endLine": 23,
+          "params": [
+            "{ platform }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "PlatformPill",
+          "line": 15,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "PlatformPill",
+          "callee": "platform.replace",
+          "lineNumber": 20
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/components/ui/ScoreBadge.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 18,
+      "nonEmptyLines": 16,
+      "functions": [
+        {
+          "name": "ScoreBadge",
+          "startLine": 5,
+          "endLine": 18,
+          "params": [
+            "{ score }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ScoreBadge",
+          "line": 5,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ScoreBadge",
+          "callee": "score.toFixed",
+          "lineNumber": 15
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/hooks/useMapBounds.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 42,
+      "nonEmptyLines": 36,
+      "functions": [
+        {
+          "name": "useMapBounds",
+          "startLine": 12,
+          "endLine": 42,
+          "params": [
+            "map"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "useMapBounds",
+          "line": 12,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "useMapBounds",
+          "callee": "useState",
+          "lineNumber": 13
+        },
+        {
+          "caller": "useMapBounds",
+          "callee": "useRef",
+          "lineNumber": 14
+        },
+        {
+          "caller": "useMapBounds",
+          "callee": "useEffect",
+          "lineNumber": 16
+        },
+        {
+          "caller": "useMapBounds",
+          "callee": "map.addListener",
+          "lineNumber": 19
+        },
+        {
+          "caller": "useMapBounds",
+          "callee": "clearTimeout",
+          "lineNumber": 20
+        },
+        {
+          "caller": "useMapBounds",
+          "callee": "setTimeout",
+          "lineNumber": 21
+        },
+        {
+          "caller": "useMapBounds",
+          "callee": "map.getBounds",
+          "lineNumber": 22
+        },
+        {
+          "caller": "useMapBounds",
+          "callee": "b.getNorthEast",
+          "lineNumber": 24
+        },
+        {
+          "caller": "useMapBounds",
+          "callee": "b.getSouthWest",
+          "lineNumber": 25
+        },
+        {
+          "caller": "useMapBounds",
+          "callee": "setBounds",
+          "lineNumber": 26
+        },
+        {
+          "caller": "useMapBounds",
+          "callee": "ne.lat",
+          "lineNumber": 27
+        },
+        {
+          "caller": "useMapBounds",
+          "callee": "sw.lat",
+          "lineNumber": 28
+        },
+        {
+          "caller": "useMapBounds",
+          "callee": "ne.lng",
+          "lineNumber": 29
+        },
+        {
+          "caller": "useMapBounds",
+          "callee": "sw.lng",
+          "lineNumber": 30
+        },
+        {
+          "caller": "useMapBounds",
+          "callee": "google.maps.event.removeListener",
+          "lineNumber": 36
+        },
+        {
+          "caller": "useMapBounds",
+          "callee": "clearTimeout",
+          "lineNumber": 37
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/hooks/useMentions.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 44,
+      "nonEmptyLines": 36,
+      "functions": [
+        {
+          "name": "useMentions",
+          "startLine": 11,
+          "endLine": 44,
+          "params": [
+            "placeId"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "useMentions",
+          "line": 11,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "useMentions",
+          "callee": "useState",
+          "lineNumber": 15
+        },
+        {
+          "caller": "useMentions",
+          "callee": "useState",
+          "lineNumber": 16
+        },
+        {
+          "caller": "useMentions",
+          "callee": "useRef",
+          "lineNumber": 17
+        },
+        {
+          "caller": "useMentions",
+          "callee": "useEffect",
+          "lineNumber": 19
+        },
+        {
+          "caller": "useMentions",
+          "callee": "setMentions",
+          "lineNumber": 21
+        },
+        {
+          "caller": "useMentions",
+          "callee": "abortRef.current?.abort",
+          "lineNumber": 25
+        },
+        {
+          "caller": "useMentions",
+          "callee": "setIsLoading",
+          "lineNumber": 29
+        },
+        {
+          "caller": "useMentions",
+          "callee": "fetchMentions(placeId, controller.signal)\n      .then((data) => {\n        if (controller.signal.aborted) return\n        setMentions(data.mentions)\n      })\n      .finally",
+          "lineNumber": 31
+        },
+        {
+          "caller": "useMentions",
+          "callee": "fetchMentions(placeId, controller.signal)\n      .then",
+          "lineNumber": 31
+        },
+        {
+          "caller": "useMentions",
+          "callee": "fetchMentions",
+          "lineNumber": 31
+        },
+        {
+          "caller": "useMentions",
+          "callee": "setMentions",
+          "lineNumber": 34
+        },
+        {
+          "caller": "useMentions",
+          "callee": "setIsLoading",
+          "lineNumber": 37
+        },
+        {
+          "caller": "useMentions",
+          "callee": "controller.abort",
+          "lineNumber": 40
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/hooks/usePlaces.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 73,
+      "nonEmptyLines": 64,
+      "functions": [
+        {
+          "name": "usePlaces",
+          "startLine": 15,
+          "endLine": 73,
+          "params": [
+            "bounds"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "usePlaces",
+          "line": 15,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "usePlaces",
+          "callee": "useState",
+          "lineNumber": 20
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "useState",
+          "lineNumber": 21
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "useState",
+          "lineNumber": 22
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "useRef",
+          "lineNumber": 23
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "JSON.stringify",
+          "lineNumber": 25
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "useEffect",
+          "lineNumber": 27
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "abortRef.current?.abort",
+          "lineNumber": 31
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "boundsToCenter",
+          "lineNumber": 35
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "setIsLoading",
+          "lineNumber": 36
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "fetchNearbyPlaces(\n      { lat: center.lat, lng: center.lng, bounds },\n      controller.signal\n    )\n      .then((data) => {\n        if (controller.signal.aborted) return\n        setPlaces((prev) => {\n          const incomingMap = new Map(data.places.map((p) => [p.place_id, p]))\n          const updated = prev.map((p) => {\n            const fresh = incomingMap.get(p.place_id)\n            if (!fresh) return p\n            return {\n              ...p,\n              photos: fresh.photos?.length ? fresh.photos : p.photos,\n              primary_type: fresh.primary_type ?? p.primary_type,\n              rating: fresh.rating ?? p.rating,\n              user_rating_count: fresh.user_rating_count ?? p.user_rating_count,\n              regular_opening_hours: fresh.regular_opening_hours ?? p.regular_opening_hours,\n            }\n          })\n          const existingIds = new Set(prev.map((p) => p.place_id))\n          const added = data.places.filter((p) => !existingIds.has(p.place_id))\n          return added.length > 0 ? [...updated, ...added] : updated\n        })\n        setRegionStatus(data.region_status)\n      })\n      .finally",
+          "lineNumber": 38
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "fetchNearbyPlaces(\n      { lat: center.lat, lng: center.lng, bounds },\n      controller.signal\n    )\n      .then",
+          "lineNumber": 38
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "fetchNearbyPlaces",
+          "lineNumber": 38
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "setPlaces",
+          "lineNumber": 44
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "data.places.map",
+          "lineNumber": 45
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "prev.map",
+          "lineNumber": 46
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "incomingMap.get",
+          "lineNumber": 47
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "prev.map",
+          "lineNumber": 58
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "data.places.filter",
+          "lineNumber": 59
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "existingIds.has",
+          "lineNumber": 59
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "setRegionStatus",
+          "lineNumber": 62
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "setIsLoading",
+          "lineNumber": 65
+        },
+        {
+          "caller": "usePlaces",
+          "callee": "controller.abort",
+          "lineNumber": 68
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/lib/api-client.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 65,
+      "nonEmptyLines": 56,
+      "functions": [
+        {
+          "name": "fetchNearbyPlaces",
+          "startLine": 13,
+          "endLine": 49,
+          "params": [
+            "req",
+            "signal"
+          ]
+        },
+        {
+          "name": "fetchMentions",
+          "startLine": 51,
+          "endLine": 65,
+          "params": [
+            "placeId",
+            "signal"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "fetchNearbyPlaces",
+          "line": 13,
+          "isDefault": false
+        },
+        {
+          "name": "fetchMentions",
+          "line": 51,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "fetchNearbyPlaces",
+          "callee": "fetch",
+          "lineNumber": 24
+        },
+        {
+          "caller": "fetchNearbyPlaces",
+          "callee": "JSON.stringify",
+          "lineNumber": 27
+        },
+        {
+          "caller": "fetchNearbyPlaces",
+          "callee": "resp.json",
+          "lineNumber": 32
+        },
+        {
+          "caller": "fetchNearbyPlaces",
+          "callee": "new Promise<void>((resolve, reject) => {\n        const timer = setTimeout(resolve, baseDelay * 2 ** attempt)\n        signal?.addEventListener('abort', () => { clearTimeout(timer); reject() }, { once: true })\n      }).catch",
+          "lineNumber": 41
+        },
+        {
+          "caller": "fetchNearbyPlaces",
+          "callee": "setTimeout",
+          "lineNumber": 42
+        },
+        {
+          "caller": "fetchNearbyPlaces",
+          "callee": "signal?.addEventListener",
+          "lineNumber": 43
+        },
+        {
+          "caller": "fetchNearbyPlaces",
+          "callee": "clearTimeout",
+          "lineNumber": 43
+        },
+        {
+          "caller": "fetchNearbyPlaces",
+          "callee": "reject",
+          "lineNumber": 43
+        },
+        {
+          "caller": "fetchMentions",
+          "callee": "fetch",
+          "lineNumber": 56
+        },
+        {
+          "caller": "fetchMentions",
+          "callee": "resp.json",
+          "lineNumber": 61
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/lib/map-utils.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 29,
+      "nonEmptyLines": 26,
+      "functions": [
+        {
+          "name": "boundsToCenter",
+          "startLine": 3,
+          "endLine": 8,
+          "params": [
+            "bounds"
+          ]
+        },
+        {
+          "name": "haversineDistanceMeters",
+          "startLine": 10,
+          "endLine": 25,
+          "params": [
+            "lat1",
+            "lng1",
+            "lat2",
+            "lng2"
+          ]
+        },
+        {
+          "name": "boundsOverlap",
+          "startLine": 27,
+          "endLine": 29,
+          "params": [
+            "a",
+            "b"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "boundsToCenter",
+          "line": 3,
+          "isDefault": false
+        },
+        {
+          "name": "haversineDistanceMeters",
+          "line": 10,
+          "isDefault": false
+        },
+        {
+          "name": "boundsOverlap",
+          "line": 27,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "haversineDistanceMeters",
+          "callee": "Math.sin",
+          "lineNumber": 22
+        },
+        {
+          "caller": "haversineDistanceMeters",
+          "callee": "Math.cos",
+          "lineNumber": 23
+        },
+        {
+          "caller": "haversineDistanceMeters",
+          "callee": "Math.cos",
+          "lineNumber": 23
+        },
+        {
+          "caller": "haversineDistanceMeters",
+          "callee": "Math.sin",
+          "lineNumber": 23
+        },
+        {
+          "caller": "haversineDistanceMeters",
+          "callee": "Math.atan2",
+          "lineNumber": 24
+        },
+        {
+          "caller": "haversineDistanceMeters",
+          "callee": "Math.sqrt",
+          "lineNumber": 24
+        },
+        {
+          "caller": "haversineDistanceMeters",
+          "callee": "Math.sqrt",
+          "lineNumber": 24
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "coffee-map/types/index.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 61,
+      "nonEmptyLines": 54,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}
