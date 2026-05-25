@@ -18,13 +18,12 @@ The data curated is fundamentally different from Google reviews — it's editori
 
 | Layer | Tech |
 |-------|------|
-| Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS |
-| Map | Google Maps JS API — AdvancedMarkerElement (requires mapId) |
-| Backend | FastAPI, Python 3.11, pydantic-settings |
-| Database | Supabase (Postgres) — supabase-py v2 wrapped in `asyncio.to_thread` |
+| Frontend | Next.js, TypeScript |
+| Map | Google Maps API, NearbySearch + TextSearch |
+| Backend | FastAPI, Python |
+| Database | Supabase (Postgres) |
 | Web search | Tavily API, Brave Search API |
-| LLM | OpenAI GPT-4o-mini (place resolver + WFH attribute extractor) |
-| Place lookup | Google Places API (New) — Nearby Search + Text Search |
+| LLM | OpenAI |
 | Hosting | Frontend: Vercel · Backend: Render |
 
 ---
