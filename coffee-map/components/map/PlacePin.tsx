@@ -23,7 +23,7 @@ export function PlacePin({ map, place, onClick }: PlacePinProps) {
       background: '#ef4444',
       borderColor: '#b91c1c',
       glyphColor: '#ffffff',
-      scale: 1.1,
+      scale: 0.7,
     })
 
     const marker = new google.maps.marker.AdvancedMarkerElement({

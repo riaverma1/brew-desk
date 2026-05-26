@@ -27,8 +27,8 @@ const WFH_KEYWORDS = [
   'freelance', 'coding',
   // environment
   'atmosphere', 'ambiance', 'vibe', 'ac', 'air conditioning', 'ventilation',
-  // drinks
-  'coffee', 'drink',
+  // // drinks
+  // 'coffee', 'drink',
 ]
 
 function isUsefulSnippet(s: string | null | undefined, placeName?: string): boolean {
