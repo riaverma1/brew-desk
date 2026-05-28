@@ -1,8 +1,5 @@
-/**
- * POST /api/places — proxies nearby-search to FastAPI.
- * BACKEND_URL is server-only (no NEXT_PUBLIC_ prefix).
- * cache: 'no-store' prevents Next.js from caching map responses.
- */
+export const maxDuration = 60
+
 export async function POST(request: Request): Promise<Response> {
   const backendUrl = process.env.BACKEND_URL
   if (!backendUrl) {
@@ -16,13 +13,24 @@ export async function POST(request: Request): Promise<Response> {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
       cache: 'no-store',
+      signal: AbortSignal.timeout(55_000),
     })
 
-    const data = await upstream.json()
+    const text = await upstream.text()
+    if (!upstream.ok) {
+      console.error(`[/api/places] upstream ${upstream.status}:`, text.slice(0, 500))
+      return Response.json(
+        { error: `Backend error ${upstream.status}`, places: [], region_status: null, region_id: null },
+        { status: upstream.status }
+      )
+    }
+    const data = JSON.parse(text)
     return Response.json(data, { status: upstream.status })
-  } catch {
+  } catch (err) {
+    const isTimeout = err instanceof DOMException && err.name === 'TimeoutError'
+    console.error('[/api/places] upstream fetch failed:', err)
     return Response.json(
-      { error: 'Failed to reach backend', places: [], region_status: null, region_id: null },
+      { error: isTimeout ? 'Backend timed out' : 'Failed to reach backend', places: [], region_status: null, region_id: null },
       { status: 502 }
     )
   }

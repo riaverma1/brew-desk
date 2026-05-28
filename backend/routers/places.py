@@ -147,7 +147,7 @@ async def nearby_search(
             )
         )
 
-    logger.info("nearby-search: returning %d pins (%d enriched from Google)", len(response_places), enriched)
+    logger.info("nearby-search: returning %d pins (%d enriched from Google)", len(response_places), len(pending_writes))
 
     return NearbySearchResponse(
         places=response_places,
