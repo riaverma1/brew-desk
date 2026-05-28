@@ -36,9 +36,19 @@ export function MapContainer() {
   const bounds = useMapBounds(mapReady ? mapRef.current : null)
   const { places, regionStatus, isLoading } = usePlaces(bounds)
 
-  const visiblePlaces = openNowOnly
-    ? places.filter((p) => p.regular_opening_hours?.openNow === true)
+  const inViewportPlaces = bounds
+    ? places.filter(
+        (p) =>
+          p.lat <= bounds.north &&
+          p.lat >= bounds.south &&
+          p.lng <= bounds.east &&
+          p.lng >= bounds.west
+      )
     : places
+
+  const visiblePlaces = openNowOnly
+    ? inViewportPlaces.filter((p) => p.regular_opening_hours?.openNow === true)
+    : inViewportPlaces
 
   const sortedVisiblePlaces = [...visiblePlaces].sort(
     (a, b) => b.mention_count - a.mention_count
