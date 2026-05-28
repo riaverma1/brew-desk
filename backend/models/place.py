@@ -38,6 +38,7 @@ class PlacePinResponse(BaseModel):
     rating: float | None = None
     user_rating_count: int | None = None
     regular_opening_hours: dict | None = None
+    top_mention_snippet: str | None = None
 
 
 class NearbySearchResponse(BaseModel):

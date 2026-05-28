@@ -95,6 +95,35 @@ async def save_google_place_data(place_id: str, data: dict) -> None:
     await asyncio.to_thread(_query)
 
 
+async def get_top_snippets_for_places(place_ids: list[str]) -> dict[str, str | None]:
+    """
+    Fetch the highest-confidence mention snippet for each place_id in one query.
+    Returns a dict mapping place_id → evidence_snippet (or None if no useful snippet).
+    """
+    if not place_ids:
+        return {}
+
+    def _query():
+        db = get_supabase()
+        resp = (
+            db.table("mentions")
+            .select("place_id, evidence_snippet, laptop_confidence")
+            .in_("place_id", place_ids)
+            .not_.is_("evidence_snippet", "null")
+            .order("laptop_confidence", desc=True)
+            .execute()
+        )
+        result: dict[str, str | None] = {}
+        for row in resp.data:
+            pid = row["place_id"]
+            snippet = (row.get("evidence_snippet") or "").strip()
+            if pid not in result and snippet and len(snippet) >= 15:
+                result[pid] = snippet
+        return result
+
+    return await asyncio.to_thread(_query)
+
+
 async def get_mentions_for_place(place_id: str) -> list[dict]:
     """
     Return mentions with source platform/handle joined, ordered by laptop_confidence desc.

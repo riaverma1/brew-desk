@@ -131,6 +131,12 @@ function PlaceCard({
           )}
         </div>
 
+        {place.top_mention_snippet && (
+          <p className="text-xs text-gray-500 mt-1 line-clamp-2 italic">
+            &ldquo;{place.top_mention_snippet}&rdquo;
+          </p>
+        )}
+
         <AttributePills place={place} />
       </div>
     </button>

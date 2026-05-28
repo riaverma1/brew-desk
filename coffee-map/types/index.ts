@@ -31,6 +31,7 @@ export interface PlacePin {
   rating: number | null
   user_rating_count: number | null
   regular_opening_hours: { weekdayDescriptions?: string[]; openNow?: boolean } | null
+  top_mention_snippet: string | null
 }
 
 export interface MentionCard {

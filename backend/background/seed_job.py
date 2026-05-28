@@ -89,7 +89,16 @@ async def trigger_seed(region_id: str) -> None:
                 region_id, resolve_exc,
             )
 
-        # Step 3: mark seeded
+        # Step 3: enrich new places (photos, rating, hours) — isolated, non-blocking
+        try:
+            from background.enrich_job import enrich_unenriched_places
+            from config import get_settings
+            enrich_summary = await enrich_unenriched_places(region_id, get_settings().google_places_api_key)
+            logger.info("Seed job: enrich complete — %s", enrich_summary)
+        except Exception as enrich_exc:
+            logger.warning("Seed job: enrich failed for region %s: %s — proceeding to seeded", region_id, enrich_exc)
+
+        # Step 4: mark seeded
         db = supabase_client.get_supabase()
         db.table("regions").update(
             {"status": "seeded", "last_crawled_at": datetime.now(timezone.utc).isoformat()}

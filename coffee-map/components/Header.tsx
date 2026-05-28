@@ -15,9 +15,10 @@ export function Header({ openNowOnly, onToggleOpenNow }: HeaderProps) {
         <span className="font-bold text-gray-900 text-xl tracking-tight">BrewDesk</span>
       </div>
 
-      <span className="hidden sm:block text-sm text-gray-400">
-        Find your next workspace between meetings
-      </span>
+      <div className="hidden sm:flex flex-col">
+        <span className="text-sm text-gray-400">Find your next workspace between meetings.</span>
+        <span className="text-sm text-gray-400">Each place is community-verified and mapped for you.</span>
+      </div>
 
       <div className="ml-auto">
         <button

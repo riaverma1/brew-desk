@@ -66,13 +66,19 @@ async def nearby_search(
     if not db_places:
         return NearbySearchResponse(places=[], region_status=status, region_id=region_id)
 
+    # Batch-fetch top mention snippet per place (one query, not N)
+    all_place_ids = [p["place_id"] for p in db_places]
+    top_snippets = await supabase_client.get_top_snippets_for_places(all_place_ids)
+
     # Build Google data lookup for enrichment
     google_data_map: dict[str, dict] = {r["place_id"]: r for r in nearby_results}
 
     # Step 2: for DB places that also appeared in the nearby search, write
-    # fresh Google data back to the DB (photos, rating, hours)
+    # fresh Google data back to the DB (photos, rating, hours).
+    # Writes run concurrently and are awaited before the response so data is
+    # guaranteed persisted — no fire-and-forget background tasks for this step.
     now = datetime.now(timezone.utc).isoformat()
-    enriched = 0
+    pending_writes: list[tuple[str, dict]] = []
     for place_row in db_places:
         pid = place_row["place_id"]
         gdata = google_data_map.get(pid)
@@ -91,11 +97,14 @@ async def nearby_search(
         if gdata.get("regular_opening_hours") is not None:
             db_update["regular_opening_hours"] = gdata["regular_opening_hours"]
 
-        background_tasks.add_task(supabase_client.save_google_place_data, pid, db_update)
-        enriched += 1
+        pending_writes.append((pid, db_update))
 
-    if enriched:
-        logger.info("nearby-search: %d places queued for Google data enrichment", enriched)
+    if pending_writes:
+        await asyncio.gather(*[
+            supabase_client.save_google_place_data(pid, update)
+            for pid, update in pending_writes
+        ])
+        logger.info("nearby-search: %d places enriched from Google data", len(pending_writes))
 
     # Step 3: build response — live Google data takes precedence over cached DB values
     response_places: list[PlacePinResponse] = []
@@ -134,6 +143,7 @@ async def nearby_search(
                     gdata.get("regular_opening_hours")
                     or place_row.get("regular_opening_hours")
                 ),
+                top_mention_snippet=top_snippets.get(pid),
             )
         )
 
