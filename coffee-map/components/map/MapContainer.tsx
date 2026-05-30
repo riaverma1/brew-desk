@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useMapBounds } from '@/hooks/useMapBounds'
+import { isOpenNow } from '@/lib/map-utils'
 import { usePlaces } from '@/hooks/usePlaces'
 import type { PlacePin as PlacePinType } from '@/types'
 import { Header } from '@/components/Header'
@@ -47,7 +48,7 @@ export function MapContainer() {
     : places
 
   const visiblePlaces = openNowOnly
-    ? inViewportPlaces.filter((p) => p.regular_opening_hours?.openNow === true)
+    ? inViewportPlaces.filter((p) => isOpenNow(p) === true)
     : inViewportPlaces
 
   const sortedVisiblePlaces = [...visiblePlaces].sort(

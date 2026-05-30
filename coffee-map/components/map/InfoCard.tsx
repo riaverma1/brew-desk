@@ -2,6 +2,7 @@
 
 import { useMentions } from '@/hooks/useMentions'
 import type { PlacePin } from '@/types'
+import { isOpenNow } from '@/lib/map-utils'
 import { MentionCard } from '@/components/ui/MentionCard'
 import { AttributePills } from './AttributePills'
 
@@ -37,6 +38,7 @@ function googleMapsUrl(place: PlacePin): string {
 export function InfoCard({ placeId, place, onClose }: InfoCardProps) {
   const { mentions, isLoading } = useMentions(placeId)
   const hours = todaysHours(place)
+  const openStatus = isOpenNow(place)
 
   return (
     <div className="
@@ -105,14 +107,14 @@ export function InfoCard({ placeId, place, onClose }: InfoCardProps) {
       {/* Today's hours */}
       {hours && (
         <div className="px-4 py-2 border-b border-gray-100 flex items-center gap-2 flex-wrap">
-          {place.regular_opening_hours?.openNow != null && (
+          {openStatus != null && (
             <span className={`flex items-center gap-1 text-xs font-medium ${
-              place.regular_opening_hours.openNow ? 'text-green-600' : 'text-red-500'
+              openStatus ? 'text-green-600' : 'text-red-500'
             }`}>
               <span className={`h-1.5 w-1.5 rounded-full ${
-                place.regular_opening_hours.openNow ? 'bg-green-500' : 'bg-red-400'
+                openStatus ? 'bg-green-500' : 'bg-red-400'
               }`} />
-              {place.regular_opening_hours.openNow ? 'Open' : 'Closed'}
+              {openStatus ? 'Open' : 'Closed'}
             </span>
           )}
           <p className="text-xs text-gray-600">{hours}</p>

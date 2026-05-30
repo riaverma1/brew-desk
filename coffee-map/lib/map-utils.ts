@@ -1,4 +1,50 @@
-import type { MapBounds } from '@/types'
+import type { MapBounds, PlacePin } from '@/types'
+
+// Parse "7:00 AM" / "12:00 AM" into minutes-since-midnight.
+function parseTime(s: string): number {
+  const m = s.match(/(\d+):(\d+)\s*(AM|PM)/i)
+  if (!m) return -1
+  let h = parseInt(m[1], 10)
+  const min = parseInt(m[2], 10)
+  const period = m[3].toUpperCase()
+  if (period === 'AM' && h === 12) h = 0
+  if (period === 'PM' && h !== 12) h += 12
+  return h * 60 + min
+}
+
+/**
+ * Computes whether a place is open right now from its stored weekdayDescriptions.
+ * Returns null when hours data is unavailable.
+ * Google's index: 0=Monday … 6=Sunday; JS getDay(): 0=Sunday … 6=Saturday.
+ */
+export function isOpenNow(place: PlacePin): boolean | null {
+  const descriptions = place.regular_opening_hours?.weekdayDescriptions
+  if (!descriptions?.length) return null
+
+  const jsDay = new Date().getDay() // 0=Sun
+  const googleIndex = (jsDay + 6) % 7  // 0=Mon
+  const entry = descriptions[googleIndex]
+  if (!entry) return null
+
+  const hoursStr = entry.replace(/^[^:]+:\s*/, '')
+  if (hoursStr === 'Closed') return false
+  if (hoursStr === 'Open 24 hours') return true
+
+  // "7:00 AM – 9:00 PM" — en-dash separator
+  const parts = hoursStr.split('–')
+  if (parts.length !== 2) return null
+
+  const open = parseTime(parts[0].trim())
+  const close = parseTime(parts[1].trim())
+  if (open < 0 || close < 0) return null
+
+  const now = new Date()
+  const nowMin = now.getHours() * 60 + now.getMinutes()
+
+  // close <= open means the range spans midnight (e.g. 8:00 AM – 12:00 AM)
+  if (close <= open) return nowMin >= open || nowMin < close
+  return nowMin >= open && nowMin < close
+}
 
 export function boundsToCenter(bounds: MapBounds): { lat: number; lng: number } {
   return {

@@ -1,6 +1,7 @@
 'use client'
 
 import type { PlacePin } from '@/types'
+import { isOpenNow } from '@/lib/map-utils'
 import { AttributePills } from './AttributePills'
 
 interface PlaceListProps {
@@ -61,7 +62,7 @@ function PlaceCard({
   onClick: () => void
 }) {
   const hours = todaysHoursShort(place)
-  const isOpen = place.regular_opening_hours?.openNow
+  const isOpen = isOpenNow(place)
   const photo = place.photos[0] ?? null
 
   const badgeClass =
